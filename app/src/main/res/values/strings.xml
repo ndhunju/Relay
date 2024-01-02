@@ -3,4 +3,6 @@
     <string name="image_description_search">Search</string>
     <string name="image_description_account">Account</string>
     <string name="image_description_app_logo">App Logo</string>
+    <string name="image_description_synced_logo">Message synced</string>
+    <string name="image_description_un_synced_logo">Message not synced.</string>
 </resources>

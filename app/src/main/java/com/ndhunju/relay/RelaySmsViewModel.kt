@@ -1,5 +1,7 @@
 package com.ndhunju.relay
 
+import com.ndhunju.relay.ui.messages.Message
+import com.ndhunju.relay.ui.mockMessages
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 
@@ -15,9 +17,11 @@ class RelaySmsViewModel {
 
     var onSearchTextChanged: (String) -> Unit = {}
     var onClickAccountIcon = {}
+    var onClickMessage: (Message) -> Unit = {}
 
 }
 
 data class SmsReporterViewState(
-    var showSearchTextField: Boolean = false
+    var showSearchTextField: Boolean = false,
+    var messages: List<Message> = mockMessages
 )
