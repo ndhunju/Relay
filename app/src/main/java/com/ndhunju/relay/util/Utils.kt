@@ -21,7 +21,7 @@ fun readSms(contentResolver: ContentResolver): List<Message> {
             val message = Message(
                 cursor.getStringForColumn("address"),
                 cursor.getStringForColumn("body"),
-                cursor.getStringForColumn("date")
+                cursor.getStringForColumn("date").toLong()
             )
             //println("SMS from: $message")
             messages.add(message)

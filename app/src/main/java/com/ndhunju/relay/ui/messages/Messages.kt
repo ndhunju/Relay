@@ -112,10 +112,9 @@ fun MessageListItem(
 data class Message(
     val from: String,
     val body: String,
-    val timeStamp: String
+    val timeStamp: Long
 ) {
     fun getFormattedTime(): String {
-        // TODO: Parse timeStamp into Long
-        return timeStamp //dateFormat.format(timeStamp)
+        return dateFormat.format(timeStamp)
     }
 }
