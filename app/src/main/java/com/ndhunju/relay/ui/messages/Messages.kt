@@ -17,6 +17,7 @@ import androidx.constraintlayout.compose.ConstraintLayout
 import androidx.constraintlayout.compose.Dimension
 import com.ndhunju.relay.R
 import com.ndhunju.relay.ui.mockMessages
+import com.ndhunju.relay.ui.theme.LocalDimens
 import com.ndhunju.relay.util.dateFormat
 
 @Preview(showBackground = true)
@@ -39,6 +40,8 @@ fun MessageListItem(
         .clickable { onClick(message) }
     ) {
         val (divider, from, body, date, status) = createRefs()
+        val itemVerticalPadding = LocalDimens.current.itemPaddingVertical
+        val contentHorizontalPadding = LocalDimens.current.contentPaddingHorizontal
 
         Divider(Modifier.constrainAs(divider) {
             top.linkTo(parent.top)
@@ -46,8 +49,8 @@ fun MessageListItem(
         })
 
         Text(text = message.from, Modifier.constrainAs(from) {
-            top.linkTo(parent.top, 16.dp)
-            start.linkTo(parent.start, 16.dp)
+            top.linkTo(parent.top, itemVerticalPadding)
+            start.linkTo(parent.start, contentHorizontalPadding)
             width = Dimension.fillToConstraints
         },
             maxLines = 1,
@@ -62,10 +65,10 @@ fun MessageListItem(
                     start = from.end,
                     end = parent.end,
                     startMargin = 4.dp,
-                    endMargin = 16.dp,
+                    endMargin = contentHorizontalPadding,
                     bias = 1f,
                 )
-                top.linkTo(parent.top, 16.dp)
+                top.linkTo(parent.top, itemVerticalPadding)
             })
 
         Icon(
@@ -79,9 +82,9 @@ fun MessageListItem(
                 .padding(start = 8.dp)
                 .size(16.dp)
                 .constrainAs(status) {
-                    end.linkTo(parent.end, 16.dp)
+                    end.linkTo(parent.end, contentHorizontalPadding)
                     top.linkTo(date.bottom, 4.dp)
-                    bottom.linkTo(parent.bottom, 16.dp)
+                    bottom.linkTo(parent.bottom, itemVerticalPadding)
                 }
         )
 
@@ -93,12 +96,11 @@ fun MessageListItem(
                     linkTo(
                         start = parent.start,
                         end = status.start,
-                        startMargin = 16.dp,
+                        startMargin = contentHorizontalPadding,
                         endMargin = 8.dp,
                         bias = 0f,
                     )
-                    bottom.linkTo(parent.bottom, 4.dp)
-                    bottom.linkTo(parent.bottom, 16.dp)
+                    bottom.linkTo(parent.bottom, itemVerticalPadding)
                     width = Dimension.fillToConstraints
                 },
             maxLines = 1,
