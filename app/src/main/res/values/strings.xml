@@ -1,8 +1,23 @@
 <resources>
     <string name="app_name">Relay</string>
+    <!-- Image description for search icon -->
     <string name="image_description_search">Search</string>
+    <!-- Image description for account icon -->
     <string name="image_description_account">Account</string>
+    <!-- Image description for app logo -->
     <string name="image_description_app_logo">App Logo</string>
+    <!-- Image description for an icon that indicates that the message has been synced -->
     <string name="image_description_synced_logo">Message synced</string>
+    <!-- Image description for an icon that indicates that the message has not been synced -->
     <string name="image_description_un_synced_logo">Message not synced.</string>
+
+    <!-- Shown to user inside a dialog when the Android OS signal that we need to present an
+    explanation to the user as to why we need the permissions -->
+    <string name="permission_rationale_sms_read_send">This app needs permission to read and send
+        SMS in order to show you the SMS inside the app and for you to send the SMS from the app.
+    </string>
+    <!-- Verb. Positive action button in a dialog -->
+    <string name="ok">OK</string>
+    <!-- Verb. Negative action button in a dialog -->
+    <string name="cancel">Cancel</string>
 </resources>

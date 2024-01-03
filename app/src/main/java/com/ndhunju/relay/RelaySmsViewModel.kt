@@ -23,5 +23,5 @@ class RelaySmsViewModel {
 
 data class SmsReporterViewState(
     var showSearchTextField: Boolean = false,
-    var messages: List<Message> = mockMessages
+    var messages: List<Message> = emptyList()
 )

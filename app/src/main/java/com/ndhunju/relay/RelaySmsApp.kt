@@ -56,7 +56,7 @@ fun RelaySmsApp(
                 .padding(innerPadding)
                 .fillMaxWidth(),
             content = {
-                itemsIndexed(viewModel.state.value.messages) { index: Int, message: Message ->
+                itemsIndexed(viewState.messages) { index: Int, message: Message ->
                     MessageListItem(message, true, viewModel.onClickMessage)
                 }
         })
