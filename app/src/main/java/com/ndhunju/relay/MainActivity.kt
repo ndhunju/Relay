@@ -27,9 +27,11 @@ class MainActivity : ComponentActivity() {
         if (areNeededPermissionGranted(permissions)) {
             // All permissions granted
             viewModel.state.value.messages = readSms(contentResolver)
+            // Reset this value in case it was set to true earlier
+            viewModel.state.value.showErrorMessageForPermissionDenied = false
         } else {
             // Permissions denied
-            // TODO: Show message on the screen that the app needs permission
+            viewModel.state.value.showErrorMessageForPermissionDenied = true
         }
     }
 
@@ -45,6 +47,10 @@ class MainActivity : ComponentActivity() {
                     RelaySmsApp(viewModel)
                 }
             }
+        }
+
+        viewModel.onClickGrantPermission = {
+            requestPermission(requestPermissionLauncher)
         }
 
         // Check if needed permissions are granted

@@ -14,10 +14,12 @@
     <!-- Shown to user inside a dialog when the Android OS signal that we need to present an
     explanation to the user as to why we need the permissions -->
     <string name="permission_rationale_sms_read_send">This app needs permission to read and send
-        SMS in order to show you the SMS inside the app and for you to send the SMS from the app.
+        SMS in order to show you the SMS and for you to send the SMS from the app.
     </string>
     <!-- Verb. Positive action button in a dialog -->
     <string name="ok">OK</string>
     <!-- Verb. Negative action button in a dialog -->
     <string name="cancel">Cancel</string>
+    <!-- Text shown in a button. When user clicks on it, app requests OS to grant permissions -->
+    <string name="grant_permissions">Grant Permissions</string>
 </resources>

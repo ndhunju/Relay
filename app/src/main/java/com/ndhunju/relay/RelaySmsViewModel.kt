@@ -1,5 +1,8 @@
 package com.ndhunju.relay
 
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.setValue
 import com.ndhunju.relay.ui.messages.Message
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -17,10 +20,14 @@ class RelaySmsViewModel {
     var onSearchTextChanged: (String) -> Unit = {}
     var onClickAccountIcon = {}
     var onClickMessage: (Message) -> Unit = {}
+    var onClickGrantPermission: () -> Unit = {}
 
 }
 
 data class SmsReporterViewState(
-    var showSearchTextField: Boolean = false,
     var messages: List<Message> = emptyList()
-)
+) {
+    // Note: Compose doesn't track inner fields for change unless we use mutableStateOf
+    var showErrorMessageForPermissionDenied: Boolean by mutableStateOf(false)
+    var showSearchTextField: Boolean by mutableStateOf(false)
+}
