@@ -22,4 +22,6 @@
     <string name="cancel">Cancel</string>
     <!-- Text shown in a button. When user clicks on it, app requests OS to grant permissions -->
     <string name="grant_permissions">Grant Permissions</string>
+    <!-- Message shown on the screen when no sender address is found -->
+    <string name="msg_no_sender_found">Oops! No sender address found. Please go back</string>
 </resources>
