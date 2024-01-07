@@ -10,6 +10,7 @@ import android.os.Bundle
 import android.provider.Telephony
 import androidx.activity.compose.setContent
 import androidx.activity.result.contract.ActivityResultContracts
+import androidx.activity.viewModels
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
@@ -25,10 +26,7 @@ import com.ndhunju.relay.util.requestPermission
 class MainActivity : FragmentActivity() {
 
     // Member Variables
-    // TODO: Nikesh - Use dagger to inject here using subcomponent
-    val viewModel: RelaySmsViewModel by lazy {
-        RelaySmsViewModel((application as RelayApplication).appComponent.relayRepository())
-    }
+    val viewModel: RelaySmsViewModel by viewModels { RelayViewModelFactory }
 
     private val requestPermissionLauncher = registerForActivityResult(
         ActivityResultContracts.RequestMultiplePermissions()

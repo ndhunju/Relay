@@ -3,6 +3,7 @@ package com.ndhunju.relay
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
+import androidx.lifecycle.ViewModel
 import com.ndhunju.relay.data.RelayRepository
 import com.ndhunju.relay.ui.messages.Message
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -10,7 +11,7 @@ import kotlinx.coroutines.flow.StateFlow
 
 class RelaySmsViewModel(
    repository: RelayRepository
-) {
+): ViewModel() {
 
     private var _state = MutableStateFlow(SmsReporterViewState())
     val state: StateFlow<SmsReporterViewState>

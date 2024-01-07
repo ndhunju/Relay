@@ -11,7 +11,7 @@ class RelayApplication: Application() {
     override fun onCreate() {
         super.onCreate()
         this.appComponent = DaggerAppComponent.builder()
-            .appModule(AndroidAppModule(this))
+            .androidAppModule(AndroidAppModule(this))
             .build()
     }
 }
