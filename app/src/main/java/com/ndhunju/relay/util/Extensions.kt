@@ -9,7 +9,7 @@ import android.database.Cursor
 fun Cursor.getStringForColumn(column: String): String {
     val columnIndex = getColumnIndex(column)
     if (columnIndex >= 0) {
-        return getString(columnIndex)
+        return getString(columnIndex) ?: ""
     }
 
     return ""

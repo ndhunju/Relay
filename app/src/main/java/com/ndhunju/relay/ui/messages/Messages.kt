@@ -89,7 +89,7 @@ fun MessageListItem(
         )
 
         Text(
-            text = message.body,
+            text = message.body, // + "\n" + message.toString(), // for debugging
             Modifier
                 .constrainAs(body) {
                     top.linkTo(from.bottom)
@@ -110,11 +110,19 @@ fun MessageListItem(
 }
 
 data class Message(
+    val threadId: String,
     val from: String,
     val body: String,
-    val timeStamp: Long
+    val date: String,
+    val type: String,
+    val extra: String? = null
 ) {
     fun getFormattedTime(): String {
-        return dateFormat.format(timeStamp)
+        val dateAsLong = date.toLongOrNull() ?: 0
+        return dateFormat.format(dateAsLong)
+    }
+
+    fun isSentByUser(): Boolean {
+        return type == "2"
     }
 }

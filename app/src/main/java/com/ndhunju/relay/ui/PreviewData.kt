@@ -4,13 +4,17 @@ import com.ndhunju.relay.ui.messages.Message
 
 val mockMessages = listOf(
     Message(
-        "Sanima Bank",
-        "2,300.00 withdrawn from your account. Your new balance is 46,000",
-        System.currentTimeMillis()
+        "ThreadId1",
+        "Bikesh",
+        "See you soon!",
+        System.currentTimeMillis().toString(),
+        "1",
     ),
     Message(
+        "ThreadId2",
         "Nabil Bank",
         "2,300.00 added to your account. Your new balance is 50,000",
-        System.currentTimeMillis()
+        System.currentTimeMillis().toString(),
+        "2",
     )
 )

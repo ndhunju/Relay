@@ -59,7 +59,7 @@ class MainActivity : FragmentActivity() {
             supportFragmentManager.beginTransaction()
                 .add(
                     android.R.id.content,
-                    MessagesFromFragment.newInstance(message.from),
+                    MessagesFromFragment.newInstance(message.threadId),
                     MessagesFromFragment.TAG
                     )
                 .addToBackStack(MessagesFromFragment.TAG)

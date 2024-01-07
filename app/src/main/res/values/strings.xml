@@ -1,5 +1,7 @@
 <resources>
     <string name="app_name">Relay</string>
+
+    <!-- General Image Descriptions -->
     <!-- Image description for search icon -->
     <string name="image_description_search">Search</string>
     <!-- Image description for account icon -->
@@ -10,6 +12,8 @@
     <string name="image_description_synced_logo">Message synced</string>
     <!-- Image description for an icon that indicates that the message has not been synced -->
     <string name="image_description_un_synced_logo">Message not synced.</string>
+    <!-- Image description for back icon. Clicking on this takes user to previous screen -->
+    <string name="image_description_go_back">Back</string>
 
     <!-- Shown to user inside a dialog when the Android OS signal that we need to present an
     explanation to the user as to why we need the permissions -->

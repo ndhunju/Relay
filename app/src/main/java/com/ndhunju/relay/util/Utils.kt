@@ -13,22 +13,18 @@ val dateFormat = SimpleDateFormat("MMM d", Locale.getDefault())
  * Reads the SMS from the device and returns it as a list of [Message]
  */
 fun getLastSmsBySender(contentResolver: ContentResolver): List<Message> {
-    val uri = Uri.parse("content://sms/inbox")
+    val uri = Uri.parse("content://sms")
     val cursor: Cursor? = contentResolver.query(
         uri,
-        arrayOf("DISTINCT address","body", "date"), // DISTINCT
-        "address IS NOT NULL) GROUP BY (address", //GROUP BY,
+        smsColumns,
+         "thread_id IS NOT NULL) GROUP BY (thread_id", //GROUP BY,
         null,
         "date DESC" // Show newest message at the top
     )
     val messages = mutableListOf<Message>()
     if (cursor != null && cursor.moveToFirst()) {
         do {
-            val message = Message(
-                cursor.getStringForColumn("address"),
-                cursor.getStringForColumn("body"),
-                cursor.getStringForColumn("date").toLongOrNull() ?: 0
-            )
+            val message = fromCursor(cursor)
             //println("SMS from: $message")
             messages.add(message)
         } while (cursor.moveToNext())
@@ -41,13 +37,12 @@ fun getLastSmsBySender(contentResolver: ContentResolver): List<Message> {
 /**
  * Returns list of message for passed [sender]
  */
-fun getSmsBySender(contentResolver: ContentResolver, sender: String): List<Message> {
-    val uri = Uri.parse("content://sms/inbox")
-    // TODO: Get SMS send to this sender by our user
+fun getSmsByThreadId(contentResolver: ContentResolver, sender: String): List<Message> {
+    val uri = Uri.parse("content://sms")
     val cursor: Cursor? = contentResolver.query(
         uri,
-        arrayOf("address","body", "date"),
-        "address='$sender'",
+        smsColumns,
+        "thread_id='$sender'",
         null,
         null
     )
@@ -55,11 +50,7 @@ fun getSmsBySender(contentResolver: ContentResolver, sender: String): List<Messa
     val messages = mutableListOf<Message>()
     if (cursor != null && cursor.moveToFirst()) {
         do {
-            val message = Message(
-                cursor.getStringForColumn("address"),
-                cursor.getStringForColumn("body"),
-                cursor.getStringForColumn("date").toLongOrNull() ?: 0
-            )
+            val message = fromCursor(cursor)
             //println("SMS from: $message")
             messages.add(message)
         } while (cursor.moveToNext())
@@ -67,4 +58,18 @@ fun getSmsBySender(contentResolver: ContentResolver, sender: String): List<Messa
     }
 
     return messages
+}
+
+val smsColumns = arrayOf("thread_id", "status", "type", "subject", "person", "reply_path_present",
+    "address","body", "date")
+
+fun fromCursor(cursor: Cursor): Message {
+    return Message(
+        cursor.getStringForColumn("thread_id"),
+        cursor.getStringForColumn("address"),
+        cursor.getStringForColumn("body"),
+        cursor.getStringForColumn("date"),
+        cursor.getStringForColumn("type"),
+        cursor.getStringForColumn("type")
+    )
 }

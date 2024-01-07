@@ -7,9 +7,9 @@ import android.view.ViewGroup
 import androidx.compose.ui.platform.ComposeView
 import androidx.fragment.app.Fragment
 import com.ndhunju.relay.ui.theme.RelayTheme
-import com.ndhunju.relay.util.getSmsBySender
+import com.ndhunju.relay.util.getSmsByThreadId
 
-private const val SENDER_ADDRESS = "SENDER_ADDRESS"
+private const val THREAD_ID = "THREAD_ID"
 
 /**
  * A simple [Fragment] subclass that shows all the messages from the passed sender/address
@@ -18,12 +18,12 @@ private const val SENDER_ADDRESS = "SENDER_ADDRESS"
  */
 class MessagesFromFragment : Fragment() {
 
-    private var senderAddress: String? = null
+    private var threadId: String? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         arguments?.let {
-            senderAddress = it.getString(SENDER_ADDRESS)
+            threadId = it.getString(THREAD_ID)
         }
     }
 
@@ -35,18 +35,18 @@ class MessagesFromFragment : Fragment() {
             setContent {
                 RelayTheme {
                     // Process the data
-                    val senderAddress: String = senderAddress ?: ""
-                    val messages = if (senderAddress.isNotEmpty()) {
-                        getSmsBySender(
+                    val threadId: String = threadId ?: ""
+                    val messages = if (threadId.isNotEmpty()) {
+                        getSmsByThreadId(
                             context.contentResolver,
-                            senderAddress
+                            threadId
                         )
                     } else {
                         emptyList()
                     }
 
                     MessagesFromView(
-                        senderAddress,
+                        messages.first().from,
                         messages,
                         // TODO: Nikesh - Implement proper nav controller
                         onBackPressed = { parentFragmentManager.popBackStack() }
@@ -64,14 +64,14 @@ class MessagesFromFragment : Fragment() {
          * Use this factory method to create a new instance of
          * this fragment using the provided parameters.
          *
-         * @param senderAddress address of sender. Eg 408 320 4832.
+         * @param threadId id of message thread
          * @return A new instance of fragment MessagesFromFragment.
          */
         @JvmStatic
-        fun newInstance(senderAddress: String) =
+        fun newInstance(threadId: String) =
             MessagesFromFragment().apply {
                 arguments = Bundle().apply {
-                    putString(SENDER_ADDRESS, senderAddress)
+                    putString(THREAD_ID, threadId)
                 }
             }
     }

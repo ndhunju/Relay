@@ -3,8 +3,12 @@ package com.ndhunju.relay.ui.messagesfrom
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -71,32 +75,58 @@ fun MessagesFromView(
                     TopAppBarWithUpButton(senderAddress, onBackPressed)
                 }
             ) { internalPadding ->
-                // TODO: Nikesh - Arrange items from bottom up
                 LazyColumn(
                     contentPadding = internalPadding,
+                    reverseLayout = true,
                     verticalArrangement = Arrangement.spacedBy(8.dp),
+                    modifier = Modifier.fillMaxSize(),
                     content = {
-                        // Show list of messages for given sender
+                        // Show list of messages for the given thread
                         itemsIndexed(messageList) { _: Int, message: Message ->
-                            Box(
-                                Modifier
-                                    .padding(
-                                        start = LocalDimens.current.contentPaddingHorizontal,
-                                        end = LocalDimens.current.contentPaddingHorizontal * 3,
-                                    )
-                                    .background(
-                                        color = MaterialTheme.colorScheme.primary,
-                                        shape = RoundedCornerShape(size = 9.dp)
-                                    )
-                                    .padding(
-                                        vertical = LocalDimens.current.itemPaddingVertical,
-                                        horizontal = 8.dp
-                                    )
-                            ) {
-                                Text(
-                                    text = message.body,
-                                    color = MaterialTheme.colorScheme.onPrimary
+                            Box(modifier = Modifier
+                                .fillMaxWidth()
+                                .padding(
+                                    horizontal = LocalDimens.current.contentPaddingHorizontal
                                 )
+                            ) {
+                                Row {
+                                    // If the message is sent by the user,
+                                    // show the message on the right/end side.
+                                    // Otherwise, show it on the left/start side.
+                                    if (message.isSentByUser()) {
+                                        Spacer(modifier = Modifier.weight(0.2f))
+                                    }
+
+                                    Box(modifier = Modifier
+                                        .wrapContentSize(align = if (message.isSentByUser()) {
+                                            Alignment.TopEnd
+                                        } else {
+                                            Alignment.TopStart
+                                        })
+                                        .weight(0.8f)
+                                        .background(
+                                            color = MaterialTheme.colorScheme.primary,
+                                            shape = RoundedCornerShape(size = 11.dp))
+                                        .padding(
+                                            vertical = LocalDimens.current.itemPaddingVertical,
+                                            horizontal = 8.dp
+                                        )
+                                    ) {
+                                        Text(
+                                            text = message.body, //+ "\n" + message.toString(), for debugging
+                                            color = MaterialTheme.colorScheme.onPrimary,
+                                            textAlign = if (message.isSentByUser()) {
+                                                TextAlign.End
+                                            } else {
+                                                TextAlign.Start
+                                            }
+                                        )
+                                    }
+
+                                    if (message.isSentByUser().not()) {
+                                        Spacer(modifier = Modifier.weight(0.2f))
+                                    }
+                                }
                             }
                         }
                     })
@@ -122,7 +152,7 @@ private fun TopAppBarWithUpButton(senderAddress: String, onBackPressed: (() -> U
                 Icon(
                     modifier = Modifier.padding(4.dp),
                     imageVector = Icons.Filled.ArrowBack,
-                    contentDescription = "Back"
+                    contentDescription = stringResource(R.string.image_description_go_back)
                 )
             }
         }
