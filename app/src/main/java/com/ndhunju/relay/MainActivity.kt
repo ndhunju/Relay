@@ -101,13 +101,8 @@ class MainActivity : FragmentActivity() {
                     if (intent.action == Telephony.Sms.Intents.SMS_RECEIVED_ACTION) {
                         val smsMessages = Telephony.Sms.Intents.getMessagesFromIntent(intent)
                         for (smsMessage in smsMessages) {
-                            //val messageBody = smsMessage.messageBody
-                            // Process the message content here
-                            // TODO: 1. Update the UI
-                            //  2. Push the new SMS to the server
-                            //  3. Update Sync icon
                             //println("Received SMS: $messageBody")
-                            viewModel.onNewSmsReceived()
+                            viewModel.onNewSmsReceived(smsMessage)
                         }
                     }
                 }

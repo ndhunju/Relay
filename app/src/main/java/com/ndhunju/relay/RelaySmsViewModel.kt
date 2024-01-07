@@ -1,13 +1,17 @@
 package com.ndhunju.relay
 
+import android.telephony.SmsMessage
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
 import com.ndhunju.relay.data.RelayRepository
 import com.ndhunju.relay.ui.messages.Message
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.launch
 
 class RelaySmsViewModel(
    private val repository: RelayRepository
@@ -28,13 +32,43 @@ class RelaySmsViewModel(
 
     var onAllPermissionGranted = {
         // All permissions granted
-        state.value.messages = repository.getLastSmsBySender()
+        state.value.updateMessages(repository.getLastSmsBySender())
         // Reset this value in case it was set to true earlier
         state.value.showErrorMessageForPermissionDenied = false
     }
 
-    var onNewSmsReceived = {
+    var onNewSmsReceived: (SmsMessage) -> Unit = { smsMessage ->
+        // TODO:
+        //  2. Push the new SMS to the server
+        //  3. Update Sync icon
+        // Update the UI to the the latest SMS
+        viewModelScope.launch {
+            var oldLastMessage: Message? = null
+            var oldLastMessageIndex = -1
 
+            // Find the thread in which the message is sent to
+            state.value.messageList.forEachIndexed { index, message ->
+                if (message.from == smsMessage.originatingAddress) {
+                    oldLastMessage = state.value.messageList[index]
+                    oldLastMessageIndex = index
+                }
+                return@forEachIndexed
+            }
+
+            if (oldLastMessage != null) {
+                // Update last message shown with the new message
+                oldLastMessage?.copy(
+                    body = smsMessage.messageBody,
+                    date = smsMessage.timestampMillis.toString()
+                )?.let { state.value.messageList[oldLastMessageIndex] = it }
+            } else {
+                // Update the entire list since matching thread wasn't found
+                viewModelScope.launch {
+                    state.value.updateMessages(repository.getLastSmsBySender())
+                }
+            }
+
+        }
     }
 
     /**
@@ -47,9 +81,18 @@ class RelaySmsViewModel(
 }
 
 data class SmsReporterViewState(
-    var messages: List<Message> = emptyList()
+    private var messages: List<Message> = emptyList()
 ) {
+    var messageList = mutableStateListOf<Message>()
     // Note: Compose doesn't track inner fields for change unless we use mutableStateOf
     var showErrorMessageForPermissionDenied: Boolean by mutableStateOf(false)
     var showSearchTextField: Boolean by mutableStateOf(false)
+
+    init {
+        updateMessages(messages)
+    }
+
+    fun updateMessages(messages: List<Message>) {
+        messageList.addAll(messages)
+    }
 }
