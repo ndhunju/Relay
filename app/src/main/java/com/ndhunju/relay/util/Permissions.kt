@@ -12,6 +12,10 @@ import androidx.core.app.ActivityCompat
 fun checkIfPermissionGranted(context: Context): Boolean {
     return ActivityCompat.checkSelfPermission(
         context,
+        Manifest.permission.RECEIVE_SMS
+    ) == PackageManager.PERMISSION_GRANTED
+            && ActivityCompat.checkSelfPermission(
+        context,
         Manifest.permission.READ_SMS
     ) == PackageManager.PERMISSION_GRANTED
             && ActivityCompat.checkSelfPermission(
@@ -25,6 +29,7 @@ fun checkIfPermissionGranted(context: Context): Boolean {
  */
 fun requestPermission(requestPermissionLauncher: ActivityResultLauncher<Array<String>>) {
     requestPermissionLauncher.launch(arrayOf(
+        Manifest.permission.RECEIVE_SMS,
         Manifest.permission.READ_SMS,
         Manifest.permission.SEND_SMS
     ))
@@ -34,6 +39,7 @@ fun requestPermission(requestPermissionLauncher: ActivityResultLauncher<Array<St
  * Returns true if the needed permissions for the app to work are granted in [permissions]
  */
 fun areNeededPermissionGranted(permissions: Map<String, Boolean>): Boolean {
-    return permissions[Manifest.permission.READ_SMS] == true
+    return permissions[Manifest.permission.RECEIVE_SMS] == true
+            && permissions[Manifest.permission.READ_SMS] == true
             && permissions[Manifest.permission.SEND_SMS] == true
 }

@@ -2,7 +2,12 @@ package com.ndhunju.relay
 
 import android.Manifest.permission.READ_SMS
 import android.app.AlertDialog
+import android.content.BroadcastReceiver
+import android.content.Context
+import android.content.Intent
+import android.content.IntentFilter
 import android.os.Bundle
+import android.provider.Telephony
 import androidx.activity.compose.setContent
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.layout.fillMaxSize
@@ -30,11 +35,16 @@ class MainActivity : FragmentActivity() {
             viewModel.state.value.messages = getLastSmsBySender(contentResolver)
             // Reset this value in case it was set to true earlier
             viewModel.state.value.showErrorMessageForPermissionDenied = false
+            // Create and register the SMS broadcast receiver
+            createAndRegisterBroadcastReceiver()
         } else {
             // Permissions denied
             viewModel.state.value.showErrorMessageForPermissionDenied = true
         }
     }
+
+    private lateinit var smsReceiver: BroadcastReceiver
+    private var isRegistered = false
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -84,4 +94,49 @@ class MainActivity : FragmentActivity() {
             }
         }
     }
+
+    private fun createAndRegisterBroadcastReceiver() {
+        if (isRegistered.not()) {
+            smsReceiver = object : BroadcastReceiver() {
+                override fun onReceive(context: Context, intent: Intent) {
+
+                    if (intent.action == Telephony.Sms.Intents.SMS_RECEIVED_ACTION) {
+                        val smsMessages = Telephony.Sms.Intents.getMessagesFromIntent(intent)
+                        for (smsMessage in smsMessages) {
+                            val messageBody = smsMessage.messageBody
+                            // Process the message content here
+                            // TODO: 1. Update the UI
+                            //  2. Push the new SMS to the server
+                            //  3. Update Sync icon
+                            //println("Received SMS: $messageBody")
+                        }
+                    }
+                }
+            }
+
+            val intent = registerReceiver(
+                smsReceiver,
+                IntentFilter(Telephony.Sms.Intents.SMS_RECEIVED_ACTION)
+            )
+            isRegistered = intent != null
+        }
+    }
+
+    override fun onResume() {
+        super.onResume()
+
+        // Ensure permissions are granted before registering the receiver
+        if (checkIfPermissionGranted(this)) {
+            createAndRegisterBroadcastReceiver()
+        }
+    }
+
+    override fun onPause() {
+        super.onPause()
+
+        if (isRegistered) {
+            unregisterReceiver(smsReceiver)
+        }
+    }
+
 }
