@@ -37,9 +37,10 @@ import com.ndhunju.relay.ui.theme.LocalDimens
 @Preview
 @Composable
 fun RelaySmsAppPreview() {
-    val viewModel = RelaySmsViewModel()
+    // TODO: Nikesh - Make dummy repo to pass to view model
+//    val viewModel = RelaySmsViewModel()
 //    viewModel.state.value.showErrorMessageForPermissionDenied = true
-    RelaySmsApp(viewModel)
+//    RelaySmsApp(viewModel)
 }
 
 @Composable

@@ -20,21 +20,21 @@ import com.ndhunju.relay.ui.messagesfrom.MessagesFromFragment
 import com.ndhunju.relay.ui.theme.RelayTheme
 import com.ndhunju.relay.util.areNeededPermissionGranted
 import com.ndhunju.relay.util.checkIfPermissionGranted
-import com.ndhunju.relay.util.getLastSmsBySender
 import com.ndhunju.relay.util.requestPermission
 
 class MainActivity : FragmentActivity() {
 
     // Member Variables
-    private val viewModel = RelaySmsViewModel()
+    // TODO: Nikesh - Use dagger to inject here using subcomponent
+    val viewModel: RelaySmsViewModel by lazy {
+        RelaySmsViewModel((application as RelayApplication).appComponent.relayRepository())
+    }
+
     private val requestPermissionLauncher = registerForActivityResult(
         ActivityResultContracts.RequestMultiplePermissions()
     ) { permissions ->
         if (areNeededPermissionGranted(permissions)) {
-            // All permissions granted
-            viewModel.state.value.messages = getLastSmsBySender(contentResolver)
-            // Reset this value in case it was set to true earlier
-            viewModel.state.value.showErrorMessageForPermissionDenied = false
+            viewModel.onAllPermissionGranted()
             // Create and register the SMS broadcast receiver
             createAndRegisterBroadcastReceiver()
         } else {
@@ -78,7 +78,7 @@ class MainActivity : FragmentActivity() {
 
         // Check if needed permissions are granted
         if (checkIfPermissionGranted(this)) {
-            viewModel.state.value.messages = getLastSmsBySender(contentResolver)
+            viewModel.onAllPermissionGranted()
         } else {
             if (shouldShowRequestPermissionRationale(this, READ_SMS)) {
                 // Show an explanation as to why the app needs read and send SMS permission
@@ -103,12 +103,13 @@ class MainActivity : FragmentActivity() {
                     if (intent.action == Telephony.Sms.Intents.SMS_RECEIVED_ACTION) {
                         val smsMessages = Telephony.Sms.Intents.getMessagesFromIntent(intent)
                         for (smsMessage in smsMessages) {
-                            val messageBody = smsMessage.messageBody
+                            //val messageBody = smsMessage.messageBody
                             // Process the message content here
                             // TODO: 1. Update the UI
                             //  2. Push the new SMS to the server
                             //  3. Update Sync icon
                             //println("Received SMS: $messageBody")
+                            viewModel.onNewSmsReceived()
                         }
                     }
                 }

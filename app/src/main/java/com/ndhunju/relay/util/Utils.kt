@@ -9,31 +9,7 @@ import java.util.Locale
 
 val dateFormat = SimpleDateFormat("MMM d", Locale.getDefault())
 
-/**
- * Reads the SMS from the device and returns it as a list of [Message]
- */
-fun getLastSmsBySender(contentResolver: ContentResolver): List<Message> {
-    val uri = Uri.parse("content://sms")
-    val cursor: Cursor? = contentResolver.query(
-        uri,
-        smsColumns,
-         "thread_id IS NOT NULL) GROUP BY (thread_id", //GROUP BY,
-        null,
-        "date DESC" // Show newest message at the top
-    )
-    val messages = mutableListOf<Message>()
-    if (cursor != null && cursor.moveToFirst()) {
-        do {
-            val message = fromCursor(cursor)
-            //println("SMS from: $message")
-            messages.add(message)
-        } while (cursor.moveToNext())
-        cursor.close()
-    }
-
-    return messages
-}
-
+// TODO: Nikesh - Move it to RelayRepository
 /**
  * Returns list of message for passed [sender]
  */

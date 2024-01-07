@@ -3,11 +3,14 @@ package com.ndhunju.relay
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
+import com.ndhunju.relay.data.RelayRepository
 import com.ndhunju.relay.ui.messages.Message
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 
-class RelaySmsViewModel {
+class RelaySmsViewModel(
+   repository: RelayRepository
+) {
 
     private var _state = MutableStateFlow(SmsReporterViewState())
     val state: StateFlow<SmsReporterViewState>
@@ -20,7 +23,18 @@ class RelaySmsViewModel {
     var onSearchTextChanged: (String) -> Unit = {}
     var onClickAccountIcon = {}
     var onClickMessage: (Message) -> Unit = {}
-    var onClickGrantPermission: () -> Unit = {}
+    var onClickGrantPermission = {}
+
+    var onAllPermissionGranted = {
+        // All permissions granted
+        state.value.messages = repository.getLastSmsBySender()
+        // Reset this value in case it was set to true earlier
+        state.value.showErrorMessageForPermissionDenied = false
+    }
+
+    var onNewSmsReceived = {
+
+    }
 
 }
 
