@@ -10,7 +10,7 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 
 class RelaySmsViewModel(
-   repository: RelayRepository
+   private val repository: RelayRepository
 ): ViewModel() {
 
     private var _state = MutableStateFlow(SmsReporterViewState())
@@ -35,6 +35,13 @@ class RelaySmsViewModel(
 
     var onNewSmsReceived = {
 
+    }
+
+    /**
+     * Returns list of message for passed [sender]
+     */
+    fun getSmsByThreadId(sender: String): List<Message> {
+        return repository.getSmsByThreadId(sender)
     }
 
 }

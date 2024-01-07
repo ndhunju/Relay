@@ -36,6 +36,32 @@ class RelayRepository @Inject constructor(private val context: Context) {
         return messages
     }
 
+    /**
+     * Returns list of message for passed [sender]
+     */
+    fun getSmsByThreadId(sender: String): List<Message> {
+        val uri = Uri.parse("content://sms")
+        val cursor: Cursor? = context.contentResolver.query(
+            uri,
+            smsColumns,
+            "thread_id='$sender'",
+            null,
+            null
+        )
+
+        val messages = mutableListOf<Message>()
+        if (cursor != null && cursor.moveToFirst()) {
+            do {
+                val message = fromCursor(cursor)
+                //println("SMS from: $message")
+                messages.add(message)
+            } while (cursor.moveToNext())
+            cursor.close()
+        }
+
+        return messages
+    }
+
     private val smsColumns = arrayOf(
         "thread_id", "status", "type", "subject", "person",
         "reply_path_present", "address","body", "date"

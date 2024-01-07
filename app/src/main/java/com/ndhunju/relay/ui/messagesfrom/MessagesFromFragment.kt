@@ -6,8 +6,10 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.compose.ui.platform.ComposeView
 import androidx.fragment.app.Fragment
+import androidx.fragment.app.viewModels
+import com.ndhunju.relay.RelaySmsViewModel
+import com.ndhunju.relay.RelayViewModelFactory
 import com.ndhunju.relay.ui.theme.RelayTheme
-import com.ndhunju.relay.util.getSmsByThreadId
 
 private const val THREAD_ID = "THREAD_ID"
 
@@ -19,6 +21,7 @@ private const val THREAD_ID = "THREAD_ID"
 class MessagesFromFragment : Fragment() {
 
     private var threadId: String? = null
+    private val relaySmsViewModel: RelaySmsViewModel by viewModels { RelayViewModelFactory }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -37,10 +40,7 @@ class MessagesFromFragment : Fragment() {
                     // Process the data
                     val threadId: String = threadId ?: ""
                     val messages = if (threadId.isNotEmpty()) {
-                        getSmsByThreadId(
-                            context.contentResolver,
-                            threadId
-                        )
+                        relaySmsViewModel.getSmsByThreadId(threadId)
                     } else {
                         emptyList()
                     }
