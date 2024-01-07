@@ -38,3 +38,6 @@ gradle.xml
 /.idea/vcs.xml
 /.idea/codeStyles/codeStyleConfig.xml
 /.idea/codeStyles/Project.xml
+
+#Sensitive files
+google-services.json
