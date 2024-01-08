@@ -5,9 +5,11 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.material3.Divider
 import androidx.compose.material3.Icon
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextOverflow
@@ -16,6 +18,7 @@ import androidx.compose.ui.unit.dp
 import androidx.constraintlayout.compose.ConstraintLayout
 import androidx.constraintlayout.compose.Dimension
 import com.ndhunju.relay.R
+import com.ndhunju.relay.service.Result
 import com.ndhunju.relay.ui.mockMessages
 import com.ndhunju.relay.ui.theme.LocalDimens
 import com.ndhunju.relay.util.LogCompositions
@@ -25,8 +28,7 @@ import com.ndhunju.relay.util.dateFormat
 @Composable
 fun MessageListItemPreview() {
     MessageListItem(
-        message = mockMessages.first(),
-        isSynced = true,
+        message = mockMessages.first().copy(syncStatus = Result.Success("")),
         onClick = {}
     )
 }
@@ -34,7 +36,6 @@ fun MessageListItemPreview() {
 @Composable
 fun MessageListItem(
     message: Message,
-    isSynced: Boolean,
     onClick: (Message) -> Unit
 ) {
     ConstraintLayout(modifier = Modifier
@@ -75,13 +76,14 @@ fun MessageListItem(
             })
 
         Icon(
-            painterResource(
-                id = if (isSynced) R.drawable.baseline_synced_24
-                else R.drawable.baseline_un_synced_24),
-            stringResource(
-                id = if (isSynced) R.string.image_description_synced_logo
-                else R.string.image_description_un_synced_logo),
-            Modifier
+            painter = painterResource(R.drawable.baseline_sync_status_24),
+            contentDescription = stringResource(R.string.image_description_sync_status_logo),
+            tint = when (message.syncStatus) {
+                is Result.Pending -> Color.White
+                is Result.Success -> Color.Green
+                is Result.Failure -> MaterialTheme.colorScheme.error
+            },
+            modifier = Modifier
                 .padding(start = 8.dp)
                 .size(16.dp)
                 .constrainAs(status) {
@@ -118,6 +120,7 @@ data class Message(
     val body: String,
     val date: String,
     val type: String,
+    val syncStatus: Result = Result.Pending,
     val extra: String? = null
 ) {
     fun getFormattedTime(): String {

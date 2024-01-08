@@ -3,6 +3,7 @@ package com.ndhunju.relay.data
 import android.content.Context
 import android.database.Cursor
 import android.net.Uri
+import com.ndhunju.relay.service.Result
 import com.ndhunju.relay.ui.messages.Message
 import com.ndhunju.relay.util.getStringForColumn
 import javax.inject.Inject
@@ -74,7 +75,8 @@ class RelayRepository @Inject constructor(private val context: Context) {
             cursor.getStringForColumn("body"),
             cursor.getStringForColumn("date"),
             cursor.getStringForColumn("type"),
-            cursor.getStringForColumn("type")
+            Result.Pending,
+            null
         )
     }
 

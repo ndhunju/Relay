@@ -8,10 +8,8 @@
     <string name="image_description_account">Account</string>
     <!-- Image description for app logo -->
     <string name="image_description_app_logo">App Logo</string>
-    <!-- Image description for an icon that indicates that the message has been synced -->
-    <string name="image_description_synced_logo">Message synced</string>
-    <!-- Image description for an icon that indicates that the message has not been synced -->
-    <string name="image_description_un_synced_logo">Message not synced.</string>
+    <!-- Image description for an icon that indicates where the message has been synced or not  -->
+    <string name="image_description_sync_status_logo">Message sync status</string>
     <!-- Image description for back icon. Clicking on this takes user to previous screen -->
     <string name="image_description_go_back">Back</string>
 

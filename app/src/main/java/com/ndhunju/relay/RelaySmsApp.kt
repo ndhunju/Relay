@@ -90,7 +90,7 @@ fun RelaySmsApp(
                         // Pass key for better performance like setHasStableIds
                         key = { _, item -> item.threadId },
                     ) { _: Int, message: Message ->
-                        MessageListItem(message, true, viewModel.onClickMessage)
+                        MessageListItem(message, viewModel.onClickMessage)
                     }
                 })
         }

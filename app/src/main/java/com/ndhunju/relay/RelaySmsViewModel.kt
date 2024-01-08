@@ -40,43 +40,46 @@ class RelaySmsViewModel(
     }
 
     var onNewSmsReceived: (SmsMessage) -> Unit = { smsMessage ->
-        // TODO: Update Sync icon
-        // Push new SMS to the server
-        cloudDatabaseService.pushMessage(Message(
-            "0",
-            smsMessage.originatingAddress ?: "",
-            smsMessage.messageBody,
-            smsMessage.timestampMillis.toString(),
-            ""
-        ))
 
         // Update the UI to the the latest SMS
         viewModelScope.launch {
-            var oldLastMessage: Message? = null
             var oldLastMessageIndex = -1
 
             // Find the thread in which the message is sent to
             state.value.messageList.forEachIndexed { index, message ->
                 if (message.from == smsMessage.originatingAddress) {
-                    oldLastMessage = state.value.messageList[index]
                     oldLastMessageIndex = index
                 }
                 return@forEachIndexed
             }
 
-            if (oldLastMessage != null) {
+            if (oldLastMessageIndex > -1) {
                 // Update last message shown with the new message
-                oldLastMessage?.copy(
+                state.value.messageList[oldLastMessageIndex].copy(
                     body = smsMessage.messageBody,
                     date = smsMessage.timestampMillis.toString()
-                )?.let { state.value.messageList[oldLastMessageIndex] = it }
+                ).let { state.value.messageList[oldLastMessageIndex] = it }
             } else {
                 // Update the entire list since matching thread wasn't found
-                viewModelScope.launch {
-                    state.value.updateMessages(repository.getLastSmsBySender())
-                }
+                state.value.updateMessages(repository.getLastSmsBySender())
             }
 
+            // Push new SMS to the server
+            cloudDatabaseService.pushMessage(
+                Message(
+                    "0",
+                    smsMessage.originatingAddress ?: "",
+                    smsMessage.messageBody,
+                    smsMessage.timestampMillis.toString(),
+                    ""
+                )
+            ).collect { result ->
+                // Update the icon based on update call status
+                // TODO: Nikesh - Need to sync the state with MessageFrom screen too
+                state.value.messageList[oldLastMessageIndex].copy(
+                    syncStatus = result
+                ).let { state.value.messageList[oldLastMessageIndex] = it }
+            }
         }
     }
 
