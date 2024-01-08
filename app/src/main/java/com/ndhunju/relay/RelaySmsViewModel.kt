@@ -8,13 +8,15 @@ import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.ndhunju.relay.data.RelayRepository
+import com.ndhunju.relay.service.CloudDatabaseService
 import com.ndhunju.relay.ui.messages.Message
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
 
 class RelaySmsViewModel(
-   private val repository: RelayRepository
+    private val repository: RelayRepository,
+    private val cloudDatabaseService: CloudDatabaseService
 ): ViewModel() {
 
     private var _state = MutableStateFlow(SmsReporterViewState())
@@ -38,9 +40,16 @@ class RelaySmsViewModel(
     }
 
     var onNewSmsReceived: (SmsMessage) -> Unit = { smsMessage ->
-        // TODO:
-        //  2. Push the new SMS to the server
-        //  3. Update Sync icon
+        // TODO: Update Sync icon
+        // Push new SMS to the server
+        cloudDatabaseService.pushMessage(Message(
+            "0",
+            smsMessage.originatingAddress ?: "",
+            smsMessage.messageBody,
+            smsMessage.timestampMillis.toString(),
+            ""
+        ))
+
         // Update the UI to the the latest SMS
         viewModelScope.launch {
             var oldLastMessage: Message? = null
