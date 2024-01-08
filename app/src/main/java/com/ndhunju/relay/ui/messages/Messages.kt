@@ -18,6 +18,7 @@ import androidx.constraintlayout.compose.Dimension
 import com.ndhunju.relay.R
 import com.ndhunju.relay.ui.mockMessages
 import com.ndhunju.relay.ui.theme.LocalDimens
+import com.ndhunju.relay.util.LogCompositions
 import com.ndhunju.relay.util.dateFormat
 
 @Preview(showBackground = true)
@@ -42,6 +43,8 @@ fun MessageListItem(
         val (divider, from, body, date, status) = createRefs()
         val itemVerticalPadding = LocalDimens.current.itemPaddingVertical
         val contentHorizontalPadding = LocalDimens.current.contentPaddingHorizontal
+
+        LogCompositions(tag = "MessageListItem", msg = "MessageListItem scope")
 
         Divider(Modifier.constrainAs(divider) {
             top.linkTo(parent.top)
