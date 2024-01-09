@@ -89,44 +89,7 @@ fun MessagesFromView(
                                     horizontal = LocalDimens.current.contentPaddingHorizontal
                                 )
                             ) {
-                                Row {
-                                    // If the message is sent by the user,
-                                    // show the message on the right/end side.
-                                    // Otherwise, show it on the left/start side.
-                                    if (message.isSentByUser()) {
-                                        Spacer(modifier = Modifier.weight(0.2f))
-                                    }
-
-                                    Box(modifier = Modifier
-                                        .wrapContentSize(align = if (message.isSentByUser()) {
-                                            Alignment.TopEnd
-                                        } else {
-                                            Alignment.TopStart
-                                        })
-                                        .weight(0.8f)
-                                        .background(
-                                            color = MaterialTheme.colorScheme.primary,
-                                            shape = RoundedCornerShape(size = 11.dp))
-                                        .padding(
-                                            vertical = LocalDimens.current.itemPaddingVertical,
-                                            horizontal = 8.dp
-                                        )
-                                    ) {
-                                        Text(
-                                            text = message.body, //+ "\n" + message.toString(), for debugging
-                                            color = MaterialTheme.colorScheme.onPrimary,
-                                            textAlign = if (message.isSentByUser()) {
-                                                TextAlign.End
-                                            } else {
-                                                TextAlign.Start
-                                            }
-                                        )
-                                    }
-
-                                    if (message.isSentByUser().not()) {
-                                        Spacer(modifier = Modifier.weight(0.2f))
-                                    }
-                                }
+                                ChatBubbleView(message = message)
                             }
                         }
                     })
@@ -134,6 +97,48 @@ fun MessagesFromView(
         }
 
     }
+}
+
+@Composable
+fun ChatBubbleView(message: Message) {
+    Row {
+        // If the message is sent by the user, show the message on the right/end side.
+        // Otherwise, show it on the left/start side.
+        if (message.isSentByUser()) {
+            Spacer(modifier = Modifier.weight(0.2f))
+        }
+
+        Box(modifier = Modifier
+            .wrapContentSize(align = if (message.isSentByUser()) {
+                Alignment.TopEnd
+            } else {
+                Alignment.TopStart
+            })
+            .weight(0.8f)
+            .background(
+                color = MaterialTheme.colorScheme.primary,
+                shape = RoundedCornerShape(size = 11.dp))
+            .padding(
+                vertical = LocalDimens.current.itemPaddingVertical,
+                horizontal = 8.dp
+            )
+        ) {
+            Text(
+                text = message.body, //+ "\n" + message.toString(), for debugging
+                color = MaterialTheme.colorScheme.onPrimary,
+                textAlign = if (message.isSentByUser()) {
+                    TextAlign.End
+                } else {
+                    TextAlign.Start
+                }
+            )
+        }
+
+        if (message.isSentByUser().not()) {
+            Spacer(modifier = Modifier.weight(0.2f))
+        }
+    }
+
 }
 
 @Composable
