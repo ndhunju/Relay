@@ -30,6 +30,7 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.ndhunju.relay.R
+import com.ndhunju.relay.ui.custom.SyncStatusIcon
 import com.ndhunju.relay.ui.messages.Message
 import com.ndhunju.relay.ui.mockMessages
 import com.ndhunju.relay.ui.theme.LocalDimens
@@ -108,30 +109,45 @@ fun ChatBubbleView(message: Message) {
             Spacer(modifier = Modifier.weight(0.2f))
         }
 
-        Box(modifier = Modifier
-            .wrapContentSize(align = if (message.isSentByUser()) {
-                Alignment.TopEnd
-            } else {
-                Alignment.TopStart
-            })
-            .weight(0.8f)
-            .background(
-                color = MaterialTheme.colorScheme.primary,
-                shape = RoundedCornerShape(size = 11.dp))
-            .padding(
-                vertical = LocalDimens.current.itemPaddingVertical,
-                horizontal = 8.dp
-            )
-        ) {
-            Text(
-                text = message.body, //+ "\n" + message.toString(), for debugging
-                color = MaterialTheme.colorScheme.onPrimary,
-                textAlign = if (message.isSentByUser()) {
-                    TextAlign.End
-                } else {
-                    TextAlign.Start
-                }
-            )
+        Row(
+            modifier = Modifier
+                .wrapContentSize(
+                    align = if (message.isSentByUser()) {
+                        Alignment.TopEnd
+                    } else {
+                        Alignment.TopStart
+                    }
+                )
+                .weight(0.8f)
+        )  {
+            Box(
+                modifier = Modifier
+                    .background(
+                        color = MaterialTheme.colorScheme.primary,
+                        shape = RoundedCornerShape(size = 11.dp)
+                    )
+                    .padding(
+                        vertical = LocalDimens.current.itemPaddingVertical,
+                        horizontal = 8.dp
+                    )
+            ) {
+                Text(
+                    text = message.body, //+ "\n" + message.toString(), for debugging
+                    color = MaterialTheme.colorScheme.onPrimary,
+                    textAlign = if (message.isSentByUser()) {
+                        TextAlign.End
+                    } else {
+                        TextAlign.Start
+                    }
+                )
+            }
+
+            if (message.isSentByUser().not()) {
+                SyncStatusIcon(
+                    syncStatus = message.syncStatus,
+                    modifier = Modifier.align(Alignment.Bottom)
+                )
+            }
         }
 
         if (message.isSentByUser().not()) {
