@@ -19,8 +19,8 @@ class RelaySmsViewModel(
     private val cloudDatabaseService: CloudDatabaseService
 ): ViewModel() {
 
-    private var _state = MutableStateFlow(SmsReporterViewState())
-    val state: StateFlow<SmsReporterViewState>
+    private var _state = MutableStateFlow(RelaySmsAppUiState())
+    val state: StateFlow<RelaySmsAppUiState>
         get() { return _state }
 
     var onClickSearchIcon = {
@@ -92,7 +92,13 @@ class RelaySmsViewModel(
 
 }
 
-data class SmsReporterViewState(
+/**
+ * Data class representing state of [RelaySmsAppScreen]
+ * @Note The compiler only uses the properties defined inside the primary constructor for the
+ * automatically generated functions. The compiler excludes properties declared inside the
+ * class body from the generated implementations.
+ */
+data class RelaySmsAppUiState(
     private var messages: List<Message> = emptyList()
 ) {
     var messageList = mutableStateListOf<Message>()

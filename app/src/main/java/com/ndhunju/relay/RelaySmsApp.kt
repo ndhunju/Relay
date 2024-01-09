@@ -43,7 +43,7 @@ fun RelaySmsAppPreview() {
 }
 
 @Composable
-fun RelaySmsApp(
+fun RelaySmsAppScreen(
     viewModel: RelaySmsViewModel
 ) {
     val viewState by viewModel.state.collectAsStateWithLifecycle()

@@ -53,7 +53,7 @@ class MainActivity : FragmentActivity() {
                     modifier = Modifier.fillMaxSize(),
                     color = MaterialTheme.colorScheme.background
                 ) {
-                    RelaySmsApp(viewModel)
+                    RelaySmsAppScreen(viewModel)
                 }
             }
         }
