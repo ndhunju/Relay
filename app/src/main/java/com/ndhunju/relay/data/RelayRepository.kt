@@ -16,6 +16,7 @@ class RelayRepository @Inject constructor(private val context: Context) {
      * Reads the SMS from the device and returns it as a list of [Message]
      */
     fun getLastSmsBySender(): List<Message> {
+        // TODO: Nikesh - This is not returning last message sent in the thread but by the user
         val uri = Uri.parse("content://sms")
         val cursor: Cursor? = context.contentResolver.query(
             uri,
@@ -38,14 +39,14 @@ class RelayRepository @Inject constructor(private val context: Context) {
     }
 
     /**
-     * Returns list of message for passed [sender]
+     * Returns list of message for passed [threadId]
      */
-    fun getSmsByThreadId(sender: String): List<Message> {
+    fun getSmsByThreadId(threadId: String): List<Message> {
         val uri = Uri.parse("content://sms")
         val cursor: Cursor? = context.contentResolver.query(
             uri,
             smsColumns,
-            "thread_id='$sender'",
+            "thread_id='$threadId'",
             null,
             null
         )
