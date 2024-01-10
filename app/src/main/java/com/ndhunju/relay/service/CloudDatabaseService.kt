@@ -66,16 +66,21 @@ class CloudDatabaseService @Inject constructor(
     }
 
     /**
-     * Pushes [message] to the cloud database
+     * Pushes [message] to the cloud database. Pass [resultStateFlow] if
+     * you want [Result] to be emitted to it
      */
-    fun pushMessage(message: Message): StateFlow<Result> {
+    fun pushMessage(
+        message: Message,
+        resultStateFlow: MutableStateFlow<Result>? = null
+    ): StateFlow<Result> {
 
-        val result = MutableStateFlow<Result>(Result.Pending)
+        val stateFlow = resultStateFlow ?: MutableStateFlow<Result>(Result.Pending)
 
         if (userId == null) {
             createUser {
-                pushMessage(message)
+                pushMessage(message, stateFlow)
             }
+            return stateFlow
         }
 
         val userId = userId
@@ -92,15 +97,16 @@ class CloudDatabaseService @Inject constructor(
         messageCollection.add(newMessage)
             .addOnSuccessListener {
                 Log.d(TAG, "pushMessageToServer: is successful")
-                result.value = Result.Success()
+                stateFlow.value = Result.Success()
             }
             .addOnFailureListener { exception ->
-                Log.d(TAG, "pushMessageToServer: $exception")
                 // TODO: Nikesh - Log this error in Firebase
-                result.value = Result.Failure(exception.localizedMessage ?: "")
+                // TODO: Nikesh - Make a logger class
+                Log.d(TAG, "pushMessageToServer: $exception")
+                stateFlow.value = Result.Failure(exception.localizedMessage ?: "")
             }
 
-        return result
+        return stateFlow
     }
 
     /**
