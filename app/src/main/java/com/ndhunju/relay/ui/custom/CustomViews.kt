@@ -48,6 +48,6 @@ fun SyncStatusIcon(syncStatus: Result?, modifier: Modifier = Modifier) {
         modifier = modifier
             .padding(start = 8.dp)
             .size(16.dp)
-            .alpha( if (syncStatus == null) 0f else 1f)
+            .alpha(if (syncStatus == null) 0f else 1f)
     )
 }

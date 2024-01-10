@@ -40,6 +40,7 @@ import com.ndhunju.relay.ui.theme.LocalDimens
 fun MessagesFromPreview() {
     return MessagesFromView(mockMessages.first().from, messageList = mockMessages)
 }
+
 @Composable
 fun MessagesFromView(
     senderAddress: String,
@@ -126,10 +127,13 @@ fun ChatBubbleView(message: Message) {
                         color = MaterialTheme.colorScheme.primary,
                         shape = RoundedCornerShape(size = 11.dp)
                     )
-                    .padding(
+                    .padding( // Inner Padding
                         vertical = LocalDimens.current.itemPaddingVertical,
                         horizontal = 8.dp
                     )
+                    // Setting fill=false prevents second item
+                    // in the Row to get squeezed to width 0
+                    .weight(weight = 1F, fill = false)
             ) {
                 Text(
                     text = message.body, //+ "\n" + message.toString(), for debugging
