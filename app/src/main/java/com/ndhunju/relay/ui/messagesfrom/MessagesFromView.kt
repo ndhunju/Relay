@@ -43,7 +43,7 @@ fun MessagesFromPreview() {
 
 @Composable
 fun MessagesFromView(
-    senderAddress: String,
+    senderAddress: String?,
     messageList: List<Message>,
     onBackPressed: (() -> Unit)? = null
 ) {
@@ -51,7 +51,7 @@ fun MessagesFromView(
         modifier = Modifier.fillMaxSize()
     ) {
         // If for some reason no sender is passed, show error message
-        if (senderAddress.isEmpty() && messageList.isEmpty()) {
+        if (senderAddress?.isEmpty() == true && messageList.isEmpty()) {
             Scaffold(
                 topBar = { TopAppBarWithUpButton(senderAddress, onBackPressed) }
             ) { innerPadding ->
@@ -163,12 +163,12 @@ fun ChatBubbleView(message: Message) {
 
 @Composable
 @OptIn(ExperimentalMaterial3Api::class)
-private fun TopAppBarWithUpButton(senderAddress: String, onBackPressed: (() -> Unit)?) {
+private fun TopAppBarWithUpButton(senderAddress: String?, onBackPressed: (() -> Unit)?) {
     TopAppBar(
         modifier = Modifier.background(MaterialTheme.colorScheme.background),
         title = {
             Text(
-                text = senderAddress,
+                text = senderAddress ?: "",
                 color = MaterialTheme.colorScheme.primary
             )
         },

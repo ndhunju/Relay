@@ -108,19 +108,19 @@ class RelaySmsViewModel(
     /**
      * Returns list of message for passed [threadId]
      */
-    suspend fun getSmsByThreadId(threadId: String): List<Message> {
-        val messages = relayRepository.getSmsByThreadId(threadId)
-        // Populate the syncStatus of each message based on info stored in local database
-        smsInfoRepository.getSmsInfoForEachIdInAndroidDb(
-            messages.map { message -> message.idInAndroidDb }
-        ).forEachIndexed { i, smsInfo ->
-            messages[i].syncStatus = smsInfo?.syncStatus
+    fun getSmsByThreadId(threadId: String) {
+        viewModelScope.launch {
+            val messages = relayRepository.getSmsByThreadId(threadId)
+            // Populate the syncStatus of each message based on info stored in local database
+            smsInfoRepository.getSmsInfoForEachIdInAndroidDb(
+                messages.map { message -> message.idInAndroidDb }
+            ).forEachIndexed { i, smsInfo ->
+                messages[i].syncStatus = smsInfo?.syncStatus
+            }
+
+            // Update the state with the messages
+            _messageFromUiState.value.messagesInThread.addAll(messages)
         }
-
-        // Update the state with the messages
-        _messageFromUiState.value.messagesInThread.addAll(messages)
-
-        return messages
     }
 
     /**

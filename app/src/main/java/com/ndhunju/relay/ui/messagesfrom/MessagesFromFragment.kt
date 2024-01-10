@@ -4,8 +4,6 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.platform.ComposeView
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
@@ -13,9 +11,9 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.ndhunju.relay.RelaySmsViewModel
 import com.ndhunju.relay.RelayViewModelFactory
 import com.ndhunju.relay.ui.theme.RelayTheme
-import kotlinx.coroutines.launch
 
 private const val THREAD_ID = "THREAD_ID"
+private const val SENDER_ADDRESS = "SENDER_ADDRESS"
 
 /**
  * A simple [Fragment] subclass that shows all the messages from the passed sender/address
@@ -25,13 +23,18 @@ private const val THREAD_ID = "THREAD_ID"
 class MessagesFromFragment : Fragment() {
 
     private var threadId: String? = null
+    private var senderAddress: String? = null
     private val relaySmsViewModel: RelaySmsViewModel by viewModels { RelayViewModelFactory }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         arguments?.let {
             threadId = it.getString(THREAD_ID)
+            senderAddress = it.getString(SENDER_ADDRESS)
         }
+
+        // Make async call to get the data here
+        threadId?.let { relaySmsViewModel.getSmsByThreadId(it) }
     }
 
     override fun onCreateView(
@@ -43,19 +46,9 @@ class MessagesFromFragment : Fragment() {
                 RelayTheme {
                     val uiState = relaySmsViewModel.messageFromUiState.collectAsStateWithLifecycle()
                     // This coroutine is bound to the lifecycle of the enclosing compose
-                    val composeCoroutine = rememberCoroutineScope()
-                    // Process the data
-                    val threadId: String = threadId ?: ""
-                    if (threadId.isNotEmpty()) {
-                        LaunchedEffect(key1 = "getSmsByThreadId", block = {
-                            composeCoroutine.launch {
-                                relaySmsViewModel.getSmsByThreadId(threadId)
-                            }
-                        })
-                    }
-
+                    //val composeCoroutine = rememberCoroutineScope()
                     MessagesFromView(
-                        uiState.value.messagesInThread.firstOrNull()?.from ?: "",
+                        senderAddress,
                         uiState.value.messagesInThread,
                         // TODO: Nikesh - Implement proper nav controller
                         onBackPressed = { parentFragmentManager.popBackStack() }
@@ -76,11 +69,11 @@ class MessagesFromFragment : Fragment() {
          * @param threadId id of message thread
          * @return A new instance of fragment MessagesFromFragment.
          */
-        @JvmStatic
-        fun newInstance(threadId: String) =
+        fun newInstance(threadId: String, senderAddress: String) =
             MessagesFromFragment().apply {
                 arguments = Bundle().apply {
                     putString(THREAD_ID, threadId)
+                    putString(SENDER_ADDRESS, senderAddress)
                 }
             }
     }

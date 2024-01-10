@@ -11,7 +11,7 @@ val mockMessages = listOf(
         "See you soon!",
         System.currentTimeMillis().toString(),
         "1",
-        Result.Success()
+        Result.Failure()
     ),
     Message(
         "1",
