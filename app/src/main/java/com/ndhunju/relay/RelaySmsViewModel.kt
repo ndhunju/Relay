@@ -46,7 +46,7 @@ class RelaySmsViewModel(
 
     var onAllPermissionGranted = {
         // All permissions granted
-        state.value.updateLastMessages(relayRepository.getLastMessageForEachThread())
+        viewModelScope.launch { updateLastMessagesWithCorrectSyncStatus() }
         // Reset this value in case it was set to true earlier
         state.value.showErrorMessageForPermissionDenied = false
     }
@@ -87,7 +87,7 @@ class RelaySmsViewModel(
                 ).let { state.value.lastMessageList[oldLastMessageIndex] = it }
             } else {
                 // Update the entire list since matching thread wasn't found
-                state.value.updateLastMessages(relayRepository.getLastMessageForEachThread())
+                updateLastMessagesWithCorrectSyncStatus()
             }
 
             // Push new message to the cloud database
@@ -121,6 +121,24 @@ class RelaySmsViewModel(
         _messageFromUiState.value.messagesInThread.addAll(messages)
 
         return messages
+    }
+
+    /**
+     * Updates the [RelaySmsAppUiState.lastMessageList] stored in [_state] with
+     * correct value for [Message.syncStatus]
+     */
+    private suspend fun updateLastMessagesWithCorrectSyncStatus() {
+        // Update syncStatus info of Last Message with info available in database
+        val lastMessages = relayRepository.getLastMessageForEachThread()
+        val smsInfoForLastMessages = smsInfoRepository.getSmsInfoForEachIdInAndroidDb(
+            lastMessages.map { msg -> msg.idInAndroidDb }
+        )
+
+        lastMessages.forEachIndexed{ index, message ->
+            message.syncStatus = smsInfoForLastMessages[index]?.syncStatus
+        }
+
+        state.value.updateLastMessages(lastMessages)
     }
 
 }
