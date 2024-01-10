@@ -4,7 +4,15 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.wrapContentSize
+import androidx.compose.material3.CircularProgressIndicator
+import androidx.compose.ui.Alignment
+import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.ComposeView
+import androidx.compose.ui.unit.dp
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
@@ -47,12 +55,25 @@ class MessagesFromFragment : Fragment() {
                     val uiState = relaySmsViewModel.messageFromUiState.collectAsStateWithLifecycle()
                     // This coroutine is bound to the lifecycle of the enclosing compose
                     //val composeCoroutine = rememberCoroutineScope()
-                    MessagesFromView(
-                        senderAddress,
-                        uiState.value.messagesInThread,
-                        // TODO: Nikesh - Implement proper nav controller
-                        onBackPressed = { parentFragmentManager.popBackStack() }
-                    )
+                    if (uiState.value.isLoading.value) {
+                        Box(modifier = Modifier
+                            .wrapContentSize(align = Alignment.Center)
+                        ) {
+                            CircularProgressIndicator(
+                                modifier = Modifier
+                                    .size(32.dp)
+                            )
+                        }
+                    } else {
+                        AnimatedVisibility(visible = uiState.value.isLoading.value.not()) {
+                            MessagesFromView(
+                                senderAddress,
+                                uiState.value.messagesInThread,
+                                // TODO: Nikesh - Implement proper nav controller
+                                onBackPressed = { parentFragmentManager.popBackStack() }
+                            )
+                        }
+                    }
                 }
             }
         }

@@ -1,6 +1,7 @@
 package com.ndhunju.relay
 
 import android.telephony.SmsMessage
+import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
@@ -110,6 +111,7 @@ class RelaySmsViewModel(
      */
     fun getSmsByThreadId(threadId: String) {
         viewModelScope.launch {
+            _messageFromUiState.value.isLoading.value = true
             val messages = relayRepository.getSmsByThreadId(threadId)
             // Populate the syncStatus of each message based on info stored in local database
             smsInfoRepository.getSmsInfoForEachIdInAndroidDb(
@@ -120,6 +122,7 @@ class RelaySmsViewModel(
 
             // Update the state with the messages
             _messageFromUiState.value.messagesInThread.addAll(messages)
+            _messageFromUiState.value.isLoading.value = false
         }
     }
 
@@ -167,7 +170,8 @@ data class RelaySmsAppUiState(
 }
 
 data class MessageFromUiState(
-    var messagesInThread: SnapshotStateList<Message> = mutableStateListOf()
+    var messagesInThread: SnapshotStateList<Message> = mutableStateListOf(),
+    var isLoading: MutableState<Boolean> = mutableStateOf(true)
 )
 
 /**

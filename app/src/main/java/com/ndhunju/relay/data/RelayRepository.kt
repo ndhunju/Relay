@@ -73,6 +73,7 @@ class RelayRepository @Inject constructor(private val context: Context) {
     /**
      * Returns list of [Message] from passed [address]
      */
+    @Suppress("unused")
     fun getMessagesByAddress(address: String): List<Message> {
         val cursor: Cursor? = context.contentResolver.query(
             smsUri,
