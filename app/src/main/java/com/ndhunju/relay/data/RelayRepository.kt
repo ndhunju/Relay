@@ -28,17 +28,8 @@ class RelayRepository @Inject constructor(private val context: Context) {
             null,
             "date DESC" // Show newest message at the top
         )
-        val messages = mutableListOf<Message>()
-        if (cursor != null && cursor.moveToFirst()) {
-            do {
-                val message = fromCursor(cursor)
-                //println("SMS from: $message")
-                messages.add(message)
-            } while (cursor.moveToNext())
-            cursor.close()
-        }
 
-        return messages
+       return fromCursor(cursor)
     }
 
     /**
@@ -48,22 +39,13 @@ class RelayRepository @Inject constructor(private val context: Context) {
         val cursor: Cursor? = context.contentResolver.query(
             smsUri,
             smsColumns,
+            // NOTE: $threadId must be wrapped with single quotation
             "thread_id='$threadId'",
             null,
             null
         )
 
-        val messages = mutableListOf<Message>()
-        if (cursor != null && cursor.moveToFirst()) {
-            do {
-                val message = fromCursor(cursor)
-                //println("SMS from: $message")
-                messages.add(message)
-            } while (cursor.moveToNext())
-            cursor.close()
-        }
-
-        return messages
+        return fromCursor(cursor)
     }
 
     /**
@@ -74,21 +56,13 @@ class RelayRepository @Inject constructor(private val context: Context) {
         val cursor: Cursor? = context.contentResolver.query(
             smsUri,
             smsColumns,
+            // NOTE: $body and $address must be wrapped with single quotation
             "body='$body' AND address='$address'",
             null,
             null
         )
 
-        val messages = mutableListOf<Message>()
-        // TODO: Encapsulate following logic into a extension function for re usability
-        if (cursor != null && cursor.moveToFirst()) {
-            do {
-                val message = fromCursor(cursor)
-                //println("SMS from: $message")
-                messages.add(message)
-            } while (cursor.moveToNext())
-            cursor.close()
-        }
+        val messages = fromCursor(cursor)
 
         if (messages.size > 1) {
             Log.e(TAG, "getMessageBy: Found multiple messages for passed body and address")
@@ -109,17 +83,7 @@ class RelayRepository @Inject constructor(private val context: Context) {
             null
         )
 
-        val messages = mutableListOf<Message>()
-        if (cursor != null && cursor.moveToFirst()) {
-            do {
-                val message = fromCursor(cursor)
-                //println("SMS from: $message")
-                messages.add(message)
-            } while (cursor.moveToNext())
-            cursor.close()
-        }
-
-        return messages
+        return  fromCursor(cursor)
     }
 
     /**
@@ -130,17 +94,25 @@ class RelayRepository @Inject constructor(private val context: Context) {
         "reply_path_present", "subject", "body", "service_center", "locked", "error_code", "seen"
     )
 
-    private fun fromCursor(cursor: Cursor): Message {
-        return Message(
-            cursor.getStringForColumn("_id"),
-            cursor.getStringForColumn("thread_id"),
-            cursor.getStringForColumn("address"),
-            cursor.getStringForColumn("body"),
-            cursor.getStringForColumn("date"),
-            cursor.getStringForColumn("type"),
-            Result.Pending,
-            null
-        )
+    private fun fromCursor(cursor: Cursor?): List<Message> {
+        val messages = mutableListOf<Message>()
+        if (cursor != null && cursor.moveToFirst()) {
+            do {
+                messages.add(Message(
+                    cursor.getStringForColumn("_id"),
+                    cursor.getStringForColumn("thread_id"),
+                    cursor.getStringForColumn("address"),
+                    cursor.getStringForColumn("body"),
+                    cursor.getStringForColumn("date"),
+                    cursor.getStringForColumn("type"),
+                    Result.Pending,
+                    null
+                ))
+            } while (cursor.moveToNext())
+            cursor.close()
+        }
+
+        return messages
     }
 
 }
