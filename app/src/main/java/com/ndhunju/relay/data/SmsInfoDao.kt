@@ -15,12 +15,10 @@ interface SmsInfoDao {
      * @Note: The database operations can take a long time to execute, so they need to run on a
      * separate thread. Room doesn't allow database access on the main thread. Hence use suspend
      */
-    @Insert(
-        // OnConflict strategy constant to abort the transaction.
-        // The transaction is rolled back.
-        onConflict = OnConflictStrategy.ABORT
-    )
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insert(smsInfo: SmsInfo): Long
+    // TODO: Handle the situation when the SMS was sent when the device was offline.
+    //  The respective SmsInfo is stores this Sms with syncStatus to Pending
 
     @Update
     suspend fun update(smsInfo: SmsInfo)
