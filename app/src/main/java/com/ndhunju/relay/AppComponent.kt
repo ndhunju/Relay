@@ -1,6 +1,7 @@
 package com.ndhunju.relay
 
 import com.ndhunju.relay.data.RelayRepository
+import com.ndhunju.relay.data.SmsInfoRepository
 import com.ndhunju.relay.service.CloudDatabaseService
 import dagger.Component
 import javax.inject.Singleton
@@ -17,5 +18,7 @@ interface AppComponent {
     fun relayRepository(): RelayRepository
 
     fun cloudDatabaseService(): CloudDatabaseService
+
+    fun smsInfoRepository(): SmsInfoRepository
 
 }

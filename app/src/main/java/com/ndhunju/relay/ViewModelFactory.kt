@@ -16,10 +16,11 @@ val RelayViewModelFactory: ViewModelProvider.Factory = object : ViewModelProvide
         val application = checkNotNull(extras[APPLICATION_KEY]) as RelayApplication
         val repository = application.appComponent.relayRepository()
         val cloudDatabaseService = application.appComponent.cloudDatabaseService()
+        val smsRepository = application.appComponent.smsInfoRepository()
         with(modelClass) {
             return when {
                 isAssignableFrom(RelaySmsViewModel::class.java) -> {
-                    RelaySmsViewModel(repository, cloudDatabaseService) as T
+                    RelaySmsViewModel(repository, smsRepository, cloudDatabaseService) as T
                 }
                 else -> throw IllegalArgumentException(
                     "Unknown ViewModel class: ${modelClass.name}"

@@ -4,6 +4,9 @@ import android.app.Application
 import android.content.Context
 import com.google.gson.Gson
 import com.google.gson.GsonBuilder
+import com.ndhunju.relay.data.OfflineSmsInfoRepository
+import com.ndhunju.relay.data.MainDatabase
+import com.ndhunju.relay.data.SmsInfoRepository
 import com.ndhunju.relay.util.CurrentUser
 import dagger.Module
 import dagger.Provides
@@ -17,7 +20,7 @@ import javax.inject.Singleton
  * Dagger how to provide classes that your project doesn't own.
  */
 @Module
-class AppModule() {
+class AppModule(private val application: Application) {
 
     @Provides
     @Singleton
@@ -31,6 +34,12 @@ class AppModule() {
     @Provides
     @Singleton
     fun providesCurrentUser(): CurrentUser = CurrentUser
+
+    @Provides
+    @Singleton
+    fun smsInfoRepository(): SmsInfoRepository = OfflineSmsInfoRepository(
+        MainDatabase.getDatabase(application).smsInfoDao()
+    )
 
 }
 

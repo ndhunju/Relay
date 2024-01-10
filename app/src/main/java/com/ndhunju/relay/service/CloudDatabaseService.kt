@@ -92,7 +92,7 @@ class CloudDatabaseService @Inject constructor(
         messageCollection.add(newMessage)
             .addOnSuccessListener {
                 Log.d(TAG, "pushMessageToServer: is successful")
-                result.value = Result.Success(true)
+                result.value = Result.Success()
             }
             .addOnFailureListener { exception ->
                 Log.d(TAG, "pushMessageToServer: $exception")
@@ -127,6 +127,6 @@ class CloudDatabaseService @Inject constructor(
  */
 sealed class Result {
     data object Pending: Result()
-    data class Success(val data: Any): Result()
-    data class Failure(val message: String): Result()
+    data class Success(val data: Any? = null): Result()
+    data class Failure(val message: String? = null): Result()
 }

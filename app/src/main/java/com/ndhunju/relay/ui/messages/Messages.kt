@@ -100,6 +100,10 @@ fun MessageListItem(
 }
 
 data class Message(
+    /**
+     * Id or PK that is stored in the SMS database in the device by OS
+     */
+    val idInAndroidDb: String,
     val threadId: String,
     val from: String,
     val body: String,

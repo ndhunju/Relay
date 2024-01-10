@@ -86,7 +86,7 @@ fun RelaySmsAppScreen(
                     .fillMaxWidth(),
                 content = {
                     itemsIndexed(
-                        viewState.messageList,
+                        viewState.lastMessageList,
                         // Pass key for better performance like setHasStableIds
                         key = { _, item -> item.threadId },
                     ) { _: Int, message: Message ->

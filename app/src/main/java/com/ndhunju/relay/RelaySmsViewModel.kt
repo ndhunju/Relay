@@ -8,6 +8,8 @@ import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.ndhunju.relay.data.RelayRepository
+import com.ndhunju.relay.data.SmsInfo
+import com.ndhunju.relay.data.SmsInfoRepository
 import com.ndhunju.relay.service.CloudDatabaseService
 import com.ndhunju.relay.ui.messages.Message
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -15,7 +17,8 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
 
 class RelaySmsViewModel(
-    private val repository: RelayRepository,
+    private val relayRepository: RelayRepository,
+    private val smsInfoRepository: SmsInfoRepository,
     private val cloudDatabaseService: CloudDatabaseService
 ): ViewModel() {
 
@@ -34,7 +37,7 @@ class RelaySmsViewModel(
 
     var onAllPermissionGranted = {
         // All permissions granted
-        state.value.updateMessages(repository.getLastSmsBySender())
+        state.value.updateMessages(relayRepository.getLastMessageForEachThread())
         // Reset this value in case it was set to true earlier
         state.value.showErrorMessageForPermissionDenied = false
     }
@@ -43,42 +46,52 @@ class RelaySmsViewModel(
 
         // Update the UI to the the latest SMS
         viewModelScope.launch {
-            var oldLastMessageIndex = -1
 
+            // Based on smsMessage, retrieve all info about this message from the database
+            val messageFromAndroidDb = relayRepository.getMessageByAddressAndBody(
+                // We tried to use combination of timestamp and address
+                // but turns out smsMessage.timestampMillis is different
+                // that time stamp in the sms column for the same sms
+                smsMessage.originatingAddress ?: "",
+                smsMessage.messageBody
+            )
+
+            // Store the message on local database
+            val smsInfoToInsert = messageFromAndroidDb.toSmsInfo()
+            val idOfInsertedSmsInfo = smsInfoRepository.insertSmsInfo(messageFromAndroidDb.toSmsInfo())
+
+            // Update the UI by thread Id instead of address
+            var oldLastMessageIndex = -1
             // Find the thread in which the message is sent to
-            state.value.messageList.forEachIndexed { index, message ->
-                if (message.from == smsMessage.originatingAddress) {
+            state.value.lastMessageList.forEachIndexed { index, lastMessage ->
+                if (lastMessage.threadId == messageFromAndroidDb.threadId) {
                     oldLastMessageIndex = index
+                    return@forEachIndexed
                 }
-                return@forEachIndexed
             }
 
             if (oldLastMessageIndex > -1) {
                 // Update last message shown with the new message
-                state.value.messageList[oldLastMessageIndex].copy(
+                state.value.lastMessageList[oldLastMessageIndex].copy(
                     body = smsMessage.messageBody,
                     date = smsMessage.timestampMillis.toString()
-                ).let { state.value.messageList[oldLastMessageIndex] = it }
+                ).let { state.value.lastMessageList[oldLastMessageIndex] = it }
             } else {
                 // Update the entire list since matching thread wasn't found
-                state.value.updateMessages(repository.getLastSmsBySender())
+                state.value.updateMessages(relayRepository.getLastMessageForEachThread())
             }
 
-            // Push new SMS to the server
-            cloudDatabaseService.pushMessage(
-                Message(
-                    "0",
-                    smsMessage.originatingAddress ?: "",
-                    smsMessage.messageBody,
-                    smsMessage.timestampMillis.toString(),
-                    ""
+            // Push new message to the cloud database
+            cloudDatabaseService.pushMessage(messageFromAndroidDb).collect { result ->
+                // Update the sync status in the local DB
+                smsInfoRepository.updateSmsInfo(smsInfoToInsert.copy(
+                    id = idOfInsertedSmsInfo,
+                    syncStatus = result)
                 )
-            ).collect { result ->
                 // Update the icon based on update call status
-                // TODO: Nikesh - Need to sync the state with MessageFrom screen too
-                state.value.messageList[oldLastMessageIndex].copy(
+                state.value.lastMessageList[oldLastMessageIndex].copy(
                     syncStatus = result
-                ).let { state.value.messageList[oldLastMessageIndex] = it }
+                ).let { state.value.lastMessageList[oldLastMessageIndex] = it }
             }
         }
     }
@@ -87,7 +100,7 @@ class RelaySmsViewModel(
      * Returns list of message for passed [sender]
      */
     fun getSmsByThreadId(sender: String): List<Message> {
-        return repository.getSmsByThreadId(sender)
+        return relayRepository.getSmsByThreadId(sender)
     }
 
 }
@@ -101,7 +114,7 @@ class RelaySmsViewModel(
 data class RelaySmsAppUiState(
     private var messages: List<Message> = emptyList()
 ) {
-    var messageList = mutableStateListOf<Message>()
+    var lastMessageList = mutableStateListOf<Message>()
     // Note: Compose doesn't track inner fields for change unless we use mutableStateOf
     var showErrorMessageForPermissionDenied: Boolean by mutableStateOf(false)
     var showSearchTextField: Boolean by mutableStateOf(false)
@@ -111,6 +124,19 @@ data class RelaySmsAppUiState(
     }
 
     fun updateMessages(messages: List<Message>) {
-        messageList.addAll(messages)
+        lastMessageList.addAll(messages)
     }
+}
+
+/**
+ * Convenience function to convert [Message] object to [SmsInfo]
+ */
+fun Message.toSmsInfo(): SmsInfo {
+    return SmsInfo(
+        0, // The database framework ignores the provided value because of autogenerate
+        idInAndroidDb,
+        threadId,
+        date,
+        syncStatus
+    )
 }

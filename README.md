@@ -9,5 +9,6 @@ This app uses best practices for Android and uses the following libraries:
 - **Firestore Database**: For temporarily storing data in cloud
 - **Jetpack Compose**: For building modern and declarative UIs.
 - **Gson**: For serializing and deserializing.
+- **Room**: To store persistent data offline
 - **Dagger**: For dependency injection.
 - **JUnit**: For unit testing.
