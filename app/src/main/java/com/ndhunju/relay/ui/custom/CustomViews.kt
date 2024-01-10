@@ -11,6 +11,7 @@ import androidx.compose.material3.TextField
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
@@ -33,7 +34,7 @@ fun SearchTextField(onSearchTextChanged: (String) -> Unit) {
 }
 
 @Composable
-fun SyncStatusIcon(syncStatus: Result, modifier: Modifier = Modifier) {
+fun SyncStatusIcon(syncStatus: Result?, modifier: Modifier = Modifier) {
     Icon(
         painter = painterResource(R.drawable.baseline_sync_status_24),
         contentDescription = stringResource(R.string.image_description_sync_status_logo),
@@ -41,9 +42,12 @@ fun SyncStatusIcon(syncStatus: Result, modifier: Modifier = Modifier) {
             is Result.Pending -> Color.LightGray
             is Result.Success -> Color.Green
             is Result.Failure -> MaterialTheme.colorScheme.error
+            // Hide the icon by making it have same color as the background
+            else -> MaterialTheme.colorScheme.background
         },
         modifier = modifier
             .padding(start = 8.dp)
             .size(16.dp)
+            .alpha( if (syncStatus == null) 0f else 1f)
     )
 }
