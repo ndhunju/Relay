@@ -4,12 +4,16 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.platform.ComposeView
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.ndhunju.relay.RelaySmsViewModel
 import com.ndhunju.relay.RelayViewModelFactory
 import com.ndhunju.relay.ui.theme.RelayTheme
+import kotlinx.coroutines.launch
 
 private const val THREAD_ID = "THREAD_ID"
 
@@ -37,17 +41,22 @@ class MessagesFromFragment : Fragment() {
         return ComposeView(requireContext()).apply {
             setContent {
                 RelayTheme {
+                    val uiState = relaySmsViewModel.messageFromUiState.collectAsStateWithLifecycle()
+                    // This coroutine is bound to the lifecycle of the enclosing compose
+                    val composeCoroutine = rememberCoroutineScope()
                     // Process the data
                     val threadId: String = threadId ?: ""
-                    val messages = if (threadId.isNotEmpty()) {
-                        relaySmsViewModel.getSmsByThreadId(threadId)
-                    } else {
-                        emptyList()
+                    if (threadId.isNotEmpty()) {
+                        LaunchedEffect(key1 = "getSmsByThreadId", block = {
+                            composeCoroutine.launch {
+                                relaySmsViewModel.getSmsByThreadId(threadId)
+                            }
+                        })
                     }
 
                     MessagesFromView(
-                        messages.first().from,
-                        messages,
+                        uiState.value.messagesInThread.firstOrNull()?.from ?: "",
+                        uiState.value.messagesInThread,
                         // TODO: Nikesh - Implement proper nav controller
                         onBackPressed = { parentFragmentManager.popBackStack() }
                     )

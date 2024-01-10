@@ -11,7 +11,13 @@ interface SmsInfoRepository {
     /**
      * Retrieve an [SmsInfo] from the given data source that matches with the [id]
      */
-    fun getSmsInfo(id: Int): Flow<SmsInfo>
+    fun getSmsInfo(id: Int): Flow<SmsInfo?>
+
+    /**
+     * Retrieve list of [SmsInfo] from the given data source
+     * that matches with the list of [idInAndroidDbs]
+     */
+    suspend fun getSmsInfoForEachIdInAndroidDb(idInAndroidDbs: List<String>): List<SmsInfo?>
 
     /**
      * Retrieve all [SmsInfo] from the given data source

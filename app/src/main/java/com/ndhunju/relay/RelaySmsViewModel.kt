@@ -5,6 +5,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
+import androidx.compose.runtime.snapshots.SnapshotStateList
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.ndhunju.relay.data.RelayRepository
@@ -23,8 +24,16 @@ class RelaySmsViewModel(
 ): ViewModel() {
 
     private var _state = MutableStateFlow(RelaySmsAppUiState())
+    private var _messageFromUiState = MutableStateFlow(MessageFromUiState())
+
     val state: StateFlow<RelaySmsAppUiState>
         get() { return _state }
+
+    /**
+     * Represents UI state of [com.ndhunju.relay.ui.messagesfrom.MessagesFromFragment]
+     */
+    val messageFromUiState: StateFlow<MessageFromUiState>
+        get() {return _messageFromUiState}
 
     var onClickSearchIcon = {
         _state.value.showSearchTextField = !_state.value.showSearchTextField
@@ -37,7 +46,7 @@ class RelaySmsViewModel(
 
     var onAllPermissionGranted = {
         // All permissions granted
-        state.value.updateMessages(relayRepository.getLastMessageForEachThread())
+        state.value.updateLastMessages(relayRepository.getLastMessageForEachThread())
         // Reset this value in case it was set to true earlier
         state.value.showErrorMessageForPermissionDenied = false
     }
@@ -78,7 +87,7 @@ class RelaySmsViewModel(
                 ).let { state.value.lastMessageList[oldLastMessageIndex] = it }
             } else {
                 // Update the entire list since matching thread wasn't found
-                state.value.updateMessages(relayRepository.getLastMessageForEachThread())
+                state.value.updateLastMessages(relayRepository.getLastMessageForEachThread())
             }
 
             // Push new message to the cloud database
@@ -97,10 +106,21 @@ class RelaySmsViewModel(
     }
 
     /**
-     * Returns list of message for passed [sender]
+     * Returns list of message for passed [threadId]
      */
-    fun getSmsByThreadId(sender: String): List<Message> {
-        return relayRepository.getSmsByThreadId(sender)
+    suspend fun getSmsByThreadId(threadId: String): List<Message> {
+        val messages = relayRepository.getSmsByThreadId(threadId)
+        // Populate the syncStatus of each message based on info stored in local database
+        smsInfoRepository.getSmsInfoForEachIdInAndroidDb(
+            messages.map { message -> message.idInAndroidDb }
+        ).forEachIndexed { i, smsInfo ->
+            messages[i].syncStatus = smsInfo?.syncStatus
+        }
+
+        // Update the state with the messages
+        _messageFromUiState.value.messagesInThread.addAll(messages)
+
+        return messages
     }
 
 }
@@ -112,7 +132,7 @@ class RelaySmsViewModel(
  * class body from the generated implementations.
  */
 data class RelaySmsAppUiState(
-    private var messages: List<Message> = emptyList()
+    private var lastMessageForEachThread: List<Message> = emptyList()
 ) {
     var lastMessageList = mutableStateListOf<Message>()
     // Note: Compose doesn't track inner fields for change unless we use mutableStateOf
@@ -120,13 +140,17 @@ data class RelaySmsAppUiState(
     var showSearchTextField: Boolean by mutableStateOf(false)
 
     init {
-        updateMessages(messages)
+        updateLastMessages(lastMessageForEachThread)
     }
 
-    fun updateMessages(messages: List<Message>) {
+    fun updateLastMessages(messages: List<Message>) {
         lastMessageList.addAll(messages)
     }
 }
+
+data class MessageFromUiState(
+    var messagesInThread: SnapshotStateList<Message> = mutableStateListOf()
+)
 
 /**
  * Convenience function to convert [Message] object to [SmsInfo]

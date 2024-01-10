@@ -7,7 +7,16 @@ import kotlinx.coroutines.flow.Flow
  */
 class OfflineSmsInfoRepository(private val smsInfoDao: SmsInfoDao): SmsInfoRepository {
 
-    override fun getSmsInfo(id: Int): Flow<SmsInfo> = smsInfoDao.getSmsInfo(id)
+    override fun getSmsInfo(id: Int): Flow<SmsInfo?> = smsInfoDao.getSmsInfo(id)
+
+    override suspend fun getSmsInfoForEachIdInAndroidDb(
+        idInAndroidDbs: List<String>
+    ): List<SmsInfo?> {
+        return idInAndroidDbs.map { idInAndroidDb ->
+            // Although it should not happen, multiple row could have been created for same Message
+            smsInfoDao.getSmsInfoByIdInAndroidDb(idInAndroidDb).firstOrNull()
+        }
+    }
 
     override fun getAllSmsInfo(): Flow<List<SmsInfo>> = smsInfoDao.getAllSmsInfo()
 
