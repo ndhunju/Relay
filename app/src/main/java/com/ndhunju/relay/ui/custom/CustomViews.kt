@@ -1,13 +1,19 @@
 package com.ndhunju.relay.ui.custom
 
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material.icons.rounded.Search
+import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
+import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -49,5 +55,28 @@ fun SyncStatusIcon(syncStatus: Result?, modifier: Modifier = Modifier) {
             .padding(start = 8.dp)
             .size(16.dp)
             .alpha(if (syncStatus == null) 0f else 1f)
+    )
+}
+
+@Composable
+@OptIn(ExperimentalMaterial3Api::class)
+fun TopAppBarWithUpButton(title: String?, onUpPressed: (() -> Unit)?) {
+    TopAppBar(
+        modifier = Modifier.background(MaterialTheme.colorScheme.background),
+        title = {
+            Text(
+                text = title ?: "",
+                color = MaterialTheme.colorScheme.primary
+            )
+        },
+        navigationIcon = {
+            IconButton(onClick = { onUpPressed?.invoke() }) {
+                Icon(
+                    modifier = Modifier.padding(4.dp),
+                    imageVector = Icons.Filled.ArrowBack,
+                    contentDescription = stringResource(R.string.image_description_go_back)
+                )
+            }
+        }
     )
 }
