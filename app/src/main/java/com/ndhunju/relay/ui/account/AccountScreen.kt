@@ -5,6 +5,8 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.text.KeyboardActions
+import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material3.Button
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
@@ -14,7 +16,11 @@ import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.focus.FocusDirection
+import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.input.ImeAction
+import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.tooling.preview.Preview
 import com.ndhunju.relay.R
 import com.ndhunju.relay.ui.custom.TopAppBarWithUpButton
@@ -65,7 +71,8 @@ fun AccountScreen(
                     value = accountScreenUiState.phone ?: "",
                     labelRes = R.string.text_field_label_phone,
                     errorMessage = getString(accountScreenUiState.errorStrIdForPhoneField),
-                    onValueChange = onPhoneChange
+                    onValueChange = onPhoneChange,
+                    keyboardType = KeyboardType.Phone
                 )
                 Button(
                     modifier = Modifier.fillMaxWidth(),
@@ -90,8 +97,10 @@ fun RelayOutlinedTextField(
     onValueChange: ((String) -> Unit) = {},
     @StringRes labelRes: Int,
     enabled: Boolean = true,
-    errorMessage: String? = null
+    errorMessage: String? = null,
+    keyboardType: KeyboardType = KeyboardType.Text
     ) {
+    val focusManager = LocalFocusManager.current
     OutlinedTextField(
         value = value,
         onValueChange = onValueChange,
@@ -109,7 +118,11 @@ fun RelayOutlinedTextField(
             errorMessage?.let {
                 Text(text = it, color = MaterialTheme.colorScheme.error)
             }
-        }
+        },
+        keyboardOptions = KeyboardOptions(imeAction = ImeAction.Next, keyboardType = keyboardType),
+        keyboardActions = KeyboardActions(
+            onNext = { focusManager.moveFocus(FocusDirection.Down) }
+        )
     )
 }
 
