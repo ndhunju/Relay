@@ -12,6 +12,8 @@
     <string name="image_description_sync_status_logo">Message sync status</string>
     <!-- Image description for back icon. Clicking on this takes user to previous screen -->
     <string name="image_description_go_back">Back</string>
+    <!-- Content description for up button icon. Clicking on this scrolls to top of the list -->
+    <string name="content_description_scroll_to_top">Scroll To Top</string>
 
     <!-- Shown to user inside a dialog when the Android OS signal that we need to present an
     explanation to the user as to why we need the permissions -->

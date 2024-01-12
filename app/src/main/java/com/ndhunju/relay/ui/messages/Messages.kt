@@ -28,10 +28,11 @@ fun MessageListItemPreview() {
 
 @Composable
 fun MessageListItem(
+    modifier: Modifier = Modifier,
     message: Message,
     onClick: (Message) -> Unit
 ) {
-    ConstraintLayout(modifier = Modifier
+    ConstraintLayout(modifier = modifier
         .clickable { onClick(message) }
     ) {
         val (divider, from, body, date, status) = createRefs()
