@@ -85,7 +85,7 @@ fun AccountScreen(
                 )
                 Button(
                     modifier = Modifier.fillMaxWidth(),
-                    enabled = accountScreenUiState.isCreateUpdateBtnEnabled,
+                    enabled = accountScreenUiState.isCreateUpdateBtnEnabled(),
                     onClick = onClickCreateUpdate
                 ) {
                     if (accountScreenUiState.showProgress) {

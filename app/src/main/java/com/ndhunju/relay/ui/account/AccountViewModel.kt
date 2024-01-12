@@ -37,7 +37,7 @@ class AccountViewModel(
 
     val onEmailChange: (String) -> Unit = {
         email.value = it
-        errorStrIdForEmail.value = if (PatternsCompat.EMAIL_ADDRESS.matcher(it).matches()) {
+        errorStrIdForEmail.value = if (isValidEmail(it)) {
              null
         } else {
             R.string.account_invalid_email
@@ -46,12 +46,12 @@ class AccountViewModel(
 
     val onNameChange: (String) -> Unit = {
         name.value = it
-        errorStrIdForName.value = if (it.isEmpty()) R.string.account_invalid_name else null
+        errorStrIdForName.value = if (isValidName(it)) null else R.string.account_invalid_name
     }
 
     val onPhoneChange: (String) -> Unit = {
         phone.value = it
-        errorStrIdForPhone.value = if (Patterns.PHONE.matcher(it).matches()) {
+        errorStrIdForPhone.value = if (isValidPhoneNumber(it)) {
             null
         } else {
             R.string.account_invalid_phone
@@ -155,8 +155,20 @@ data class AccountScreenUiState(
     val isEmailTextFieldEnabled: Boolean = showProgress.not(),
     val isNameTextFieldEnabled: Boolean = showProgress.not(),
     val isPhoneTextFieldEnabled: Boolean = showProgress.not(),
-    val isCreateUpdateBtnEnabled: Boolean = showProgress.not(),
-)
+) {
+    fun isCreateUpdateBtnEnabled(): Boolean {
+        return showProgress.not() // Disable when showing progress
+                // Disable if there is an error in Email, Name or Phone
+                && isValidEmail(email)
+                && isValidName(name)
+                && isValidPhoneNumber(phone)
+    }
+}
+
+private fun isValidEmail(email: String?) =
+    (email != null) && PatternsCompat.EMAIL_ADDRESS.matcher(email).matches()
+private fun isValidName(it: String?) = it != null && it.isEmpty().not()
+private fun isValidPhoneNumber(it: String?) = it != null && Patterns.PHONE.matcher(it).matches()
 
 /**
  * All possible modes that user could be using [AccountScreen] in.
