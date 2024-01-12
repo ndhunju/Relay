@@ -25,10 +25,10 @@ class CloudDatabaseService @Inject constructor(
 
     private var userId: String?
         get() {
-           return currentUser.userId
+           return currentUser.user.id
         }
         set(value) {
-            currentUser.userId = value
+            currentUser.user = currentUser.user.copy(id = value)
         }
 
     /**
@@ -41,8 +41,8 @@ class CloudDatabaseService @Inject constructor(
         phone: String? = null,
         deviceId: String? = null,
         pushNotificationToken: String? = null,
-        onUserCreateCallback: (() -> Unit)? = null
-    ) {
+    ): StateFlow<Result> {
+        val flow = MutableStateFlow<Result>(Result.Pending)
         val database = Firebase.firestore
         val userCollection = database.collection("User")
         val newUser = hashMapOf(
@@ -57,13 +57,27 @@ class CloudDatabaseService @Inject constructor(
             .addOnSuccessListener { documentRef ->
                 val docId = documentRef.id
                 userId = docId
-                onUserCreateCallback?.invoke()
+                flow.value = Result.Success()
             }
             .addOnFailureListener {ex ->
                 Log.d(TAG, "createUser: Failed with $ex")
+                flow.value = Result.Failure(ex.message)
             }
 
+        return flow
     }
+
+    // TODO: Nikesh - Add the logic for updating existing user
+//    fun updateUser(
+//        name: String? = null,
+//        phone: String? = null,
+//        deviceId: String? = null,
+//        pushNotificationToken: String? = null,
+//    ): StateFlow<Result> {
+//        val flow = MutableStateFlow<Result>(Result.Pending)
+//
+//        return flow
+//    }
 
     /**
      * Pushes [message] to the cloud database. Pass [resultStateFlow] if
@@ -76,10 +90,8 @@ class CloudDatabaseService @Inject constructor(
 
         val stateFlow = resultStateFlow ?: MutableStateFlow<Result>(Result.Pending)
 
-        if (userId == null) {
-            createUser {
-                pushMessage(message, stateFlow)
-            }
+        if (userId == null || userId?.isEmpty() == true) {
+            stateFlow.value = Result.Failure("User is signed in.")
             return stateFlow
         }
 
@@ -111,7 +123,7 @@ class CloudDatabaseService @Inject constructor(
 
     /**
      * WIP
-     * Fetches message for meant for [currentUser]
+     * Fetches messages meant for [currentUser]
      */
 //    fun fetchMessages() {
 //        val database = Firebase.firestore

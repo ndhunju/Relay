@@ -30,6 +30,9 @@ fun AccountScreenPreview() {
 fun AccountScreen(
     accountScreenUiState: AccountScreenUiState,
     onUpPressed: () -> Unit = {},
+    onEmailChange: (String) -> Unit = {},
+    onNameChange: (String) -> Unit = {},
+    onPhoneChange: (String) -> Unit = {},
     onClickCreateUpdate: () -> Unit = {}
 ) {
     Surface {
@@ -49,16 +52,20 @@ fun AccountScreen(
                     value = accountScreenUiState.email ?: "",
                     labelRes = R.string.text_field_label_email,
                     enabled = accountScreenUiState.isEmailTextFieldEnabled,
-                    errorMessage = accountScreenUiState.errorSupportingTextForEmailField
+                    errorMessage = accountScreenUiState.errorMsgForEmailField,
+                    onValueChange = onEmailChange
                 )
                 RelayOutlinedTextField(
                     value = accountScreenUiState.name ?: "",
-                    labelRes = R.string.text_field_label_name
+                    labelRes = R.string.text_field_label_name,
+                    errorMessage = accountScreenUiState.errorMsgForNameField,
+                    onValueChange = onNameChange
                 )
                 RelayOutlinedTextField(
                     value = accountScreenUiState.phone ?: "",
                     labelRes = R.string.text_field_label_phone,
-                    errorMessage = accountScreenUiState.errorSupportingTextForPhone
+                    errorMessage = accountScreenUiState.errorMsgForPhoneField,
+                    onValueChange = onPhoneChange
                 )
                 Button(
                     modifier = Modifier.fillMaxWidth(),
@@ -104,25 +111,4 @@ fun RelayOutlinedTextField(
             }
         }
     )
-}
-
-/**
- * Data class representing the state of [AccountScreen]
- */
-data class AccountScreenUiState(
-    val email: String? = null,
-    val isEmailTextFieldEnabled: Boolean = true,
-    val errorSupportingTextForEmailField: String? = null,
-    val name: String? = null,
-    val phone: String? = null,
-    val errorSupportingTextForPhone: String? = null,
-    val mode: Mode = Mode.Create
-)
-
-/**
- * All possible modes that user could be using [AccountScreen] in.
- */
-sealed class Mode {
-    data object Create: Mode()
-    data object Update: Mode()
 }

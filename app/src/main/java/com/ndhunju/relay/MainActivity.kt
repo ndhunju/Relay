@@ -17,6 +17,7 @@ import androidx.compose.material3.Surface
 import androidx.compose.ui.Modifier
 import androidx.core.app.ActivityCompat.shouldShowRequestPermissionRationale
 import androidx.fragment.app.FragmentActivity
+import com.ndhunju.relay.ui.account.AccountFragment
 import com.ndhunju.relay.ui.messagesfrom.MessagesFromFragment
 import com.ndhunju.relay.ui.theme.RelayTheme
 import com.ndhunju.relay.util.areNeededPermissionGranted
@@ -71,6 +72,17 @@ class MainActivity : FragmentActivity() {
                     MessagesFromFragment.TAG
                     )
                 .addToBackStack(MessagesFromFragment.TAG)
+                .commit()
+        }
+
+        viewModel.onClickAccountIcon = {
+            supportFragmentManager.beginTransaction()
+                .add(
+                    android.R.id.content,
+                    AccountFragment.newInstance(),
+                    AccountFragment.TAG
+                )
+                .addToBackStack(AccountFragment.TAG)
                 .commit()
         }
 

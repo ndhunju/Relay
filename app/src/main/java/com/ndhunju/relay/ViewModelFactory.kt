@@ -4,6 +4,8 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.ViewModelProvider.AndroidViewModelFactory.Companion.APPLICATION_KEY
 import androidx.lifecycle.viewmodel.CreationExtras
+import com.ndhunju.relay.ui.account.AccountViewModel
+import com.ndhunju.relay.util.CurrentUser
 
 val RelayViewModelFactory: ViewModelProvider.Factory = object : ViewModelProvider.Factory {
 
@@ -22,11 +24,13 @@ val RelayViewModelFactory: ViewModelProvider.Factory = object : ViewModelProvide
                 isAssignableFrom(RelaySmsViewModel::class.java) -> {
                     RelaySmsViewModel(repository, smsRepository, cloudDatabaseService) as T
                 }
+                isAssignableFrom(AccountViewModel::class.java) -> {
+                    AccountViewModel(cloudDatabaseService, CurrentUser.user) as T
+                }
                 else -> throw IllegalArgumentException(
                     "Unknown ViewModel class: ${modelClass.name}"
                 )
             }
         }
-
     }
 }
