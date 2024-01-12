@@ -5,9 +5,13 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
+import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
+import androidx.compose.material3.CircularProgressIndicator
+import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.OutlinedTextFieldDefaults
@@ -22,6 +26,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.dp
 import com.ndhunju.relay.R
 import com.ndhunju.relay.ui.custom.TopAppBarWithUpButton
 import com.ndhunju.relay.ui.theme.LocalDimens
@@ -32,6 +37,7 @@ fun AccountScreenPreview() {
     AccountScreen(AccountScreenUiState())
 }
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun AccountScreen(
     accountScreenUiState: AccountScreenUiState,
@@ -39,7 +45,8 @@ fun AccountScreen(
     onEmailChange: (String) -> Unit = {},
     onNameChange: (String) -> Unit = {},
     onPhoneChange: (String) -> Unit = {},
-    onClickCreateUpdate: () -> Unit = {}
+    onClickCreateUpdate: () -> Unit = {},
+    onClickDialogBtnOk: () -> Unit = {},
 ) {
     Surface {
         Scaffold(
@@ -78,12 +85,49 @@ fun AccountScreen(
                     modifier = Modifier.fillMaxWidth(),
                     onClick = onClickCreateUpdate
                 ) {
-                    Text(text = stringResource(
-                        when(accountScreenUiState.mode) {
-                            Mode.Create -> R.string.button_label_create_account
-                            Mode.Update -> R.string.button_label_update
+                    if (accountScreenUiState.showProgress) {
+                        CircularProgressIndicator(
+                            modifier = Modifier.size(32.dp),
+                            color = MaterialTheme.colorScheme.onBackground
+                        )
+                    } else {
+                        Text(
+                            text = stringResource(
+                                when (accountScreenUiState.mode) {
+                                    Mode.Create -> R.string.button_label_create_account
+                                    Mode.Update -> R.string.button_label_update
+                                }
+                            )
+                        )
+                    }
+                }
+
+                if (accountScreenUiState.showDialog) {
+                    AlertDialog(onDismissRequest = {}) {
+                        Surface {
+                            Column(modifier = Modifier
+                                .padding(
+                                    horizontal = LocalDimens.current.contentPaddingHorizontal,
+                                    vertical = LocalDimens.current.itemPaddingVertical
+                                ),
+                                verticalArrangement = Arrangement.spacedBy(
+                                    LocalDimens.current.itemPaddingVertical
+                                )
+                            ) {
+                                Text(
+                                    text = getString(
+                                        resId = accountScreenUiState.errorStrIdForGenericError
+                                    ) ?: ""
+                                )
+                                Button(
+                                    modifier = Modifier.fillMaxWidth(),
+                                    onClick = onClickDialogBtnOk
+                                ) {
+                                    Text(text = stringResource(id = R.string.ok))
+                                }
+                            }
                         }
-                    ))
+                    }
                 }
             }
 

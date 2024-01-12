@@ -1,13 +1,17 @@
 package com.ndhunju.relay.ui.account
 
+import android.util.Log
 import android.util.Patterns
+import androidx.annotation.StringRes
 import androidx.core.util.PatternsCompat
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.ndhunju.relay.R
 import com.ndhunju.relay.service.CloudDatabaseService
+import com.ndhunju.relay.service.Result
 import com.ndhunju.relay.util.User
 import com.ndhunju.relay.util.combine
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.catch
@@ -28,7 +32,8 @@ class AccountViewModel(
     private val errorStrIdForEmail = MutableStateFlow<Int?>(null)
     private val errorStrIdForName = MutableStateFlow<Int?>(null)
     private val errorStrIdForPhone = MutableStateFlow<Int?>(null)
-    private val errorMsgGeneric = MutableStateFlow<String?>(null)
+    private val errorStrIdGeneric = MutableStateFlow<Int?>(null)
+    private val showProgress = MutableStateFlow(false)
 
     val onEmailChange: (String) -> Unit = {
         email.value = it
@@ -53,18 +58,36 @@ class AccountViewModel(
         }
     }
 
+    /**
+     * Ok button was clicked on the dialog.
+     */
+    val onClickDialogBtnOk = {
+        errorStrIdGeneric.value = null
+    }
+
     val onClickCreateUpdateUser: () -> Unit = {
         if (user.isRegistered) {
-            cloudDatabaseService.createUser(
-                name = name.value,
-                email = email.value,
-                phone = phone.value
-            )
-        } else {
 //            cloudDatabaseService.updateUser(
 //                name = name.value,
 //                phone = phone.value
 //            )
+        } else {
+            viewModelScope.launch(Dispatchers.IO) {
+                cloudDatabaseService.createUser(
+                    name = name.value,
+                    email = email.value,
+                    phone = phone.value
+                ).collect { result ->
+                    when(result) {
+                        Result.Pending -> showProgress.value = true
+                        is Result.Success -> showProgress.value = false
+                        is Result.Failure -> {
+                            errorStrIdGeneric.value = R.string.account_user_create_failed
+                            showProgress.value = false
+                        }
+                    }
+                }
+            }
         }
 
     }
@@ -76,20 +99,35 @@ class AccountViewModel(
             // NOTE: In a complex UI State class representing large compose layout,
             // this approach might be expensive as change in any one field triggers
             // recomposition of the entire layout, top to bottom
-            combine(email, name, phone, errorStrIdForEmail, errorStrIdForName, errorStrIdForPhone)
-            { email, name, phone, errorStrIdForEmail, errorStrIdForName, errorStrIdForPhone ->
+            combine(
+                email,
+                name,
+                phone,
+                errorStrIdForEmail,
+                errorStrIdForName,
+                errorStrIdForPhone,
+                errorStrIdGeneric,
+                showProgress
+            )
+            { email, name, phone, errorStrIdForEmail,
+              errorStrIdForName, errorStrIdForPhone, errorStrIdGeneric, showProgress ->
                 AccountScreenUiState(
                     mode = if (user.isRegistered) Mode.Update else Mode.Create,
                     email = email,
-                    isEmailTextFieldEnabled = user.isRegistered.not(),
+                    // Disable email text field if user is already registered or network progress
+                    isEmailTextFieldEnabled = user.isRegistered.not() && showProgress.not(),
                     errorStrIdForEmailField = errorStrIdForEmail,
                     name = name,
                     errorStrIdForNameField = errorStrIdForName,
                     phone = phone,
                     errorStrIdForPhoneField = errorStrIdForPhone,
+                    errorStrIdForGenericError = errorStrIdGeneric,
+                    showProgress = showProgress
                 )
             }.catch { throwable ->
-                errorMsgGeneric.value = throwable.localizedMessage
+                // TODO: Nikesh - User Firebase logger
+                Log.d("Error", throwable.localizedMessage, throwable)
+                errorStrIdGeneric.value = R.string.general_error_message
             }.collect { accountScreenUiState ->
                 _state.value = accountScreenUiState
             }
@@ -104,12 +142,17 @@ data class AccountScreenUiState(
     val mode: Mode = Mode.Create,
     val email: String? = null,
     val isEmailTextFieldEnabled: Boolean = true,
-    val errorStrIdForEmailField: Int? = null,
+    @StringRes val errorStrIdForEmailField: Int? = null,
     val name: String? = null,
-    val errorStrIdForNameField: Int? = null,
+    @StringRes val errorStrIdForNameField: Int? = null,
     val phone: String? = null,
-    val errorStrIdForPhoneField: Int? = null,
-    val errorStrIdForGenericError: Int? = null,
+    @StringRes val errorStrIdForPhoneField: Int? = null,
+    @StringRes val errorStrIdForGenericError: Int? = null,
+    /**
+     * True when the app is making network call to create/update [User]
+     */
+    val showProgress: Boolean = false,
+    val showDialog: Boolean = errorStrIdForGenericError != null
 )
 
 /**
