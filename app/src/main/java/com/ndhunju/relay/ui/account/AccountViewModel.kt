@@ -4,12 +4,13 @@ import android.util.Patterns
 import androidx.core.util.PatternsCompat
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.ndhunju.relay.R
 import com.ndhunju.relay.service.CloudDatabaseService
 import com.ndhunju.relay.util.User
+import com.ndhunju.relay.util.combine
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.catch
-import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.launch
 
 class AccountViewModel(
@@ -24,26 +25,31 @@ class AccountViewModel(
     private val email = MutableStateFlow(user.email)
     private val name = MutableStateFlow(user.name)
     private val phone = MutableStateFlow(user.phone)
-    private val errorMsg = MutableStateFlow("")
+    private val errorStrIdForEmail = MutableStateFlow<Int?>(null)
+    private val errorStrIdForName = MutableStateFlow<Int?>(null)
+    private val errorStrIdForPhone = MutableStateFlow<Int?>(null)
+    private val errorMsgGeneric = MutableStateFlow<String?>(null)
 
     val onEmailChange: (String) -> Unit = {
         email.value = it
-        if (PatternsCompat.EMAIL_ADDRESS.matcher(it).matches().not()) {
-            errorMsg.value = "Invalid Email."
+        errorStrIdForEmail.value = if (PatternsCompat.EMAIL_ADDRESS.matcher(it).matches()) {
+             null
+        } else {
+            R.string.account_invalid_email
         }
     }
 
     val onNameChange: (String) -> Unit = {
         name.value = it
-        if (it.isEmpty()) {
-            errorMsg.value = "Name is empty."
-        }
+        errorStrIdForName.value = if (it.isEmpty()) R.string.account_invalid_name else null
     }
 
     val onPhoneChange: (String) -> Unit = {
         phone.value = it
-        if (Patterns.PHONE.matcher(it).matches().not()) {
-            errorMsg.value = "Invalid phone number."
+        errorStrIdForPhone.value = if (Patterns.PHONE.matcher(it).matches()) {
+            null
+        } else {
+            R.string.account_invalid_phone
         }
     }
 
@@ -67,17 +73,23 @@ class AccountViewModel(
         viewModelScope.launch {
             // Combines the latest value from each of the flows, allowing us to generate a
             // view state instance which only contains the latest values.
-            combine(email, name, phone, errorMsg) { email, name, phone, errorMsg ->
+            // NOTE: In a complex UI State class representing large compose layout,
+            // this approach might be expensive as change in any one field triggers
+            // recomposition of the entire layout, top to bottom
+            combine(email, name, phone, errorStrIdForEmail, errorStrIdForName, errorStrIdForPhone)
+            { email, name, phone, errorStrIdForEmail, errorStrIdForName, errorStrIdForPhone ->
                 AccountScreenUiState(
                     mode = if (user.isRegistered) Mode.Update else Mode.Create,
                     email = email,
                     isEmailTextFieldEnabled = user.isRegistered.not(),
+                    errorStrIdForEmailField = errorStrIdForEmail,
                     name = name,
+                    errorStrIdForNameField = errorStrIdForName,
                     phone = phone,
-                    errorMsgForNameField = errorMsg
+                    errorStrIdForPhoneField = errorStrIdForPhone,
                 )
             }.catch { throwable ->
-                errorMsg.value = throwable.localizedMessage ?: ""
+                errorMsgGeneric.value = throwable.localizedMessage
             }.collect { accountScreenUiState ->
                 _state.value = accountScreenUiState
             }
@@ -92,11 +104,12 @@ data class AccountScreenUiState(
     val mode: Mode = Mode.Create,
     val email: String? = null,
     val isEmailTextFieldEnabled: Boolean = true,
-    val errorMsgForEmailField: String? = null,
+    val errorStrIdForEmailField: Int? = null,
     val name: String? = null,
+    val errorStrIdForNameField: Int? = null,
     val phone: String? = null,
-    val errorMsgForPhoneField: String? = null,
-    val errorMsgForNameField: String? = null
+    val errorStrIdForPhoneField: Int? = null,
+    val errorStrIdForGenericError: Int? = null,
 )
 
 /**

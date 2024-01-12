@@ -52,19 +52,19 @@ fun AccountScreen(
                     value = accountScreenUiState.email ?: "",
                     labelRes = R.string.text_field_label_email,
                     enabled = accountScreenUiState.isEmailTextFieldEnabled,
-                    errorMessage = accountScreenUiState.errorMsgForEmailField,
+                    errorMessage = getString(accountScreenUiState.errorStrIdForEmailField),
                     onValueChange = onEmailChange
                 )
                 RelayOutlinedTextField(
                     value = accountScreenUiState.name ?: "",
                     labelRes = R.string.text_field_label_name,
-                    errorMessage = accountScreenUiState.errorMsgForNameField,
+                    errorMessage = getString(accountScreenUiState.errorStrIdForNameField),
                     onValueChange = onNameChange
                 )
                 RelayOutlinedTextField(
                     value = accountScreenUiState.phone ?: "",
                     labelRes = R.string.text_field_label_phone,
-                    errorMessage = accountScreenUiState.errorMsgForPhoneField,
+                    errorMessage = getString(accountScreenUiState.errorStrIdForPhoneField),
                     onValueChange = onPhoneChange
                 )
                 Button(
@@ -111,4 +111,16 @@ fun RelayOutlinedTextField(
             }
         }
     )
+}
+
+/**
+ * Convenient fun that returns String corresponding to [resId]
+ */
+@Composable
+fun getString(resId: Int?): String? {
+    return if (resId != null && resId > 0) {
+        stringResource(id = resId)
+    } else {
+        null
+    }
 }

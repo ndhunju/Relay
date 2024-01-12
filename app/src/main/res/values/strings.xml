@@ -28,6 +28,8 @@
     <string name="grant_permissions">Grant Permissions</string>
     <!-- Message shown on the screen when no sender address is found -->
     <string name="msg_no_sender_found">Oops! No sender address found. Please go back</string>
+
+    <!-- AccountsScreen -->
     <!-- Title used for an screen -->
     <string name="screen_title_account">Account</string>
     <!-- Noun. Label for a text field where user can input their email -->
@@ -38,6 +40,12 @@
     <string name="text_field_label_phone">Phone</string>
     <!-- Label for a button. Click on it creates an account for the user -->
     <string name="button_label_create_account">Create</string>
-    <!-- Label for a button. Clicking on it updates account info of the user-->
+    <!-- Label for a button. Clicking on it updates account info of the user -->
     <string name="button_label_update">Update</string>
+    <!-- Error message show below the Email text field -->
+    <string name="account_invalid_email">Email is invalid.</string>
+    <!-- Error message show below the Name text field -->
+    <string name="account_invalid_name">Name is invalid.</string>
+    <!-- Error message show below the Phone number text field -->
+    <string name="account_invalid_phone">Phone number is invalid.</string>
 </resources>
