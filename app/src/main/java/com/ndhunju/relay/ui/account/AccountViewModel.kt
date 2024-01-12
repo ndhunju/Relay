@@ -114,12 +114,12 @@ class AccountViewModel(
                 AccountScreenUiState(
                     mode = if (user.isRegistered) Mode.Update else Mode.Create,
                     email = email,
+                    name = name,
+                    phone = phone,
                     // Disable email text field if user is already registered or network progress
                     isEmailTextFieldEnabled = user.isRegistered.not() && showProgress.not(),
                     errorStrIdForEmailField = errorStrIdForEmail,
-                    name = name,
                     errorStrIdForNameField = errorStrIdForName,
-                    phone = phone,
                     errorStrIdForPhoneField = errorStrIdForPhone,
                     errorStrIdForGenericError = errorStrIdGeneric,
                     showProgress = showProgress
@@ -141,18 +141,21 @@ class AccountViewModel(
 data class AccountScreenUiState(
     val mode: Mode = Mode.Create,
     val email: String? = null,
-    val isEmailTextFieldEnabled: Boolean = true,
-    @StringRes val errorStrIdForEmailField: Int? = null,
     val name: String? = null,
-    @StringRes val errorStrIdForNameField: Int? = null,
     val phone: String? = null,
+    @StringRes val errorStrIdForEmailField: Int? = null,
+    @StringRes val errorStrIdForNameField: Int? = null,
     @StringRes val errorStrIdForPhoneField: Int? = null,
     @StringRes val errorStrIdForGenericError: Int? = null,
     /**
      * True when the app is making network call to create/update [User]
      */
     val showProgress: Boolean = false,
-    val showDialog: Boolean = errorStrIdForGenericError != null
+    val showDialog: Boolean = errorStrIdForGenericError != null,
+    val isEmailTextFieldEnabled: Boolean = showProgress.not(),
+    val isNameTextFieldEnabled: Boolean = showProgress.not(),
+    val isPhoneTextFieldEnabled: Boolean = showProgress.not(),
+    val isCreateUpdateBtnEnabled: Boolean = showProgress.not(),
 )
 
 /**

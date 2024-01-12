@@ -71,18 +71,21 @@ fun AccountScreen(
                 RelayOutlinedTextField(
                     value = accountScreenUiState.name ?: "",
                     labelRes = R.string.text_field_label_name,
+                    enabled = accountScreenUiState.isNameTextFieldEnabled,
                     errorMessage = getString(accountScreenUiState.errorStrIdForNameField),
                     onValueChange = onNameChange
                 )
                 RelayOutlinedTextField(
                     value = accountScreenUiState.phone ?: "",
                     labelRes = R.string.text_field_label_phone,
+                    enabled = accountScreenUiState.isPhoneTextFieldEnabled,
                     errorMessage = getString(accountScreenUiState.errorStrIdForPhoneField),
                     onValueChange = onPhoneChange,
                     keyboardType = KeyboardType.Phone
                 )
                 Button(
                     modifier = Modifier.fillMaxWidth(),
+                    enabled = accountScreenUiState.isCreateUpdateBtnEnabled,
                     onClick = onClickCreateUpdate
                 ) {
                     if (accountScreenUiState.showProgress) {
