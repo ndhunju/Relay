@@ -9,6 +9,8 @@ import androidx.lifecycle.viewModelScope
 import com.ndhunju.relay.R
 import com.ndhunju.relay.service.CloudDatabaseService
 import com.ndhunju.relay.service.Result
+import com.ndhunju.relay.service.UserSettingsPersistService
+import com.ndhunju.relay.util.CurrentUser
 import com.ndhunju.relay.util.User
 import com.ndhunju.relay.util.combine
 import kotlinx.coroutines.Dispatchers
@@ -16,10 +18,12 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.launch
+import java.lang.RuntimeException
 
 class AccountViewModel(
     private val cloudDatabaseService: CloudDatabaseService,
-    private val user: User
+    private val userSettingsPersistService: UserSettingsPersistService,
+    private var user: User
 ): ViewModel() {
 
     private val _state = MutableStateFlow(AccountScreenUiState())
@@ -80,7 +84,25 @@ class AccountViewModel(
                 ).collect { result ->
                     when(result) {
                         Result.Pending -> showProgress.value = true
-                        is Result.Success -> showProgress.value = false
+                        is Result.Success -> {
+                            val userId = (result.data as? String)
+                                ?: throw RuntimeException("User id not provided.")
+                            // Update local copy of user
+                            user = User(
+                                id = userId,
+                                email = email.value,
+                                name = name.value,
+                                phone = phone.value,
+                                isRegistered = true
+                            )
+                            // If this is current user, update it too
+                            if (user.id == CurrentUser.user.id) {
+                                CurrentUser.user = user
+                                // Store registered user's id persistently
+                                userSettingsPersistService.save(user)
+                            }
+                            showProgress.value = false
+                        }
                         is Result.Failure -> {
                             errorStrIdGeneric.value = R.string.account_user_create_failed
                             showProgress.value = false

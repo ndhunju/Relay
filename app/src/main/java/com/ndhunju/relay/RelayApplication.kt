@@ -1,6 +1,8 @@
 package com.ndhunju.relay
 
 import android.app.Application
+import com.ndhunju.relay.util.CurrentUser
+import com.ndhunju.relay.util.User
 
 class RelayApplication: Application() {
 
@@ -14,5 +16,8 @@ class RelayApplication: Application() {
             .androidAppModule(AndroidAppModule(this))
             .appModule(AppModule(this))
             .build()
+
+        // Instantiate user in CurrentUser as app is dependent on it to function
+        CurrentUser.user = appComponent.userSettingsPersistService().retrieve() ?: User()
     }
 }

@@ -19,13 +19,18 @@ val RelayViewModelFactory: ViewModelProvider.Factory = object : ViewModelProvide
         val repository = application.appComponent.relayRepository()
         val cloudDatabaseService = application.appComponent.cloudDatabaseService()
         val smsRepository = application.appComponent.smsInfoRepository()
+        val userSettingsPersistService = application.appComponent.userSettingsPersistService()
         with(modelClass) {
             return when {
                 isAssignableFrom(RelaySmsViewModel::class.java) -> {
                     RelaySmsViewModel(repository, smsRepository, cloudDatabaseService) as T
                 }
                 isAssignableFrom(AccountViewModel::class.java) -> {
-                    AccountViewModel(cloudDatabaseService, CurrentUser.user) as T
+                    AccountViewModel(
+                        cloudDatabaseService,
+                        userSettingsPersistService,
+                        CurrentUser.user
+                    ) as T
                 }
                 else -> throw IllegalArgumentException(
                     "Unknown ViewModel class: ${modelClass.name}"

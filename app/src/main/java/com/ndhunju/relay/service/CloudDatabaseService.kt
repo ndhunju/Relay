@@ -56,8 +56,8 @@ class CloudDatabaseService @Inject constructor(
         userCollection.add(newUser)
             .addOnSuccessListener { documentRef ->
                 val docId = documentRef.id
-                userId = docId
-                flow.value = Result.Success()
+                userId = docId //
+                flow.value = Result.Success(userId)
             }
             .addOnFailureListener {ex ->
                 Log.d(TAG, "createUser: Failed with $ex")
