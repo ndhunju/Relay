@@ -2,11 +2,14 @@ package com.ndhunju.relay
 
 import android.app.Application
 import android.content.Context
+import androidx.security.crypto.EncryptedSharedPreferences
 import com.google.gson.Gson
 import com.google.gson.GsonBuilder
 import com.ndhunju.relay.data.OfflineSmsInfoRepository
 import com.ndhunju.relay.data.MainDatabase
 import com.ndhunju.relay.data.SmsInfoRepository
+import com.ndhunju.relay.service.UserSettingsPersistService
+import com.ndhunju.relay.service.UserSettingsPersistServiceSharedPreferenceImpl
 import com.ndhunju.relay.util.CurrentUser
 import dagger.Module
 import dagger.Provides
@@ -37,10 +40,25 @@ class AppModule(private val application: Application) {
 
     @Provides
     @Singleton
-    fun smsInfoRepository(): SmsInfoRepository = OfflineSmsInfoRepository(
+    fun provideSmsInfoRepository(): SmsInfoRepository = OfflineSmsInfoRepository(
         MainDatabase.getDatabase(application).smsInfoDao()
     )
 
+    @Provides
+    @Singleton
+    fun provideUserSettingsPersistService(): UserSettingsPersistService {
+        val application = application as RelayApplication
+        return UserSettingsPersistServiceSharedPreferenceImpl(
+            EncryptedSharedPreferences.create(
+                "encrypted_preferences",
+                "masterKeyAlias",
+                application,
+                EncryptedSharedPreferences.PrefKeyEncryptionScheme.AES256_SIV,
+                EncryptedSharedPreferences.PrefValueEncryptionScheme.AES256_GCM
+            ),
+            providesGson()
+        )
+    }
 }
 
 /**

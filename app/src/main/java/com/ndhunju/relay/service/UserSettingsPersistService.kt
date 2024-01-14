@@ -1,31 +1,37 @@
 package com.ndhunju.relay.service
 
-import android.app.Application
-import androidx.security.crypto.EncryptedSharedPreferences
+import android.content.SharedPreferences
 import com.google.gson.Gson
 import com.ndhunju.relay.util.User
 import javax.inject.Inject
 import javax.inject.Singleton
 
+
+interface UserSettingsPersistService {
+
+    /**
+     * Saves the pass [user] object persistently
+     */
+    fun save(user: User)
+
+    /**
+     * Retrieves [User] object that was previously save using [save] method
+     */
+    fun retrieve(): User?
+
+}
+
 @Singleton
-class UserSettingsPersistService @Inject constructor(
-    application: Application,
-    private val gson: Gson
-) {
+class UserSettingsPersistServiceSharedPreferenceImpl @Inject constructor(
+    private val sharedPreferences: SharedPreferences,
+    private val gson: Gson,
+): UserSettingsPersistService {
 
-    private val sharedPreferences = EncryptedSharedPreferences.create(
-        "encrypted_preferences",
-        "masterKeyAlias",
-        application,
-        EncryptedSharedPreferences.PrefKeyEncryptionScheme.AES256_SIV,
-        EncryptedSharedPreferences.PrefValueEncryptionScheme.AES256_GCM
-    )
-
-    fun save(user: User) {
+    override fun save(user: User) {
         sharedPreferences.edit().putString(USER_KEY, gson.toJson(user)).apply()
     }
 
-    fun retrieve(): User? {
+    override fun retrieve(): User? {
         val userInJson = sharedPreferences.getString(USER_KEY, null)
         return gson.fromJson(userInJson, User::class.java)
     }
