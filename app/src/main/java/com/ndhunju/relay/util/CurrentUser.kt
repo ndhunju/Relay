@@ -5,6 +5,9 @@ package com.ndhunju.relay.util
  */
 object CurrentUser {
     var user: User = User()
+    fun isUserSignedIn(): Boolean {
+        return user.isRegistered && user.id != null && user.id?.isNotEmpty() == true
+    }
 }
 
 data class User(

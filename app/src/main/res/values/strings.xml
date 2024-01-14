@@ -50,6 +50,8 @@
     <string name="account_invalid_name">Name is invalid.</string>
     <!-- Error message show below the Phone number text field -->
     <string name="account_invalid_phone">Phone number is invalid.</string>
-    <!-- Error message show below a button when app fails to create -->
+    <!-- Error message show in a dialog when app fails to create -->
     <string name="account_user_create_failed">Failed to create user at this time. Please try again later.</string>
+    <!-- Error message show in a dialog when app fails to update -->
+    <string name="account_user_update_failed">Failed to update at this time. Please try again later.</string>
 </resources>

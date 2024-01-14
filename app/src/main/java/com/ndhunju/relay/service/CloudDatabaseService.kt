@@ -1,6 +1,7 @@
 package com.ndhunju.relay.service
 
 import android.util.Log
+import com.google.firebase.firestore.CollectionReference
 import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.ktx.Firebase
 import com.google.gson.Gson
@@ -43,17 +44,9 @@ class CloudDatabaseService @Inject constructor(
         pushNotificationToken: String? = null,
     ): StateFlow<Result> {
         val flow = MutableStateFlow<Result>(Result.Pending)
-        val database = Firebase.firestore
-        val userCollection = database.collection("User")
-        val newUser = hashMapOf(
-            "Name" to name,
-            "Email" to email,
-            "Phone" to phone,
-            "DeviceId" to deviceId,
-            "PushNotificationToken" to pushNotificationToken
-        )
+        val newUser = makeMapForUserCollection(name, email, phone, deviceId, pushNotificationToken)
 
-        userCollection.add(newUser)
+        getUserCollection().add(newUser)
             .addOnSuccessListener { documentRef ->
                 val docId = documentRef.id
                 userId = docId //
@@ -67,17 +60,61 @@ class CloudDatabaseService @Inject constructor(
         return flow
     }
 
-    // TODO: Nikesh - Add the logic for updating existing user
-//    fun updateUser(
-//        name: String? = null,
-//        phone: String? = null,
-//        deviceId: String? = null,
-//        pushNotificationToken: String? = null,
-//    ): StateFlow<Result> {
-//        val flow = MutableStateFlow<Result>(Result.Pending)
-//
-//        return flow
-//    }
+    /**
+     * Updates user in cloud database
+     */
+    fun updateUser(
+        name: String? = currentUser.user.name,
+        phone: String? = currentUser.user.phone,
+    ): StateFlow<Result> {
+        val stateFlow = MutableStateFlow<Result>(Result.Pending)
+        val userId = currentUser.user.id ?: return stateFlow.apply {
+            value = Result.Failure("User Id is null")
+        }
+
+        getUserCollection().document(userId).update(
+            makeMapForUserCollection(name = name, phone = phone).toMap()
+        ).addOnSuccessListener {
+            stateFlow.value = Result.Success()
+        }.addOnFailureListener {
+            Log.d(TAG, "updateUser: Failed to update user")
+            stateFlow.value = Result.Failure(it.message)
+        }
+
+        return stateFlow
+    }
+
+    /**
+     * Returns [CollectionReference] for "User" collection
+     */
+    private fun getUserCollection(): CollectionReference {
+        val database = Firebase.firestore
+        return database.collection("User")
+    }
+
+    /**
+     * Returns a map that corresponds to the fields of "User" collection in the cloud database.
+     * This function skips the value that is null
+     */
+    private fun makeMapForUserCollection(
+        name: String? = null,
+        email: String? = null,
+        phone: String? = null,
+        deviceId: String? = null,
+        pushNotificationToken: String? = null
+    ) = hashMapOf(
+        // Don't include in the map if the value is null as
+        // Firebase overrides existing value with null
+        if (name != null) "Name" to name else Pair("", ""),
+        if (email != null) "Email" to email else Pair("", ""),
+        if (phone != null) "Phone" to phone else Pair("", ""),
+        if (deviceId != null) "DeviceId" to deviceId else Pair("", ""),
+        if (pushNotificationToken != null) {
+            "PushNotificationToken" to pushNotificationToken
+        } else {
+            Pair("", "")
+        }
+    )
 
     /**
      * Pushes [message] to the cloud database. Pass [resultStateFlow] if
@@ -90,12 +127,14 @@ class CloudDatabaseService @Inject constructor(
 
         val stateFlow = resultStateFlow ?: MutableStateFlow<Result>(Result.Pending)
 
-        if (userId == null || userId?.isEmpty() == true) {
-            stateFlow.value = Result.Failure("User is signed in.")
+        if (currentUser.isUserSignedIn().not()) {
+            stateFlow.value = Result.Failure("User is not signed in.")
             return stateFlow
         }
 
-        val userId = userId
+        val userId = currentUser.user.id ?: return stateFlow.apply {
+            value = Result.Failure("User Id is null")
+        }
 
         // Write a message to the database
         val database = Firebase.firestore

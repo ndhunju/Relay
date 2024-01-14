@@ -19,5 +19,6 @@ class RelayApplication: Application() {
 
         // Instantiate user in CurrentUser as app is dependent on it to function
         CurrentUser.user = appComponent.userSettingsPersistService().retrieve() ?: User()
+        // TODO: Nikesh - Based on user's id, always fetch latest user info from server
     }
 }

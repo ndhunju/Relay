@@ -70,48 +70,9 @@ class AccountViewModel(
     }
 
     val onClickCreateUpdateUser: () -> Unit = {
-        if (user.isRegistered) {
-//            cloudDatabaseService.updateUser(
-//                name = name.value,
-//                phone = phone.value
-//            )
-        } else {
-            viewModelScope.launch(Dispatchers.IO) {
-                cloudDatabaseService.createUser(
-                    name = name.value,
-                    email = email.value,
-                    phone = phone.value
-                ).collect { result ->
-                    when(result) {
-                        Result.Pending -> showProgress.value = true
-                        is Result.Success -> {
-                            val userId = (result.data as? String)
-                                ?: throw RuntimeException("User id not provided.")
-                            // Update local copy of user
-                            user = User(
-                                id = userId,
-                                email = email.value,
-                                name = name.value,
-                                phone = phone.value,
-                                isRegistered = true
-                            )
-                            // If this is current user, update it too
-                            if (user.id == CurrentUser.user.id) {
-                                CurrentUser.user = user
-                                // Store registered user's id persistently
-                                userSettingsPersistService.save(user)
-                            }
-                            showProgress.value = false
-                        }
-                        is Result.Failure -> {
-                            errorStrIdGeneric.value = R.string.account_user_create_failed
-                            showProgress.value = false
-                        }
-                    }
-                }
-            }
+        viewModelScope.launch(Dispatchers.IO) {
+            if (user.isRegistered) pushUserUpdatesToServer() else createNewUserInServer()
         }
-
     }
 
     init {
@@ -155,6 +116,81 @@ class AccountViewModel(
             }
         }
     }
+
+    /**
+     * Creates new user in the server or cloud database
+     */
+    private suspend fun createNewUserInServer() {
+        cloudDatabaseService.createUser(
+            name = name.value,
+            email = email.value,
+            phone = phone.value
+        ).collect { result ->
+            when (result) {
+                Result.Pending -> showProgress.value = true
+                is Result.Success -> {
+                    val userId = (result.data as? String)
+                        ?: throw RuntimeException("User id not provided.")
+                    // Update local copy of user
+                    user = createUserFromCurrentState(userId)
+                    // If this is current user, update it too
+                    if (user.id == CurrentUser.user.id) {
+                        CurrentUser.user = user
+                        // Store registered user's id persistently
+                        userSettingsPersistService.save(user)
+                    }
+                    showProgress.value = false
+                }
+                else -> {
+                    errorStrIdGeneric.value = R.string.account_user_create_failed
+                    showProgress.value = false
+                }
+            }
+        }
+    }
+
+    /**
+     * Pushes updates in [user] to the server or cloud database
+     */
+    private suspend fun pushUserUpdatesToServer() {
+        cloudDatabaseService.updateUser(
+            name = name.value,
+            phone = phone.value
+        ).collect { result ->
+            when (result) {
+                Result.Pending -> showProgress.value = true
+                is Result.Success -> {
+                    // Update local copy of user
+                    user = createUserFromCurrentState()
+                    // If this is current user, update it too
+                    if (user.id == CurrentUser.user.id) {
+                        CurrentUser.user = user
+                        // Store registered user's id persistently
+                        userSettingsPersistService.save(user)
+                    }
+                    showProgress.value = false
+                }
+                else -> {
+                    showProgress.value = false
+                    errorStrIdGeneric.value = R.string.account_user_update_failed
+                }
+            }
+        }
+    }
+
+    /**
+     * Creates an [User] object based on current [state] with id from [user] object
+     */
+    private fun createUserFromCurrentState(
+        id: String? = null,
+        isRegistered: Boolean = true
+        ) = User(
+        id = id ?: user.id,
+        email = state.value.email,
+        name = state.value.name,
+        phone = state.value.phone,
+        isRegistered = isRegistered
+    )
 }
 
 /**
