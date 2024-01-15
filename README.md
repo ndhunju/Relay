@@ -12,3 +12,15 @@ This app uses best practices for Android and uses the following libraries:
 - **Room**: To store persistent data offline
 - **Dagger**: For dependency injection.
 - **JUnit**: For unit testing.
+
+<table>
+  <tr>
+    <th colspan="2">Account Page</th>
+  </tr>
+  <tr>
+    <td><img src="graphics/Relay-Account-Screen.jpg" width="80%" alt=""></td>
+  </tr>
+<tr>
+    <td><p>Account Screen that respects dynamic theme set by the user.</p></td>
+  </tr>
+</table>
