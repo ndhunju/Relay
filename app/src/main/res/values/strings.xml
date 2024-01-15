@@ -54,4 +54,14 @@
     <string name="account_user_create_failed">Failed to create user at this time. Please try again later.</string>
     <!-- Error message show in a dialog when app fails to update -->
     <string name="account_user_update_failed">Failed to update at this time. Please try again later.</string>
+
+    <!-- PairWithParentScreen -->
+    <!-- Title of the screen -->
+    <string name="screen_title_pair">Pair</string>
+    <!-- Hint for TextField where user can enter email address -->
+    <string name="pair_screen_parent_email_address">Parent Email Address</string>
+    <!-- Supporting text should underneath the TextField. -->
+    <string name="pair_screen_parent_email_address_supporting_text">Enter email address of the parent to pair with.</string>
+    <!-- Verb. Text is a button. When click app starts the process of pairing -->
+    <string name="pair_screen_pair">Pair</string>
 </resources>
