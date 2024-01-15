@@ -103,18 +103,16 @@ class CloudDatabaseService @Inject constructor(
         deviceId: String? = null,
         pushNotificationToken: String? = null
     ) = hashMapOf(
+        "Name" to name,
+        "Email" to email,
+        "Phone" to phone,
+        "DeviceId" to deviceId,
+        "PushNotificationToken" to pushNotificationToken
+    ).filter {
         // Don't include in the map if the value is null as
         // Firebase overrides existing value with null
-        if (name != null) "Name" to name else Pair("", ""),
-        if (email != null) "Email" to email else Pair("", ""),
-        if (phone != null) "Phone" to phone else Pair("", ""),
-        if (deviceId != null) "DeviceId" to deviceId else Pair("", ""),
-        if (pushNotificationToken != null) {
-            "PushNotificationToken" to pushNotificationToken
-        } else {
-            Pair("", "")
-        }
-    )
+        it.value?.isNotEmpty() == true
+    }
 
     /**
      * Pushes [message] to the cloud database. Pass [resultStateFlow] if
