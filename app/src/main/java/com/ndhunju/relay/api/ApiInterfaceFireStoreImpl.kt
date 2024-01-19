@@ -1,4 +1,4 @@
-package com.ndhunju.relay.service
+package com.ndhunju.relay.api
 
 import android.util.Log
 import com.google.firebase.firestore.CollectionReference
@@ -10,42 +10,6 @@ import com.ndhunju.relay.util.CurrentUser
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
-
-/**
- * Abstracts the API that allows interaction with some kind of BE server
- */
-interface ApiInterface {
-
-    /**
-     * Makes API request to create user.
-     */
-    fun createUser(
-        name: String? = null,
-        email: String? = null,
-        phone: String? = null,
-        deviceId: String? = null,
-        pushNotificationToken: String? = null,
-    ): StateFlow<Result>
-
-    /**
-     * Makes API requests to update the user. If null is passed, don't update that value.
-     * Only the non-null value must be updated in the server
-     */
-    fun updateUser(name: String? = null, phone: String? = null, ): StateFlow<Result>
-
-
-    /**
-     * Makes API request to pair [childUserId] with a
-     * parent user whose email is [parentEmailAddress]
-     */
-    fun pairWithParent(childUserId: String, parentEmailAddress: String): Flow<Result>
-
-    /**
-     * Pushes [message] to the server.
-     */
-    fun pushMessage(message: Message): StateFlow<Result>
-
-}
 
 private val TAG = ApiInterfaceFireStoreImpl::class.simpleName
 
@@ -59,10 +23,10 @@ class ApiInterfaceFireStoreImpl(
 
     private var userId: String?
         get() {
-           return currentUser.user.id
+           return CurrentUser.user.id
         }
         set(value) {
-            currentUser.user = currentUser.user.copy(id = value)
+            CurrentUser.user = CurrentUser.user.copy(id = value)
         }
 
     /**
@@ -102,13 +66,13 @@ class ApiInterfaceFireStoreImpl(
         phone: String?,
     ): StateFlow<Result> {
         val stateFlow = MutableStateFlow<Result>(Result.Pending)
-        val userId = currentUser.user.id ?: return stateFlow.apply {
+        val userId = CurrentUser.user.id ?: return stateFlow.apply {
             value = Result.Failure("User Id is null")
         }
 
         // If null is passed, use existing values
-        val finalName = name ?: currentUser.user.name
-        val finalPhone = phone ?: currentUser.user.phone
+        val finalName = name ?: CurrentUser.user.name
+        val finalPhone = phone ?: CurrentUser.user.phone
 
         getUserCollection().document(userId).update(
             makeMapForUserCollection(name = finalName, phone = finalPhone).toMap()
@@ -170,12 +134,12 @@ class ApiInterfaceFireStoreImpl(
 
         val stateFlow = MutableStateFlow<Result>(Result.Pending)
 
-        if (currentUser.isUserSignedIn().not()) {
+        if (CurrentUser.isUserSignedIn().not()) {
             stateFlow.value = Result.Failure("User is not signed in.")
             return stateFlow
         }
 
-        val userId = currentUser.user.id ?: return stateFlow.apply {
+        val userId = CurrentUser.user.id ?: return stateFlow.apply {
             value = Result.Failure("User Id is null")
         }
 
@@ -220,13 +184,4 @@ class ApiInterfaceFireStoreImpl(
 //            Log.d("888", "pushMessageToServer: $exception")
 //        }
 //    }
-}
-
-/**
- * Encapsulates different results that an async fun can have.
- */
-sealed class Result {
-    data object Pending: Result()
-    data class Success(val data: Any? = null): Result()
-    data class Failure(val message: String? = null): Result()
 }

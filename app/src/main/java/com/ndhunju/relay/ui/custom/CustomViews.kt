@@ -23,7 +23,7 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import com.ndhunju.relay.R
-import com.ndhunju.relay.service.Result
+import com.ndhunju.relay.api.Result
 
 @Composable
 fun SearchTextField(onSearchTextChanged: (String) -> Unit) {

@@ -1,6 +1,6 @@
 package com.ndhunju.relay.ui
 
-import com.ndhunju.relay.service.Result
+import com.ndhunju.relay.api.Result
 import com.ndhunju.relay.ui.messages.Message
 
 val mockMessages = listOf(

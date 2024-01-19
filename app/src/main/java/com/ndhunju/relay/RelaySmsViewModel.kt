@@ -12,7 +12,7 @@ import androidx.lifecycle.viewModelScope
 import com.ndhunju.relay.data.DeviceSmsReaderService
 import com.ndhunju.relay.data.SmsInfo
 import com.ndhunju.relay.data.SmsInfoRepository
-import com.ndhunju.relay.service.ApiInterface
+import com.ndhunju.relay.api.ApiInterface
 import com.ndhunju.relay.ui.messages.Message
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow

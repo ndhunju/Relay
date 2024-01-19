@@ -1,7 +1,7 @@
 package com.ndhunju.relay.data
 
 import androidx.room.TypeConverter
-import com.ndhunju.relay.service.Result
+import com.ndhunju.relay.api.Result
 
 class TypeConverters {
 

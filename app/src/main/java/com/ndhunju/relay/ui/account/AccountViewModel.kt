@@ -7,8 +7,8 @@ import androidx.core.util.PatternsCompat
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.ndhunju.relay.R
-import com.ndhunju.relay.service.ApiInterface
-import com.ndhunju.relay.service.Result
+import com.ndhunju.relay.api.ApiInterface
+import com.ndhunju.relay.api.Result
 import com.ndhunju.relay.service.UserSettingsPersistService
 import com.ndhunju.relay.util.CurrentUser
 import com.ndhunju.relay.util.User

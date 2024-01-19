@@ -3,7 +3,7 @@ package com.ndhunju.relay.data
 import androidx.room.Entity
 import androidx.room.Index
 import androidx.room.PrimaryKey
-import com.ndhunju.relay.service.Result
+import com.ndhunju.relay.api.Result
 
 @Entity(
     indices = [Index("idInAndroidOsTable", unique = true)]
