@@ -1,9 +1,10 @@
-package com.ndhunju.relay.data
+package com.ndhunju.relay.data.room
 
 import android.content.Context
 import androidx.room.Database
 import androidx.room.Room
 import androidx.room.RoomDatabase
+import com.ndhunju.relay.data.SmsInfo
 
 /**
  * Room generates an instance of [MainDatabase] at compile time

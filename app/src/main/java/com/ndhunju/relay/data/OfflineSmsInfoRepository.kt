@@ -1,5 +1,6 @@
 package com.ndhunju.relay.data
 
+import com.ndhunju.relay.data.room.SmsInfoDao
 import kotlinx.coroutines.flow.Flow
 
 /**

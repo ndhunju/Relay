@@ -1,4 +1,4 @@
-package com.ndhunju.relay.data
+package com.ndhunju.relay.data.room
 
 import androidx.room.Dao
 import androidx.room.Delete
@@ -6,6 +6,7 @@ import androidx.room.Insert
 import androidx.room.OnConflictStrategy
 import androidx.room.Query
 import androidx.room.Update
+import com.ndhunju.relay.data.SmsInfo
 import kotlinx.coroutines.flow.Flow
 
 @Dao

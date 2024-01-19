@@ -4,6 +4,7 @@ import androidx.room.Entity
 import androidx.room.Index
 import androidx.room.PrimaryKey
 import com.ndhunju.relay.api.Result
+import com.ndhunju.relay.data.room.TypeConverters
 
 @Entity(
     indices = [Index("idInAndroidOsTable", unique = true)]

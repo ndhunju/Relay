@@ -1,4 +1,4 @@
-package com.ndhunju.relay.data
+package com.ndhunju.relay.data.room
 
 import androidx.room.TypeConverter
 import com.ndhunju.relay.api.Result
