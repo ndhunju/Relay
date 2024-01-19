@@ -31,6 +31,12 @@
     <!-- Generic error message shown when we don't know the reason -->
     <string name="general_error_message">Oops! Something went wrong. Please contact admin.</string>
 
+    <!-- Navigation Item -->
+    <!-- Noun. Show in side navigation drawer -->
+    <string name="nav_item_account">Account</string>
+    <!-- Show in side navigation drawer -->
+    <string name="nav_item_pair">Pair with Parent</string>
+
     <!-- AccountsScreen -->
     <!-- Title used for an screen -->
     <string name="screen_title_account">Account</string>

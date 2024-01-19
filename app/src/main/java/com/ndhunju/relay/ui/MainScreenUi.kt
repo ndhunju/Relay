@@ -2,28 +2,37 @@ package com.ndhunju.relay.ui
 
 import androidx.compose.animation.core.tween
 import androidx.compose.foundation.ExperimentalFoundationApi
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.KeyboardArrowUp
-import androidx.compose.material.icons.rounded.AccountCircle
+import androidx.compose.material.icons.filled.Menu
 import androidx.compose.material.icons.rounded.Search
 import androidx.compose.material3.Button
+import androidx.compose.material3.Divider
+import androidx.compose.material3.DrawerValue
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.ModalDrawerSheet
+import androidx.compose.material3.ModalNavigationDrawer
+import androidx.compose.material3.NavigationDrawerItem
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
+import androidx.compose.material3.rememberDrawerState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
@@ -31,6 +40,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
@@ -47,15 +57,75 @@ import kotlinx.coroutines.launch
 @Preview
 @Composable
 fun MainScreenPreview() {
-//    val viewModel = RelaySmsViewModel(RelayRepository(LocalContext.current))
-//    viewModel.state.value.showErrorMessageForPermissionDenied = true
-//    RelaySmsApp(viewModel)
+    // Fixme: Preview
+    //MainScreen(viewModel = MainViewModel())
+}
+
+@Composable
+fun MainScreen(viewModel: MainViewModel) {
+    val drawerState = rememberDrawerState(initialValue = DrawerValue.Closed)
+    val coroutineScope = rememberCoroutineScope()
+
+    ModalNavigationDrawer(
+        drawerState = drawerState,
+        drawerContent = { MainDrawerContent(navigationItems, viewModel.onClickNavItem) }
+    ) {
+        MainContent(viewModel = viewModel, onClickMenuIcon = {
+            coroutineScope.launch { drawerState.open() }
+        })
+    }
+}
+
+@Composable
+fun MainDrawerContent(
+    navigationItems: List<NavItem>,
+    onClickNavItem: (NavItem) -> Unit
+) {
+    ModalDrawerSheet(modifier = Modifier
+        .fillMaxWidth(0.7f)
+    ) {
+        // Show big app icon
+        Image(
+            painter = painterResource(id = R.drawable.ic_launcher_foreground),
+            colorFilter = ColorFilter.tint(MaterialTheme.colorScheme.primary),
+            contentDescription = stringResource(id = R.string.image_description_app_logo),
+            modifier = Modifier
+                .size(112.dp)
+                .align(Alignment.CenterHorizontally)
+        )
+
+        Divider()
+
+        // Show each items in navigationItems
+        navigationItems.forEach { item ->
+            NavigationDrawerItem(
+                label = {
+                    Row {
+                        IconButton(onClick = {}) {
+                            Icon(
+                                painter = painterResource(id = item.drawableRes),
+                                contentDescription = stringResource(item.contentDescriptionStrRes)
+                            )
+                        }
+                        Text(
+                            modifier = Modifier.align(Alignment.CenterVertically),
+                            text = stringResource(id = item.labelStrRes)
+                        )
+                    }
+                },
+                selected = item.selected,
+                onClick = { onClickNavItem(item) }
+            )
+            Divider()
+        }
+    }
 }
 
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
-fun MainScreen(
-    viewModel: MainViewModel
+fun MainContent(
+    viewModel: MainViewModel,
+    onClickMenuIcon: () -> Unit
 ) {
     val viewState by viewModel.state.collectAsStateWithLifecycle()
     val composeCoroutineScope = rememberCoroutineScope()
@@ -72,7 +142,7 @@ fun MainScreen(
                 // is not triggered when reference to those callback changes?
                 { viewModel.onClickSearchIcon() },
                 { viewModel.onSearchTextChanged(it) },
-                { viewModel.onClickAccountIcon() }
+                onClickMenuIcon
             )
         },
         floatingActionButton = {
@@ -144,19 +214,24 @@ fun MainScreenAppBar(
     showSearchTextField: Boolean = false,
     onClickSearchIcon: () -> Unit = {},
     onSearchTextChanged: (String) -> Unit = {},
-    onClickAccountIcon: () -> Unit = {}
+    onClickMenuIcon: () -> Unit = {}
 ) {
     TopAppBar(
         modifier = Modifier
             .fillMaxWidth()
             .wrapContentHeight(align = Alignment.Top),
+        navigationIcon = {
+            IconButton(onClick = onClickMenuIcon) {
+                Icon(
+                    imageVector = Icons.Default.Menu,
+                    contentDescription = stringResource(
+                        androidx.compose.ui.R.string.navigation_menu
+                    )
+                )
+            }
+        },
         title = {
             Row (verticalAlignment = Alignment.CenterVertically) {
-                Icon(
-                    painter = painterResource(id = R.drawable.ic_launcher_foreground),
-                    contentDescription = stringResource(id = R.string.image_description_app_logo),
-                    modifier = Modifier.padding(end = 8.dp)
-                )
                 if (showSearchTextField) {
                     SearchTextField(onSearchTextChanged = onSearchTextChanged)
                 } else {
@@ -171,13 +246,31 @@ fun MainScreenAppBar(
                     contentDescription = stringResource(id = R.string.image_description_search)
                 )
             }
-            IconButton(onClick = onClickAccountIcon ) {
-                Icon(
-                    imageVector = Icons.Rounded.AccountCircle,
-                    contentDescription = stringResource(id = R.string.image_description_search)
-                )
-            }
         }
     )
 }
+
+val navigationItems = listOf(
+    NavItem(
+        R.drawable.baseline_account_circle_24,
+        R.string.nav_item_pair,
+        R.string.image_description_account
+    ),
+    NavItem(
+        R.drawable.baseline_pair_parent_24,
+        R.string.nav_item_pair,
+        R.string.image_description_pair
+    )
+)
+
+/**
+ * Date class that represents items in side navigation drawer
+ * TODO: Make NavItem a sealed class
+ */
+data class NavItem(
+    val drawableRes: Int,
+    val contentDescriptionStrRes: Int,
+    val labelStrRes: Int,
+    val selected: Boolean = false
+)
 

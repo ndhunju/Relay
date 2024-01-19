@@ -4,6 +4,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.ViewModelProvider.AndroidViewModelFactory.Companion.APPLICATION_KEY
 import androidx.lifecycle.viewmodel.CreationExtras
+import com.ndhunju.relay.ui.MainViewModel
 import com.ndhunju.relay.ui.account.AccountViewModel
 import com.ndhunju.relay.util.CurrentUser
 
@@ -22,8 +23,8 @@ val RelayViewModelFactory: ViewModelProvider.Factory = object : ViewModelProvide
         val userSettingsPersistService = application.appComponent.userSettingsPersistService()
         with(modelClass) {
             return when {
-                isAssignableFrom(RelaySmsViewModel::class.java) -> {
-                    RelaySmsViewModel(repository, smsRepository, cloudDatabaseService) as T
+                isAssignableFrom(MainViewModel::class.java) -> {
+                    MainViewModel(repository, smsRepository, cloudDatabaseService) as T
                 }
                 isAssignableFrom(AccountViewModel::class.java) -> {
                     AccountViewModel(

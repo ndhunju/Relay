@@ -8,6 +8,7 @@ import androidx.compose.ui.unit.dp
 data class Dimensions(
     val contentPaddingHorizontal: Dp = 16.dp,
     val itemPaddingVertical: Dp,
+    val dividerHeight: Dp = 1.dp
 )
 
 val CompactDimensions = Dimensions(
@@ -22,6 +23,7 @@ val Sw600Dimensions = Dimensions(
 val Sw840Dimensions = Dimensions(
     contentPaddingHorizontal = 32.dp,
     itemPaddingVertical = 32.dp,
+    dividerHeight = 2.dp
 )
 
 

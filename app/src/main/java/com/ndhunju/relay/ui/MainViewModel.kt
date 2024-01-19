@@ -45,6 +45,10 @@ class MainViewModel(
     var onClickMessage: (Message) -> Unit = {}
     var onClickGrantPermission = {}
 
+    val onClickNavItem: (NavItem) -> Unit = {
+        // TODO: Implement this
+    }
+
     var onAllPermissionGranted = {
         // All permissions granted
         viewModelScope.launch { updateLastMessagesWithCorrectSyncStatus() }
