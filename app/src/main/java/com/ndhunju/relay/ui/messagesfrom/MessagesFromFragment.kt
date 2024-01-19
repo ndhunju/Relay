@@ -21,7 +21,7 @@ import androidx.compose.ui.unit.dp
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import com.ndhunju.relay.RelaySmsViewModel
+import com.ndhunju.relay.ui.MainViewModel
 import com.ndhunju.relay.RelayViewModelFactory
 import com.ndhunju.relay.ui.theme.RelayTheme
 
@@ -37,7 +37,7 @@ class MessagesFromFragment : Fragment() {
 
     private var threadId: String? = null
     private var senderAddress: String? = null
-    private val relaySmsViewModel: RelaySmsViewModel by viewModels { RelayViewModelFactory }
+    private val mainViewModel: MainViewModel by viewModels { RelayViewModelFactory }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -47,7 +47,7 @@ class MessagesFromFragment : Fragment() {
         }
 
         // Make async call to get the data here
-        threadId?.let { relaySmsViewModel.getSmsByThreadId(it) }
+        threadId?.let { mainViewModel.getSmsByThreadId(it) }
     }
 
     override fun onCreateView(
@@ -58,7 +58,7 @@ class MessagesFromFragment : Fragment() {
         return ComposeView(requireContext()).apply {
             setContent {
                 RelayTheme {
-                    val uiState = relaySmsViewModel.messageFromUiState.collectAsStateWithLifecycle()
+                    val uiState = mainViewModel.messageFromUiState.collectAsStateWithLifecycle()
                     // This coroutine is bound to the lifecycle of the enclosing compose
                     //val composeCoroutine = rememberCoroutineScope()
                     if (uiState.value.isLoading.value) {

@@ -1,4 +1,4 @@
-package com.ndhunju.relay
+package com.ndhunju.relay.ui
 
 import android.Manifest.permission.READ_SMS
 import android.app.AlertDialog
@@ -17,6 +17,8 @@ import androidx.compose.material3.Surface
 import androidx.compose.ui.Modifier
 import androidx.core.app.ActivityCompat.shouldShowRequestPermissionRationale
 import androidx.fragment.app.FragmentActivity
+import com.ndhunju.relay.R
+import com.ndhunju.relay.RelayViewModelFactory
 import com.ndhunju.relay.ui.account.AccountFragment
 import com.ndhunju.relay.ui.messagesfrom.MessagesFromFragment
 import com.ndhunju.relay.ui.theme.RelayTheme
@@ -27,7 +29,7 @@ import com.ndhunju.relay.util.requestPermission
 class MainActivity : FragmentActivity() {
 
     // Member Variables
-    val viewModel: RelaySmsViewModel by viewModels { RelayViewModelFactory }
+    val viewModel: MainViewModel by viewModels { RelayViewModelFactory }
 
     private val requestPermissionLauncher = registerForActivityResult(
         ActivityResultContracts.RequestMultiplePermissions()
@@ -54,7 +56,7 @@ class MainActivity : FragmentActivity() {
                     modifier = Modifier.fillMaxSize(),
                     color = MaterialTheme.colorScheme.background
                 ) {
-                    RelaySmsAppScreen(viewModel)
+                    MainScreen(viewModel)
                 }
             }
         }

@@ -1,4 +1,4 @@
-package com.ndhunju.relay
+package com.ndhunju.relay.ui
 
 import android.telephony.SmsMessage
 import androidx.compose.runtime.MutableState
@@ -18,16 +18,16 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
 
-class RelaySmsViewModel(
+class MainViewModel(
     private val deviceSmsReaderService: DeviceSmsReaderService,
     private val smsInfoRepository: SmsInfoRepository,
     private val apiInterface: ApiInterface
 ): ViewModel() {
 
-    private var _state = MutableStateFlow(RelaySmsAppUiState())
+    private var _state = MutableStateFlow(MainScreenUiState())
     private var _messageFromUiState = MutableStateFlow(MessageFromUiState())
 
-    val state: StateFlow<RelaySmsAppUiState>
+    val state: StateFlow<MainScreenUiState>
         get() { return _state }
 
     /**
@@ -127,7 +127,7 @@ class RelaySmsViewModel(
     }
 
     /**
-     * Updates the [RelaySmsAppUiState.lastMessageList] stored in [_state] with
+     * Updates the [MainScreenUiState.lastMessageList] stored in [_state] with
      * correct value for [Message.syncStatus]
      */
     private suspend fun updateLastMessagesWithCorrectSyncStatus() {
@@ -147,12 +147,12 @@ class RelaySmsViewModel(
 }
 
 /**
- * Data class representing state of [RelaySmsAppScreen]
+ * Data class representing state of [MainScreen]
  * @Note The compiler only uses the properties defined inside the primary constructor for the
  * automatically generated functions. The compiler excludes properties declared inside the
  * class body from the generated implementations.
  */
-data class RelaySmsAppUiState(
+data class MainScreenUiState(
     private var lastMessageForEachThread: List<Message> = emptyList()
 ) {
     var lastMessageList = mutableStateListOf<Message>()

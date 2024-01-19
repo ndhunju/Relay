@@ -1,4 +1,4 @@
-package com.ndhunju.relay
+package com.ndhunju.relay.ui
 
 import androidx.compose.animation.core.tween
 import androidx.compose.foundation.ExperimentalFoundationApi
@@ -37,6 +37,7 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import com.ndhunju.relay.R
 import com.ndhunju.relay.ui.custom.SearchTextField
 import com.ndhunju.relay.ui.messages.Message
 import com.ndhunju.relay.ui.messages.MessageListItem
@@ -45,7 +46,7 @@ import kotlinx.coroutines.launch
 
 @Preview
 @Composable
-fun RelaySmsAppPreview() {
+fun MainScreenPreview() {
 //    val viewModel = RelaySmsViewModel(RelayRepository(LocalContext.current))
 //    viewModel.state.value.showErrorMessageForPermissionDenied = true
 //    RelaySmsApp(viewModel)
@@ -53,8 +54,8 @@ fun RelaySmsAppPreview() {
 
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
-fun RelaySmsAppScreen(
-    viewModel: RelaySmsViewModel
+fun MainScreen(
+    viewModel: MainViewModel
 ) {
     val viewState by viewModel.state.collectAsStateWithLifecycle()
     val composeCoroutineScope = rememberCoroutineScope()
@@ -65,7 +66,7 @@ fun RelaySmsAppScreen(
     val showScrollToTopButton by remember { derivedStateOf { state.firstVisibleItemIndex > 0 } }
     Scaffold(
         topBar = {
-            RelaySmsAppBar(
+            MainScreenAppBar(
                 viewState.showSearchTextField,
                 // Put all callbacks inside lambda so that recomposition
                 // is not triggered when reference to those callback changes?
@@ -139,7 +140,7 @@ fun RelaySmsAppScreen(
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun RelaySmsAppBar(
+fun MainScreenAppBar(
     showSearchTextField: Boolean = false,
     onClickSearchIcon: () -> Unit = {},
     onSearchTextChanged: (String) -> Unit = {},
