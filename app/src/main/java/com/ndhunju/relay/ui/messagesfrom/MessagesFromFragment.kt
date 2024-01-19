@@ -5,6 +5,11 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.core.FastOutLinearInEasing
+import androidx.compose.animation.core.LinearOutSlowInEasing
+import androidx.compose.animation.core.tween
+import androidx.compose.animation.slideInHorizontally
+import androidx.compose.animation.slideOutHorizontally
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.wrapContentSize
@@ -65,15 +70,31 @@ class MessagesFromFragment : Fragment() {
                                     .size(32.dp)
                             )
                         }
-                    } else {
-                        AnimatedVisibility(visible = uiState.value.isLoading.value.not()) {
-                            MessagesFromView(
-                                senderAddress,
-                                uiState.value.messagesInThread,
-                                // TODO: Nikesh - Implement proper nav controller
-                                onBackPressed = { parentFragmentManager.popBackStack() }
+                    }
+
+                    AnimatedVisibility(
+                        visible = uiState.value.isLoading.value.not(),
+                        enter = slideInHorizontally(
+                            initialOffsetX = { fullWidth -> fullWidth },
+                            animationSpec = tween(
+                                durationMillis = 150,
+                                easing = LinearOutSlowInEasing
                             )
-                        }
+                        ),
+                        exit = slideOutHorizontally(
+                            targetOffsetX = { fullWidth -> fullWidth },
+                            animationSpec = tween(
+                                durationMillis = 250,
+                                easing = FastOutLinearInEasing
+                            )
+                        )
+                    ) {
+                        MessagesFromView(
+                            senderAddress,
+                            uiState.value.messagesInThread,
+                            // TODO: Nikesh - Implement proper nav controller
+                            onBackPressed = { parentFragmentManager.popBackStack() }
+                        )
                     }
                 }
             }
