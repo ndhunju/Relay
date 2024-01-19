@@ -1,4 +1,4 @@
-package com.ndhunju.relay
+package com.ndhunju.relay.di
 
 import com.ndhunju.relay.data.RelayRepository
 import com.ndhunju.relay.data.SmsInfoRepository

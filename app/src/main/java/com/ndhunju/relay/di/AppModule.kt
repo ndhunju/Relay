@@ -1,10 +1,11 @@
-package com.ndhunju.relay
+package com.ndhunju.relay.di
 
 import android.app.Application
 import android.content.Context
 import androidx.security.crypto.EncryptedSharedPreferences
 import com.google.gson.Gson
 import com.google.gson.GsonBuilder
+import com.ndhunju.relay.RelayApplication
 import com.ndhunju.relay.data.OfflineSmsInfoRepository
 import com.ndhunju.relay.data.MainDatabase
 import com.ndhunju.relay.data.SmsInfoRepository

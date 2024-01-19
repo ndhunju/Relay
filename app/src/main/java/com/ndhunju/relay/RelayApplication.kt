@@ -1,6 +1,9 @@
 package com.ndhunju.relay
 
 import android.app.Application
+import com.ndhunju.relay.di.AndroidAppModule
+import com.ndhunju.relay.di.AppComponent
+import com.ndhunju.relay.di.AppModule
 import com.ndhunju.relay.util.CurrentUser
 import com.ndhunju.relay.util.User
 
