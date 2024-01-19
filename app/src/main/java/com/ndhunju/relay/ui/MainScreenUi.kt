@@ -68,7 +68,10 @@ fun MainScreen(viewModel: MainViewModel) {
 
     ModalNavigationDrawer(
         drawerState = drawerState,
-        drawerContent = { MainDrawerContent(navigationItems, viewModel.onClickNavItem) }
+        drawerContent = { MainDrawerContent(navigationItems) {
+            viewModel.onClickNavItem(it)
+            coroutineScope.launch { drawerState.close() }
+        }}
     ) {
         MainContent(viewModel = viewModel, onClickMenuIcon = {
             coroutineScope.launch { drawerState.open() }
@@ -251,26 +254,29 @@ fun MainScreenAppBar(
 }
 
 val navigationItems = listOf(
-    NavItem(
-        R.drawable.baseline_account_circle_24,
-        R.string.nav_item_pair,
-        R.string.image_description_account
-    ),
-    NavItem(
-        R.drawable.baseline_pair_parent_24,
-        R.string.nav_item_pair,
-        R.string.image_description_pair
-    )
+    NavItem.AccountNavItem,
+    NavItem.PairNavItem
 )
 
 /**
  * Date class that represents items in side navigation drawer
- * TODO: Make NavItem a sealed class
  */
-data class NavItem(
+sealed class NavItem(
     val drawableRes: Int,
     val contentDescriptionStrRes: Int,
     val labelStrRes: Int,
     val selected: Boolean = false
-)
+) {
+    data object AccountNavItem: NavItem(
+        R.drawable.baseline_account_circle_24,
+        R.string.nav_item_pair,
+        R.string.image_description_account
+    )
+
+    data object PairNavItem: NavItem(
+        R.drawable.baseline_pair_parent_24,
+        R.string.nav_item_pair,
+        R.string.image_description_pair
+    )
+}
 

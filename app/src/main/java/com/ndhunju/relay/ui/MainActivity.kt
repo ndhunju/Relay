@@ -21,6 +21,7 @@ import com.ndhunju.relay.R
 import com.ndhunju.relay.RelayViewModelFactory
 import com.ndhunju.relay.ui.account.AccountFragment
 import com.ndhunju.relay.ui.messagesfrom.MessagesFromFragment
+import com.ndhunju.relay.ui.pair.PairWithParentFragment
 import com.ndhunju.relay.ui.theme.RelayTheme
 import com.ndhunju.relay.util.areNeededPermissionGranted
 import com.ndhunju.relay.util.checkIfPermissionGranted
@@ -61,11 +62,22 @@ class MainActivity : FragmentActivity() {
             }
         }
 
-        viewModel.onClickGrantPermission = {
+        viewModel.doRequestPermission = {
             requestPermission(requestPermissionLauncher)
         }
 
-        viewModel.onClickMessage = { message ->
+        viewModel.doOpenPairWithParentFragment = {
+            supportFragmentManager.beginTransaction()
+                .add(
+                    android.R.id.content,
+                    PairWithParentFragment.newInstance(),
+                    PairWithParentFragment.TAG
+                )
+                .addToBackStack(PairWithParentFragment.TAG)
+                .commit()
+        }
+
+        viewModel.doOpenMessageFromFragment = { message ->
             // Open MessagesFromFragment
             supportFragmentManager.beginTransaction()
                 .add(
@@ -77,7 +89,7 @@ class MainActivity : FragmentActivity() {
                 .commit()
         }
 
-        viewModel.onClickAccountIcon = {
+        viewModel.doOpenAccountFragment = {
             supportFragmentManager.beginTransaction()
                 .add(
                     android.R.id.content,

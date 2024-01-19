@@ -13,7 +13,10 @@ import com.ndhunju.relay.service.DeviceSmsReaderService
 import com.ndhunju.relay.data.SmsInfo
 import com.ndhunju.relay.data.SmsInfoRepository
 import com.ndhunju.relay.api.ApiInterface
+import com.ndhunju.relay.ui.account.AccountFragment
 import com.ndhunju.relay.ui.messages.Message
+import com.ndhunju.relay.ui.messagesfrom.MessagesFromFragment
+import com.ndhunju.relay.ui.pair.PairWithParentFragment
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
@@ -31,32 +34,56 @@ class MainViewModel(
         get() { return _state }
 
     /**
-     * Represents UI state of [com.ndhunju.relay.ui.messagesfrom.MessagesFromFragment]
+     * Represents UI state of [MessagesFromFragment]
      */
     val messageFromUiState: StateFlow<MessageFromUiState>
         get() {return _messageFromUiState}
 
+    // UI Events
     var onClickSearchIcon = {
         _state.value.showSearchTextField = !_state.value.showSearchTextField
     }
 
-    var onSearchTextChanged: (String) -> Unit = {}
-    var onClickAccountIcon = {}
-    var onClickMessage: (Message) -> Unit = {}
-    var onClickGrantPermission = {}
+    val onSearchTextChanged: (String) -> Unit = {}
+    val onClickAccountIcon = { doOpenAccountFragment?.invoke() }
+    val onClickMessage: (Message) -> Unit = { doOpenMessageFromFragment?.invoke(it) }
+    val onClickGrantPermission = { doRequestPermission?.invoke() }
 
-    val onClickNavItem: (NavItem) -> Unit = {
-        // TODO: Implement this
+    val onClickNavItem: (NavItem) -> Unit = { navItem ->
+        when (navItem) {
+            NavItem.AccountNavItem -> onClickAccountIcon()
+            NavItem.PairNavItem -> doOpenPairWithParentFragment?.invoke()
+        }
     }
 
-    var onAllPermissionGranted = {
+    /**
+     * Invoked when [MessagesFromFragment] needs to be opened
+     */
+    var doOpenMessageFromFragment: ((Message) -> Unit)? = null
+
+    /**
+     * Invoked when [PairWithParentFragment] needs to be opened
+     */
+    var doOpenPairWithParentFragment: (() -> Unit)? = null
+
+    /**
+     * Invoked when [AccountFragment] needs to be opened
+     */
+    var doOpenAccountFragment: (() -> Unit)? = null
+
+    /**
+     * Invoked when app needs user permissions
+     */
+    var doRequestPermission: (() -> Unit)? = null
+
+    val onAllPermissionGranted = {
         // All permissions granted
         viewModelScope.launch { updateLastMessagesWithCorrectSyncStatus() }
         // Reset this value in case it was set to true earlier
         state.value.showErrorMessageForPermissionDenied = false
     }
 
-    var onNewSmsReceived: (SmsMessage) -> Unit = { smsMessage ->
+    val onNewSmsReceived: (SmsMessage) -> Unit = { smsMessage ->
 
         // Update the UI to the the latest SMS
         viewModelScope.launch {
