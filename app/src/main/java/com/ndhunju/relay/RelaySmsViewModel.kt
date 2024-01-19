@@ -9,7 +9,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.runtime.snapshots.SnapshotStateList
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.ndhunju.relay.data.RelayRepository
+import com.ndhunju.relay.data.DeviceSmsReaderService
 import com.ndhunju.relay.data.SmsInfo
 import com.ndhunju.relay.data.SmsInfoRepository
 import com.ndhunju.relay.service.CloudDatabaseService
@@ -19,7 +19,7 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
 
 class RelaySmsViewModel(
-    private val relayRepository: RelayRepository,
+    private val deviceSmsReaderService: DeviceSmsReaderService,
     private val smsInfoRepository: SmsInfoRepository,
     private val cloudDatabaseService: CloudDatabaseService
 ): ViewModel() {
@@ -58,7 +58,7 @@ class RelaySmsViewModel(
         viewModelScope.launch {
 
             // Based on smsMessage, retrieve all info about this message from the database
-            val messageFromAndroidDb = relayRepository.getMessageByAddressAndBody(
+            val messageFromAndroidDb = deviceSmsReaderService.getMessageByAddressAndBody(
                 // We tried to use combination of timestamp and address
                 // but turns out smsMessage.timestampMillis is different
                 // that time stamp in the sms column for the same sms
@@ -112,7 +112,7 @@ class RelaySmsViewModel(
     fun getSmsByThreadId(threadId: String) {
         viewModelScope.launch {
             _messageFromUiState.value.isLoading.value = true
-            val messages = relayRepository.getSmsByThreadId(threadId)
+            val messages = deviceSmsReaderService.getSmsByThreadId(threadId)
             // Populate the syncStatus of each message based on info stored in local database
             smsInfoRepository.getSmsInfoForEachIdInAndroidDb(
                 messages.map { message -> message.idInAndroidDb }
@@ -132,7 +132,7 @@ class RelaySmsViewModel(
      */
     private suspend fun updateLastMessagesWithCorrectSyncStatus() {
         // Update syncStatus info of Last Message with info available in database
-        val lastMessages = relayRepository.getLastMessageForEachThread()
+        val lastMessages = deviceSmsReaderService.getLastMessageForEachThread()
         val smsInfoForLastMessages = smsInfoRepository.getSmsInfoForEachIdInAndroidDb(
             lastMessages.map { msg -> msg.idInAndroidDb }
         )

@@ -1,6 +1,6 @@
 package com.ndhunju.relay.di
 
-import com.ndhunju.relay.data.RelayRepository
+import com.ndhunju.relay.data.DeviceSmsReaderService
 import com.ndhunju.relay.data.SmsInfoRepository
 import com.ndhunju.relay.service.CloudDatabaseService
 import com.ndhunju.relay.service.UserSettingsPersistService
@@ -16,7 +16,7 @@ interface AppComponent {
 
     // The return type of functions inside the component interface is
     // what can be provided from the container
-    fun relayRepository(): RelayRepository
+    fun deviceSmsReaderService(): DeviceSmsReaderService
 
     fun cloudDatabaseService(): CloudDatabaseService
 

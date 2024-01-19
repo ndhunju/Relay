@@ -9,10 +9,14 @@ import com.ndhunju.relay.util.getStringForColumn
 import javax.inject.Inject
 import javax.inject.Singleton
 
-@Singleton
-class RelayRepository @Inject constructor(private val context: Context) {
+private val TAG = DeviceSmsReaderService::class.simpleName
 
-    private val TAG = RelayRepository::class.simpleName
+/**
+ * This class provides API to read SMS messages stored on the device in different ways.
+ */
+@Singleton
+class DeviceSmsReaderService @Inject constructor(private val context: Context) {
+
     private val smsUri = Uri.parse("content://sms")
 
     /**
