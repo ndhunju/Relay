@@ -1,4 +1,4 @@
-package com.ndhunju.relay.data
+package com.ndhunju.relay.service
 
 import android.content.Context
 import android.database.Cursor

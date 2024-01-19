@@ -1,6 +1,6 @@
 package com.ndhunju.relay.di
 
-import com.ndhunju.relay.data.DeviceSmsReaderService
+import com.ndhunju.relay.service.DeviceSmsReaderService
 import com.ndhunju.relay.data.SmsInfoRepository
 import com.ndhunju.relay.api.ApiInterface
 import com.ndhunju.relay.service.UserSettingsPersistService
