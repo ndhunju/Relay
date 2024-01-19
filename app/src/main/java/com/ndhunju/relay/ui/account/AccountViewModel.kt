@@ -7,7 +7,7 @@ import androidx.core.util.PatternsCompat
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.ndhunju.relay.R
-import com.ndhunju.relay.service.CloudDatabaseService
+import com.ndhunju.relay.service.ApiInterface
 import com.ndhunju.relay.service.Result
 import com.ndhunju.relay.service.UserSettingsPersistService
 import com.ndhunju.relay.util.CurrentUser
@@ -21,7 +21,7 @@ import kotlinx.coroutines.launch
 import java.lang.RuntimeException
 
 class AccountViewModel(
-    private val cloudDatabaseService: CloudDatabaseService,
+    private val apiInterface: ApiInterface,
     private val userSettingsPersistService: UserSettingsPersistService,
     private var user: User
 ): ViewModel() {
@@ -121,7 +121,7 @@ class AccountViewModel(
      * Creates new user in the server or cloud database
      */
     private suspend fun createNewUserInServer() {
-        cloudDatabaseService.createUser(
+        apiInterface.createUser(
             name = name.value,
             email = email.value,
             phone = phone.value
@@ -153,7 +153,7 @@ class AccountViewModel(
      * Pushes updates in [user] to the server or cloud database
      */
     private suspend fun pushUserUpdatesToServer() {
-        cloudDatabaseService.updateUser(
+        apiInterface.updateUser(
             name = name.value,
             phone = phone.value
         ).collect { result ->

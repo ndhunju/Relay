@@ -9,6 +9,8 @@ import com.ndhunju.relay.RelayApplication
 import com.ndhunju.relay.data.OfflineSmsInfoRepository
 import com.ndhunju.relay.data.MainDatabase
 import com.ndhunju.relay.data.SmsInfoRepository
+import com.ndhunju.relay.service.ApiInterface
+import com.ndhunju.relay.service.ApiInterfaceFireStoreImpl
 import com.ndhunju.relay.service.UserSettingsPersistService
 import com.ndhunju.relay.service.UserSettingsPersistServiceSharedPreferenceImpl
 import com.ndhunju.relay.util.CurrentUser
@@ -38,6 +40,12 @@ class AppModule(private val application: Application) {
     @Provides
     @Singleton
     fun providesCurrentUser(): CurrentUser = CurrentUser
+
+    @Provides
+    @Singleton
+    fun providesApiInterface(): ApiInterface {
+        return ApiInterfaceFireStoreImpl(providesGson(), providesCurrentUser())
+    }
 
     @Provides
     @Singleton

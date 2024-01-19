@@ -17,7 +17,7 @@ val RelayViewModelFactory: ViewModelProvider.Factory = object : ViewModelProvide
         // Get the Application object from extras
         val application = checkNotNull(extras[APPLICATION_KEY]) as RelayApplication
         val repository = application.appComponent.deviceSmsReaderService()
-        val cloudDatabaseService = application.appComponent.cloudDatabaseService()
+        val cloudDatabaseService = application.appComponent.apiInterface()
         val smsRepository = application.appComponent.smsInfoRepository()
         val userSettingsPersistService = application.appComponent.userSettingsPersistService()
         with(modelClass) {

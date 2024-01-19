@@ -7,22 +7,55 @@ import com.google.firebase.ktx.Firebase
 import com.google.gson.Gson
 import com.ndhunju.relay.ui.messages.Message
 import com.ndhunju.relay.util.CurrentUser
+import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
-import javax.inject.Inject
-import javax.inject.Singleton
 
 /**
- * Provides API to store and read data from Cloud Database.
- * We could extract Interface out of this class if need be.
+ * Abstracts the API that allows interaction with some kind of BE server
  */
-@Singleton
-class CloudDatabaseService @Inject constructor(
+interface ApiInterface {
+
+    /**
+     * Makes API request to create user.
+     */
+    fun createUser(
+        name: String? = null,
+        email: String? = null,
+        phone: String? = null,
+        deviceId: String? = null,
+        pushNotificationToken: String? = null,
+    ): StateFlow<Result>
+
+    /**
+     * Makes API requests to update the user. If null is passed, don't update that value.
+     * Only the non-null value must be updated in the server
+     */
+    fun updateUser(name: String? = null, phone: String? = null, ): StateFlow<Result>
+
+
+    /**
+     * Makes API request to pair [childUserId] with a
+     * parent user whose email is [parentEmailAddress]
+     */
+    fun pairWithParent(childUserId: String, parentEmailAddress: String): Flow<Result>
+
+    /**
+     * Pushes [message] to the server.
+     */
+    fun pushMessage(message: Message): StateFlow<Result>
+
+}
+
+private val TAG = ApiInterfaceFireStoreImpl::class.simpleName
+
+/**
+ * Implements [ApiInterface] using [Firebase.firestore]
+ */
+class ApiInterfaceFireStoreImpl(
     private val gson: Gson,
     private val currentUser: CurrentUser
-) {
-
-    private val TAG = CloudDatabaseService::class.simpleName
+) : ApiInterface {
 
     private var userId: String?
         get() {
@@ -36,16 +69,17 @@ class CloudDatabaseService @Inject constructor(
      * Creates user in the cloud database.
      * TODO: Nikesh - Use third party Identity Provider to authenticate and create user
      */
-    fun createUser(
-        name: String? = null,
-        email: String? = null,
-        phone: String? = null,
-        deviceId: String? = null,
-        pushNotificationToken: String? = null,
+    override fun createUser(
+        name: String?,
+        email: String?,
+        phone: String?,
+        deviceId: String?,
+        pushNotificationToken: String?,
     ): StateFlow<Result> {
         val flow = MutableStateFlow<Result>(Result.Pending)
         val newUser = makeMapForUserCollection(name, email, phone, deviceId, pushNotificationToken)
 
+        // TODO: Nikesh - Check for duplicate user email before creating new account
         getUserCollection().add(newUser)
             .addOnSuccessListener { documentRef ->
                 val docId = documentRef.id
@@ -63,17 +97,21 @@ class CloudDatabaseService @Inject constructor(
     /**
      * Updates user in cloud database
      */
-    fun updateUser(
-        name: String? = currentUser.user.name,
-        phone: String? = currentUser.user.phone,
+    override fun updateUser(
+        name: String?,
+        phone: String?,
     ): StateFlow<Result> {
         val stateFlow = MutableStateFlow<Result>(Result.Pending)
         val userId = currentUser.user.id ?: return stateFlow.apply {
             value = Result.Failure("User Id is null")
         }
 
+        // If null is passed, use existing values
+        val finalName = name ?: currentUser.user.name
+        val finalPhone = phone ?: currentUser.user.phone
+
         getUserCollection().document(userId).update(
-            makeMapForUserCollection(name = name, phone = phone).toMap()
+            makeMapForUserCollection(name = finalName, phone = finalPhone).toMap()
         ).addOnSuccessListener {
             stateFlow.value = Result.Success()
         }.addOnFailureListener {
@@ -90,6 +128,10 @@ class CloudDatabaseService @Inject constructor(
     private fun getUserCollection(): CollectionReference {
         val database = Firebase.firestore
         return database.collection("User")
+    }
+
+    private fun getParentChildCollection(): CollectionReference {
+        return Firebase.firestore.collection("ParentChild")
     }
 
     /**
@@ -114,16 +156,19 @@ class CloudDatabaseService @Inject constructor(
         it.value?.isNotEmpty() == true
     }
 
+    override fun pairWithParent(childUserId: String, parentEmailAddress: String): Flow<Result> {
+        val flow = MutableStateFlow<Result>(Result.Pending)
+        return flow
+    }
+
     /**
-     * Pushes [message] to the cloud database. Pass [resultStateFlow] if
-     * you want [Result] to be emitted to it
+     * Pushes [message] to the cloud database.
      */
-    fun pushMessage(
-        message: Message,
-        resultStateFlow: MutableStateFlow<Result>? = null
+    override fun pushMessage(
+        message: Message
     ): StateFlow<Result> {
 
-        val stateFlow = resultStateFlow ?: MutableStateFlow<Result>(Result.Pending)
+        val stateFlow = MutableStateFlow<Result>(Result.Pending)
 
         if (currentUser.isUserSignedIn().not()) {
             stateFlow.value = Result.Failure("User is not signed in.")

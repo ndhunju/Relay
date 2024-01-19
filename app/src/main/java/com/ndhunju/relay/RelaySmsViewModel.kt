@@ -12,7 +12,7 @@ import androidx.lifecycle.viewModelScope
 import com.ndhunju.relay.data.DeviceSmsReaderService
 import com.ndhunju.relay.data.SmsInfo
 import com.ndhunju.relay.data.SmsInfoRepository
-import com.ndhunju.relay.service.CloudDatabaseService
+import com.ndhunju.relay.service.ApiInterface
 import com.ndhunju.relay.ui.messages.Message
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -21,7 +21,7 @@ import kotlinx.coroutines.launch
 class RelaySmsViewModel(
     private val deviceSmsReaderService: DeviceSmsReaderService,
     private val smsInfoRepository: SmsInfoRepository,
-    private val cloudDatabaseService: CloudDatabaseService
+    private val apiInterface: ApiInterface
 ): ViewModel() {
 
     private var _state = MutableStateFlow(RelaySmsAppUiState())
@@ -92,7 +92,7 @@ class RelaySmsViewModel(
             }
 
             // Push new message to the cloud database
-            cloudDatabaseService.pushMessage(messageFromAndroidDb).collect { result ->
+            apiInterface.pushMessage(messageFromAndroidDb).collect { result ->
                 // Update the sync status in the local DB
                 smsInfoRepository.updateSmsInfo(smsInfoToInsert.copy(
                     id = idOfInsertedSmsInfo,
