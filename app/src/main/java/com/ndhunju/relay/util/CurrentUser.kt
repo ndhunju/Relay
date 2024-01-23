@@ -6,12 +6,12 @@ package com.ndhunju.relay.util
 object CurrentUser {
     var user: User = User()
     fun isUserSignedIn(): Boolean {
-        return user.isRegistered && user.id != null && user.id?.isNotEmpty() == true
+        return user.isRegistered && user.id.isNotEmpty()
     }
 }
 
 data class User(
-    val id: String? = null,
+    val id: String = "",
     val email: String? = null,
     val name: String? = null,
     val phone: String? = null,

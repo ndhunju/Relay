@@ -6,6 +6,7 @@ import androidx.lifecycle.ViewModelProvider.AndroidViewModelFactory.Companion.AP
 import androidx.lifecycle.viewmodel.CreationExtras
 import com.ndhunju.relay.ui.MainViewModel
 import com.ndhunju.relay.ui.account.AccountViewModel
+import com.ndhunju.relay.ui.pair.PairWithParentViewModel
 import com.ndhunju.relay.util.CurrentUser
 
 val RelayViewModelFactory: ViewModelProvider.Factory = object : ViewModelProvider.Factory {
@@ -17,21 +18,24 @@ val RelayViewModelFactory: ViewModelProvider.Factory = object : ViewModelProvide
     ): T {
         // Get the Application object from extras
         val application = checkNotNull(extras[APPLICATION_KEY]) as RelayApplication
-        val repository = application.appComponent.deviceSmsReaderService()
-        val cloudDatabaseService = application.appComponent.apiInterface()
-        val smsRepository = application.appComponent.smsInfoRepository()
+        val deviceSmsReaderService = application.appComponent.deviceSmsReaderService()
+        val apiInterface = application.appComponent.apiInterface()
+        val smsInfoRepository = application.appComponent.smsInfoRepository()
         val userSettingsPersistService = application.appComponent.userSettingsPersistService()
         with(modelClass) {
             return when {
                 isAssignableFrom(MainViewModel::class.java) -> {
-                    MainViewModel(repository, smsRepository, cloudDatabaseService) as T
+                    MainViewModel(deviceSmsReaderService, smsInfoRepository, apiInterface) as T
                 }
                 isAssignableFrom(AccountViewModel::class.java) -> {
                     AccountViewModel(
-                        cloudDatabaseService,
+                        apiInterface,
                         userSettingsPersistService,
                         CurrentUser.user
                     ) as T
+                }
+                isAssignableFrom(PairWithParentViewModel::class.java) -> {
+                    PairWithParentViewModel(apiInterface, CurrentUser.user) as T
                 }
                 else -> throw IllegalArgumentException(
                     "Unknown ViewModel class: ${modelClass.name}"

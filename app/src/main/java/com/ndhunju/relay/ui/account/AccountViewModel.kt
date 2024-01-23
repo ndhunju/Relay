@@ -16,6 +16,7 @@ import com.ndhunju.relay.util.combine
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.launch
 import java.lang.RuntimeException
@@ -28,7 +29,7 @@ class AccountViewModel(
 
     private val _state = MutableStateFlow(AccountScreenUiState())
     val state: StateFlow<AccountScreenUiState>
-        get() { return _state }
+        get() { return _state.asStateFlow() }
 
     private val email = MutableStateFlow(user.email)
     private val name = MutableStateFlow(user.name)

@@ -21,13 +21,19 @@ class ApiInterfaceFireStoreImpl(
     private val currentUser: CurrentUser
 ) : ApiInterface {
 
-    private var userId: String?
+    private var userId: String
         get() {
            return CurrentUser.user.id
         }
         set(value) {
             CurrentUser.user = CurrentUser.user.copy(id = value)
         }
+
+    /**
+     * Holds [CollectionReference] for "User" collection
+     */
+    private val userCollectionRef = Firebase.firestore.collection("User")
+    private val parentChildCollectionRef = Firebase.firestore.collection("ParentChild")
 
     /**
      * Creates user in the cloud database.
@@ -44,7 +50,7 @@ class ApiInterfaceFireStoreImpl(
         val newUser = makeMapForUserCollection(name, email, phone, deviceId, pushNotificationToken)
 
         // TODO: Nikesh - Check for duplicate user email before creating new account
-        getUserCollection().add(newUser)
+        userCollectionRef.add(newUser)
             .addOnSuccessListener { documentRef ->
                 val docId = documentRef.id
                 userId = docId //
@@ -66,15 +72,13 @@ class ApiInterfaceFireStoreImpl(
         phone: String?,
     ): StateFlow<Result> {
         val stateFlow = MutableStateFlow<Result>(Result.Pending)
-        val userId = CurrentUser.user.id ?: return stateFlow.apply {
-            value = Result.Failure("User Id is null")
-        }
+        val userId = CurrentUser.user.id
 
         // If null is passed, use existing values
         val finalName = name ?: CurrentUser.user.name
         val finalPhone = phone ?: CurrentUser.user.phone
 
-        getUserCollection().document(userId).update(
+        userCollectionRef.document(userId).update(
             makeMapForUserCollection(name = finalName, phone = finalPhone).toMap()
         ).addOnSuccessListener {
             stateFlow.value = Result.Success()
@@ -84,18 +88,6 @@ class ApiInterfaceFireStoreImpl(
         }
 
         return stateFlow
-    }
-
-    /**
-     * Returns [CollectionReference] for "User" collection
-     */
-    private fun getUserCollection(): CollectionReference {
-        val database = Firebase.firestore
-        return database.collection("User")
-    }
-
-    private fun getParentChildCollection(): CollectionReference {
-        return Firebase.firestore.collection("ParentChild")
     }
 
     /**
@@ -139,9 +131,7 @@ class ApiInterfaceFireStoreImpl(
             return stateFlow
         }
 
-        val userId = CurrentUser.user.id ?: return stateFlow.apply {
-            value = Result.Failure("User Id is null")
-        }
+        val userId = CurrentUser.user.id
 
         // Write a message to the database
         val database = Firebase.firestore

@@ -6,6 +6,8 @@
     <string name="image_description_search">Search</string>
     <!-- Image description for account icon -->
     <string name="image_description_account">Account</string>
+    <!-- Image description for pair icon -->
+    <string name="image_description_pair">Pair with Parent</string>
     <!-- Image description for app logo -->
     <string name="image_description_app_logo">App Logo</string>
     <!-- Image description for an icon that indicates where the message has been synced or not  -->
