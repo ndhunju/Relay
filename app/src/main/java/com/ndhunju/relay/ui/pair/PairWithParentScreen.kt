@@ -59,7 +59,7 @@ fun PairWithParentScreen(
                 RelayOutlinedTextField(
                     value = viewModel.parentEmailAddress.collectAsState().value,
                     labelRes = R.string.pair_screen_parent_email_address,
-                    onValueChange = viewModel.onParentEmailAddressChanged,
+                    onValueChange = viewModel::onParentEmailAddressChanged,
                     errorMessage = getString(resId = viewModel.errorMsgResId.collectAsState().value),
                     supportingText = stringResource(
                         R.string.pair_screen_parent_email_address_supporting_text
@@ -67,7 +67,7 @@ fun PairWithParentScreen(
                 )
 
                 ProgressButton(
-                    onClick = viewModel.onClickPair,
+                    onClick = viewModel::onClickPair,
                     labelStrRes = if (viewModel.isPaired.collectAsState().value) {
                         R.string.pair_screen_un_pair
                     } else {

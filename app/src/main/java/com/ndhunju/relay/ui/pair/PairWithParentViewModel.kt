@@ -18,25 +18,28 @@ class PairWithParentViewModel(
     private val userSettingsPersistService: UserSettingsPersistService,
 ): ViewModel() {
 
-    private val _parentEmailAddress = MutableStateFlow("")
+    private val _parentEmailAddress = MutableStateFlow(
+        currentChildUser.user.parentUserEmail ?: ""
+    )
     val parentEmailAddress = _parentEmailAddress.asStateFlow()
 
     private val _showProgress = MutableStateFlow(false)
     val showProgress = _showProgress.asStateFlow()
 
-    val onParentEmailAddressChanged: (String) -> Unit = {
-        _parentEmailAddress.value = it
-    }
-
     private val _errorMsgResId = MutableStateFlow<Int?>(null)
     val errorMsgResId = _errorMsgResId.asStateFlow()
 
-    private val _isPaired = MutableStateFlow(false)
-
+    private val _isPaired = MutableStateFlow(evaluateIsPaired())
     val isPaired = _isPaired.asStateFlow()
 
-    val onClickPair: () -> Unit = {
+    fun onParentEmailAddressChanged(newValue: String) {
+        _parentEmailAddress.value = newValue
+        _isPaired.value = evaluateIsPaired()
+    }
+
+    fun onClickPair() {
         viewModelScope.launch {
+            // TODO: Handle the scenario where "Unpair" button text is shown
             apiInterface.pairWithParent(currentChildUser.user.id, parentEmailAddress.value)
                 .collect { result ->
                     when (result) {
@@ -68,6 +71,13 @@ class PairWithParentViewModel(
                     }
             }
         }
+    }
+
+    /**
+     * Evaluates value of [_isPaired] property
+     */
+    private fun evaluateIsPaired(): Boolean {
+        return _parentEmailAddress.value == currentChildUser.user.parentUserEmail
     }
 
 }
