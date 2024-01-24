@@ -18,6 +18,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
+import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
@@ -62,7 +63,7 @@ fun SyncStatusIcon(syncStatus: Result?, modifier: Modifier = Modifier) {
 @OptIn(ExperimentalMaterial3Api::class)
 fun TopAppBarWithUpButton(title: String?, onUpPressed: (() -> Unit)?) {
     TopAppBar(
-        modifier = Modifier.background(MaterialTheme.colorScheme.background),
+        modifier = Modifier.background(MaterialTheme.colorScheme.background).shadow(6.dp),
         title = {
             Text(
                 text = title ?: "",

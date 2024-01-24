@@ -2,6 +2,7 @@ package com.ndhunju.relay.ui
 
 import com.ndhunju.relay.api.Result
 import com.ndhunju.relay.ui.messages.Message
+import com.ndhunju.relay.ui.parent.Child
 
 val mockMessages = listOf(
     Message(
@@ -32,3 +33,8 @@ val mockMessages = listOf(
         Result.Success()
     )
 )
+
+val mockChildUsers = mutableListOf<Child>().apply {
+    add(Child("0", "emailid1@gmail.com"))
+    add(Child("1", "emailid2@gmail.com"))
+}

@@ -255,7 +255,8 @@ fun MainScreenAppBar(
 
 val navigationItems = listOf(
     NavItem.AccountNavItem,
-    NavItem.PairNavItem
+    NavItem.PairNavItem,
+    NavItem.ChildUsersNavItem
 )
 
 /**
@@ -277,6 +278,12 @@ sealed class NavItem(
         R.drawable.baseline_pair_parent_24,
         R.string.nav_item_pair,
         R.string.image_description_pair
+    )
+
+    data object ChildUsersNavItem: NavItem(
+        R.drawable.baseline_child_users_24,
+        R.string.nav_item_child_user,
+        R.string.nav_item_child_user
     )
 }
 

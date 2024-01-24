@@ -17,6 +17,7 @@ import com.ndhunju.relay.ui.account.AccountFragment
 import com.ndhunju.relay.ui.messages.Message
 import com.ndhunju.relay.ui.messagesfrom.MessagesFromFragment
 import com.ndhunju.relay.ui.pair.PairWithParentFragment
+import com.ndhunju.relay.ui.parent.ChildUserListFragment
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
@@ -53,6 +54,7 @@ class MainViewModel(
         when (navItem) {
             NavItem.AccountNavItem -> onClickAccountIcon()
             NavItem.PairNavItem -> doOpenPairWithParentFragment?.invoke()
+            NavItem.ChildUsersNavItem -> doOpenChildUserFragment?.invoke()
         }
     }
 
@@ -70,6 +72,11 @@ class MainViewModel(
      * Invoked when [AccountFragment] needs to be opened
      */
     var doOpenAccountFragment: (() -> Unit)? = null
+
+    /**
+     * Invoked when [ChildUserListFragment] needs to be opened
+     */
+    var doOpenChildUserFragment: (() -> Unit)? = null
 
     /**
      * Invoked when app needs user permissions

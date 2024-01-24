@@ -7,6 +7,7 @@ import androidx.lifecycle.viewmodel.CreationExtras
 import com.ndhunju.relay.ui.MainViewModel
 import com.ndhunju.relay.ui.account.AccountViewModel
 import com.ndhunju.relay.ui.pair.PairWithParentViewModel
+import com.ndhunju.relay.ui.parent.ChildUserListViewModel
 import com.ndhunju.relay.util.CurrentUser
 
 val RelayViewModelFactory: ViewModelProvider.Factory = object : ViewModelProvider.Factory {
@@ -40,6 +41,9 @@ val RelayViewModelFactory: ViewModelProvider.Factory = object : ViewModelProvide
                         CurrentUser,
                         userSettingsPersistService
                     ) as T
+                }
+                isAssignableFrom(ChildUserListViewModel::class.java) -> {
+                    ChildUserListViewModel() as T
                 }
                 else -> throw IllegalArgumentException(
                     "Unknown ViewModel class: ${modelClass.name}"

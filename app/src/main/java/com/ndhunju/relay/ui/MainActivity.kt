@@ -22,6 +22,7 @@ import com.ndhunju.relay.RelayViewModelFactory
 import com.ndhunju.relay.ui.account.AccountFragment
 import com.ndhunju.relay.ui.messagesfrom.MessagesFromFragment
 import com.ndhunju.relay.ui.pair.PairWithParentFragment
+import com.ndhunju.relay.ui.parent.ChildUserListFragment
 import com.ndhunju.relay.ui.theme.RelayTheme
 import com.ndhunju.relay.util.areNeededPermissionGranted
 import com.ndhunju.relay.util.checkIfPermissionGranted
@@ -97,6 +98,17 @@ class MainActivity : FragmentActivity() {
                     AccountFragment.TAG
                 )
                 .addToBackStack(AccountFragment.TAG)
+                .commit()
+        }
+
+        viewModel.doOpenChildUserFragment = {
+            supportFragmentManager.beginTransaction()
+                .add(
+                    android.R.id.content,
+                    ChildUserListFragment.newInstance(),
+                    ChildUserListFragment.TAG
+                )
+                .addToBackStack(ChildUserListFragment.TAG)
                 .commit()
         }
 

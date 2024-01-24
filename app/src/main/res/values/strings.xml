@@ -36,8 +36,10 @@
     <!-- Navigation Item -->
     <!-- Noun. Show in side navigation drawer -->
     <string name="nav_item_account">Account</string>
-    <!-- Show in side navigation drawer -->
+    <!-- Shown in side navigation drawer -->
     <string name="nav_item_pair">Pair with Parent</string>
+    <!-- Shown in side navigation drawer -->
+    <string name="nav_item_child_user">Child Users</string>
 
     <!-- AccountsScreen -->
     <!-- Title used for an screen -->
@@ -82,4 +84,10 @@
     <string name="pair_screen_max_limit_reached">You have already paired with maximum allowed users.</string>
     <!-- Title for a list that show paired user's email -->
     <string name="pair_screen_paired_users">Paired Users</string>
+
+    <!-- ChildUserListScreen -->
+    <!-- Title of the screen -->
+    <string name="child_user_screen_title">Child Users</string>
+    <!-- Description for child user menu icon shown in side navigation -->
+    <string name="image_description_child_user_icon">Child User Icon</string>
 </resources>
