@@ -44,7 +44,7 @@ class PairWithParentViewModel(
                             _showProgress.value = false
                             _isPaired.value = false
                             if (result.throwable is EmailNotFoundException) {
-                                // TODO: Nikesh - Show error message based on Exception type
+                                _errorMsgResId.value = R.string.pair_screen_user_email_not_found
                             }
                             else {
                                 _errorMsgResId.value = R.string.pair_screen_pair_failed
