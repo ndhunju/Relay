@@ -11,24 +11,29 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import com.ndhunju.relay.R
+import com.ndhunju.relay.api.ApiInterfaceDummyImpl
+import com.ndhunju.relay.service.UserSettingsPersistServiceDummyImpl
+import com.ndhunju.relay.ui.account.getString
 import com.ndhunju.relay.ui.custom.ProgressButton
 import com.ndhunju.relay.ui.custom.RelayOutlinedTextField
 import com.ndhunju.relay.ui.custom.TopAppBarWithUpButton
 import com.ndhunju.relay.ui.theme.LocalDimens
-import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.StateFlow
+import com.ndhunju.relay.util.CurrentUser
 
 @Preview
 @Composable
 fun PairWithParentScreenPreview() {
-    PairWithParentScreen()
+    PairWithParentScreen(
+        PairWithParentViewModel(
+            ApiInterfaceDummyImpl(),
+            CurrentUser,
+            UserSettingsPersistServiceDummyImpl()
+        )
+    )
 }
 @Composable
 fun PairWithParentScreen(
-    parentEmailAddress: StateFlow<String> = MutableStateFlow(""),
-    onParentEmailAddressChanged: (String) -> Unit = {},
-    showProgress: StateFlow<Boolean> = MutableStateFlow(false),
-    onClickPair: () -> Unit = {},
+    viewModel: PairWithParentViewModel,
     onUpPressed: () -> Unit = {}
 ) {
     //LogCompositions(tag = "PairWithParentScreen", msg = "Called")
@@ -52,18 +57,23 @@ fun PairWithParentScreen(
                     )
             ) {
                 RelayOutlinedTextField(
-                    value = parentEmailAddress.collectAsState().value,
+                    value = viewModel.parentEmailAddress.collectAsState().value,
                     labelRes = R.string.pair_screen_parent_email_address,
-                    onValueChange = onParentEmailAddressChanged,
+                    onValueChange = viewModel.onParentEmailAddressChanged,
+                    errorMessage = getString(resId = viewModel.errorMsgResId.collectAsState().value),
                     supportingText = stringResource(
                         R.string.pair_screen_parent_email_address_supporting_text
                     )
                 )
 
                 ProgressButton(
-                    onClick = onClickPair,
-                    labelStrRes = R.string.pair_screen_pair,
-                    showSpinner = showProgress.collectAsState()
+                    onClick = viewModel.onClickPair,
+                    labelStrRes = if (viewModel.isPaired.collectAsState().value) {
+                        R.string.pair_screen_un_pair
+                    } else {
+                        R.string.pair_screen_pair
+                    },
+                    showSpinner = viewModel.showProgress.collectAsState()
                 )
             }
         }

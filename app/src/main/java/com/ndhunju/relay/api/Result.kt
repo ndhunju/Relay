@@ -6,5 +6,5 @@ package com.ndhunju.relay.api
 sealed class Result {
     data object Pending: Result()
     data class Success(val data: Any? = null): Result()
-    data class Failure(val message: String? = null): Result()
+    data class Failure(val throwable: Throwable? = null): Result()
 }

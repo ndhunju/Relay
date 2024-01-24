@@ -70,6 +70,12 @@
     <string name="pair_screen_parent_email_address">Parent Email Address</string>
     <!-- Supporting text should underneath the TextField. -->
     <string name="pair_screen_parent_email_address_supporting_text">Enter email address of the parent to pair with.</string>
-    <!-- Verb. Text is a button. When click app starts the process of pairing -->
+    <!-- Verb. Text in a button. When clicked, app starts the process of pairing -->
     <string name="pair_screen_pair">Pair</string>
+    <!-- Verb. Text in a button. When clicked, app starts the process of unpairing -->
+    <string name="pair_screen_un_pair">Unpair</string>
+    <!-- Error message shown when pairing fails -->
+    <string name="pair_screen_pair_failed">Failed to pair. Please try again</string>
+    <!-- Error message shown when parent email that user is trying to pair is not found -->
+    <string name="pair_screen_parent_not_found">Parent user is not found</string>
 </resources>

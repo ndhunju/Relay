@@ -40,3 +40,18 @@ class UserSettingsPersistServiceSharedPreferenceImpl @Inject constructor(
         const val USER_KEY = "User-Json"
     }
 }
+
+/**
+ * Dummy implementation of [UserSettingsPersistService].
+ * Can be used for UI Preview.
+ */
+class UserSettingsPersistServiceDummyImpl: UserSettingsPersistService {
+    override fun save(user: User) {
+        throw Exception("This is a dummy implementation")
+    }
+
+    override fun retrieve(): User? {
+        throw Exception("This is a dummy implementation")
+    }
+
+}

@@ -58,7 +58,7 @@ class ApiInterfaceFireStoreImpl(
             }
             .addOnFailureListener {ex ->
                 Log.d(TAG, "createUser: Failed with $ex")
-                flow.value = Result.Failure(ex.message)
+                flow.value = Result.Failure(ex)
             }
 
         return flow
@@ -84,7 +84,7 @@ class ApiInterfaceFireStoreImpl(
             stateFlow.value = Result.Success()
         }.addOnFailureListener {
             Log.d(TAG, "updateUser: Failed to update user")
-            stateFlow.value = Result.Failure(it.message)
+            stateFlow.value = Result.Failure(it)
         }
 
         return stateFlow
@@ -114,6 +114,29 @@ class ApiInterfaceFireStoreImpl(
 
     override fun pairWithParent(childUserId: String, parentEmailAddress: String): Flow<Result> {
         val flow = MutableStateFlow<Result>(Result.Pending)
+        // Check that such parent email address already exists
+        val queryByEmail = userCollectionRef.whereEqualTo("Email", parentEmailAddress)
+        queryByEmail.get().addOnSuccessListener { querySnapshot ->
+            if (querySnapshot.isEmpty) {
+                flow.value = Result.Failure(EmailNotFoundException("Parent email id not found"))
+                return@addOnSuccessListener
+            }
+
+            val parentUserId = querySnapshot.documents.first().id
+
+            // Register this pairing in the database
+            parentChildCollectionRef.add(hashMapOf(
+                "ChildUserId" to childUserId,
+                "ParentUserId" to parentUserId
+            )).addOnSuccessListener {
+                // Pass parent user's id back
+                flow.value = Result.Success(parentUserId)
+            }.addOnFailureListener { ex ->
+                //Log.d(TAG, "pairWithParent: $ex")
+                flow.value = Result.Failure(ex)
+            }
+        }
+
         return flow
     }
 
@@ -127,7 +150,7 @@ class ApiInterfaceFireStoreImpl(
         val stateFlow = MutableStateFlow<Result>(Result.Pending)
 
         if (CurrentUser.isUserSignedIn().not()) {
-            stateFlow.value = Result.Failure("User is not signed in.")
+            stateFlow.value = Result.Failure(UserSignedOutException("User is not signed in."))
             return stateFlow
         }
 
@@ -151,7 +174,7 @@ class ApiInterfaceFireStoreImpl(
                 // TODO: Nikesh - Log this error in Firebase
                 // TODO: Nikesh - Make a logger class
                 Log.d(TAG, "pushMessageToServer: $exception")
-                stateFlow.value = Result.Failure(exception.localizedMessage ?: "")
+                stateFlow.value = Result.Failure(exception)
             }
 
         return stateFlow
@@ -175,3 +198,13 @@ class ApiInterfaceFireStoreImpl(
 //        }
 //    }
 }
+
+/**
+ * Exception thrown when email address is not registered already
+ */
+class EmailNotFoundException(message: String): Exception(message)
+
+/**
+ * Exception thrown when user is not signed in
+ */
+class UserSignedOutException(message: String): Exception(message)

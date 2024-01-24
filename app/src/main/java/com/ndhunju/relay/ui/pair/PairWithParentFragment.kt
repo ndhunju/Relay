@@ -28,10 +28,7 @@ class PairWithParentFragment: Fragment() {
             setContent {
                 RelayTheme {
                     PairWithParentScreen(
-                        viewModel.parentEmailAddress,
-                        viewModel.onParentEmailAddressChanged,
-                        viewModel.showProgress,
-                        viewModel.onClickPair,
+                        viewModel,
                         onUpPressed = { parentFragmentManager.popBackStack() }
                     )
                 }

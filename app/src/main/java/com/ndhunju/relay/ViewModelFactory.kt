@@ -35,7 +35,11 @@ val RelayViewModelFactory: ViewModelProvider.Factory = object : ViewModelProvide
                     ) as T
                 }
                 isAssignableFrom(PairWithParentViewModel::class.java) -> {
-                    PairWithParentViewModel(apiInterface, CurrentUser.user) as T
+                    PairWithParentViewModel(
+                        apiInterface,
+                        CurrentUser,
+                        userSettingsPersistService
+                    ) as T
                 }
                 else -> throw IllegalArgumentException(
                     "Unknown ViewModel class: ${modelClass.name}"
