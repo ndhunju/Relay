@@ -79,7 +79,7 @@
     <!-- Error message shown when user with that email is not found -->
     <string name="pair_screen_user_email_not_found">User with this email is not found.</string>
     <!-- Error message shown when user has reached maximum allowed devices to pair -->
-    <string name="pair_screen_max_limit_reached">You have already paired with 3 devices.</string>
+    <string name="pair_screen_max_limit_reached">You have already paired with maximum allowed users.</string>
     <!-- Title for a list that show paired user's email -->
     <string name="pair_screen_paired_users">Paired Users</string>
 </resources>

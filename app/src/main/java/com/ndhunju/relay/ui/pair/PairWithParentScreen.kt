@@ -92,7 +92,7 @@ fun PairWithParentScreen(
                         .padding(vertical = LocalDimens.current.itemPaddingVertical)
                     )
 
-                for (email in viewModel.pairedUserEmailList) {
+                for (email in viewModel.pairedUserEmailList.collectAsState().value) {
                     Text(
                         text = email,
                         modifier = Modifier

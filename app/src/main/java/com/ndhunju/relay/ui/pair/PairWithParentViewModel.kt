@@ -32,9 +32,8 @@ class PairWithParentViewModel(
     private val _isPaired = MutableStateFlow(evaluateIsPaired())
     val isPaired = _isPaired.asStateFlow()
 
-    // TODO: Nikesh - Make this observable
-    val pairedUserEmailList: List<String>
-        get() { return currentChildUser.user.parentUserEmails }
+    private val _pairedUserEmailList = MutableStateFlow(currentChildUser.user.parentUserEmails)
+    val pairedUserEmailList = _pairedUserEmailList.asStateFlow()
 
     fun onParentEmailAddressChanged(newValue: String) {
         _parentEmailAddress.value = newValue
@@ -66,19 +65,21 @@ class PairWithParentViewModel(
 
                         Result.Pending -> _showProgress.value = true
                         is Result.Success -> {
-                            _showProgress.value = false
-                            _isPaired.value = evaluateIsPaired()
-                            _errorMsgResId.value = null
-
                             // Persist the value
                             val parentUserId = result.data as String
                             currentChildUser.user = currentChildUser.user.copy(
                                 parentUserIds = currentChildUser.user.parentUserIds
                                     .apply { add(parentUserId) },
                                 parentUserEmails = currentChildUser.user.parentUserEmails
-                                    .apply { add(_parentEmailAddress.value) },
+                                    .apply { add(0, _parentEmailAddress.value) },
                             )
                             userSettingsPersistService.save(currentChildUser.user)
+
+                            // Update the UI
+                            _showProgress.value = false
+                            _errorMsgResId.value = null
+                            _isPaired.value = evaluateIsPaired()
+                            _pairedUserEmailList.value = currentChildUser.user.parentUserEmails
                         }
                     }
             }
