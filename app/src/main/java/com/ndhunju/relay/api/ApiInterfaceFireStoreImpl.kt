@@ -114,6 +114,7 @@ class ApiInterfaceFireStoreImpl(
 
     override fun pairWithParent(childUserId: String, parentEmailAddress: String): Flow<Result> {
         val flow = MutableStateFlow<Result>(Result.Pending)
+        // TODO: Nikesh - check if user has already paired with 3 parents
         // Check that such parent email address already exists
         val queryByEmail = userCollectionRef.whereEqualTo("Email", parentEmailAddress)
         queryByEmail.get().addOnSuccessListener { querySnapshot ->

@@ -16,6 +16,6 @@ data class User(
     val name: String? = null,
     val phone: String? = null,
     val isRegistered: Boolean = false,
-    val parentUserId: String? = null,
-    val parentUserEmail: String? = null,
+    val parentUserIds: MutableList<String> = mutableListOf(),
+    val parentUserEmails: MutableList<String> = mutableListOf(),
 )

@@ -19,7 +19,7 @@ class PairWithParentViewModel(
 ): ViewModel() {
 
     private val _parentEmailAddress = MutableStateFlow(
-        currentChildUser.user.parentUserEmail ?: ""
+        currentChildUser.user.parentUserEmails.firstOrNull() ?: ""
     )
     val parentEmailAddress = _parentEmailAddress.asStateFlow()
 
@@ -32,12 +32,22 @@ class PairWithParentViewModel(
     private val _isPaired = MutableStateFlow(evaluateIsPaired())
     val isPaired = _isPaired.asStateFlow()
 
+    // TODO: Nikesh - Make this observable
+    val pairedUserEmailList: List<String>
+        get() { return currentChildUser.user.parentUserEmails }
+
     fun onParentEmailAddressChanged(newValue: String) {
         _parentEmailAddress.value = newValue
         _isPaired.value = evaluateIsPaired()
     }
 
     fun onClickPair() {
+        // Check if user has already paired with 3 users
+        if (currentChildUser.user.parentUserEmails.size >= 3) {
+            _errorMsgResId.value = R.string.pair_screen_max_limit_reached
+            return
+        }
+
         viewModelScope.launch {
             // TODO: Handle the scenario where "Unpair" button text is shown
             apiInterface.pairWithParent(currentChildUser.user.id, parentEmailAddress.value)
@@ -45,7 +55,7 @@ class PairWithParentViewModel(
                     when (result) {
                         is Result.Failure -> {
                             _showProgress.value = false
-                            _isPaired.value = false
+                            _isPaired.value = evaluateIsPaired()
                             if (result.throwable is EmailNotFoundException) {
                                 _errorMsgResId.value = R.string.pair_screen_user_email_not_found
                             }
@@ -57,14 +67,16 @@ class PairWithParentViewModel(
                         Result.Pending -> _showProgress.value = true
                         is Result.Success -> {
                             _showProgress.value = false
-                            _isPaired.value = true
+                            _isPaired.value = evaluateIsPaired()
                             _errorMsgResId.value = null
 
                             // Persist the value
                             val parentUserId = result.data as String
                             currentChildUser.user = currentChildUser.user.copy(
-                                parentUserId = parentUserId,
-                                parentUserEmail = _parentEmailAddress.value
+                                parentUserIds = currentChildUser.user.parentUserIds
+                                    .apply { add(parentUserId) },
+                                parentUserEmails = currentChildUser.user.parentUserEmails
+                                    .apply { add(_parentEmailAddress.value) },
                             )
                             userSettingsPersistService.save(currentChildUser.user)
                         }
@@ -77,7 +89,14 @@ class PairWithParentViewModel(
      * Evaluates value of [_isPaired] property
      */
     private fun evaluateIsPaired(): Boolean {
-        return _parentEmailAddress.value == currentChildUser.user.parentUserEmail
+        // Return true if _parentEmailAddress.value matches with
+        // any item in currentChildUser.user.parentUserEmails
+        currentChildUser.user.parentUserEmails.forEach { parentUserEmail ->
+            if (parentUserEmail == _parentEmailAddress.value) {
+                return true
+            }
+        }
+        return false
     }
 
 }

@@ -3,12 +3,16 @@ package com.ndhunju.relay.ui.pair
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.material3.Divider
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Surface
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import com.ndhunju.relay.R
 import com.ndhunju.relay.api.ApiInterfaceDummyImpl
@@ -75,6 +79,27 @@ fun PairWithParentScreen(
                     },
                     showSpinner = viewModel.showProgress.collectAsState()
                 )
+
+                Divider()
+
+                Text(
+                    text = stringResource(R.string.pair_screen_paired_users),
+                    style = MaterialTheme.typography.titleMedium.copy(
+                        fontWeight = FontWeight.Bold
+                    ),
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(vertical = LocalDimens.current.itemPaddingVertical)
+                    )
+
+                for (email in viewModel.pairedUserEmailList) {
+                    Text(
+                        text = email,
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(vertical = LocalDimens.current.itemPaddingVertical)
+                    )
+                }
             }
         }
     }
