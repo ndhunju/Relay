@@ -28,8 +28,7 @@ class ChildUserListFragment : Fragment() {
             setContent {
                 RelayTheme {
                     ChildUserListScreen(
-                        childUsers = viewModel.childUsers,
-                        onClickChildUser = viewModel::onClickChildUser,
+                        viewModel = viewModel,
                         onUpPressed = { parentFragmentManager.popBackStack() }
                     )
                 }

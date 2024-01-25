@@ -2,14 +2,21 @@ package com.ndhunju.relay.api
 
 import android.util.Log
 import com.google.firebase.firestore.CollectionReference
+import com.google.firebase.firestore.FieldPath
 import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.ktx.Firebase
 import com.google.gson.Gson
 import com.ndhunju.relay.ui.messages.Message
+import com.ndhunju.relay.ui.parent.Child
 import com.ndhunju.relay.util.CurrentUser
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.tasks.await
 
 private val TAG = ApiInterfaceFireStoreImpl::class.simpleName
 
@@ -34,6 +41,7 @@ class ApiInterfaceFireStoreImpl(
      */
     private val userCollectionRef = Firebase.firestore.collection("User")
     private val parentChildCollectionRef = Firebase.firestore.collection("ParentChild")
+    private val localIoScope = CoroutineScope(SupervisorJob() + Dispatchers.IO)
 
     /**
      * Creates user in the cloud database.
@@ -136,6 +144,35 @@ class ApiInterfaceFireStoreImpl(
                 //Log.d(TAG, "pairWithParent: $ex")
                 flow.value = Result.Failure(ex)
             }
+        }
+
+        return flow
+    }
+
+    override fun fetchChildUsers(parentUserId: String): Flow<Result> {
+        val flow = MutableStateFlow<Result>(Result.Pending)
+        localIoScope.launch {
+            // Fetch the list of child user ids for passed parent
+            val childUserIds = parentChildCollectionRef
+                .whereEqualTo("ParentUserId", parentUserId)
+                .get()
+                .await()
+                .documents.map { it.get("ChildUserId") as String }
+                .distinct() // Filter out duplicates
+                .filter { it.isNotEmpty() } // Filter out empty strings
+
+            // Fetch the email of each child user
+            val childList = childUserIds.map { childUserId ->
+                val email = userCollectionRef
+                    .whereEqualTo(FieldPath.documentId(), childUserId)
+                    .get()
+                    .await()
+                    .documents.first()
+                    .get("Email") as String
+                Child(childUserId, email)
+            }
+
+            flow.value = Result.Success(childList)
         }
 
         return flow

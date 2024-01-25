@@ -29,7 +29,7 @@ import com.ndhunju.relay.util.CurrentUser
 fun PairWithParentScreenPreview() {
     PairWithParentScreen(
         PairWithParentViewModel(
-            ApiInterfaceDummyImpl(),
+            ApiInterfaceDummyImpl,
             CurrentUser,
             UserSettingsPersistServiceDummyImpl()
         )

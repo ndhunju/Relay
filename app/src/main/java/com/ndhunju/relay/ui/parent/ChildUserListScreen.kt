@@ -13,28 +13,29 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.ndhunju.relay.R
+import com.ndhunju.relay.api.ApiInterfaceDummyImpl
 import com.ndhunju.relay.ui.custom.TopAppBarWithUpButton
-import com.ndhunju.relay.ui.mockChildUsers
 import com.ndhunju.relay.ui.theme.LocalDimens
 
 @Preview
 @Composable
 fun ChildUserListScreenPreview() {
-    ChildUserListScreen(mockChildUsers, onClickChildUser = {}, onUpPressed = {})
+    ChildUserListScreen(ChildUserListViewModel(ApiInterfaceDummyImpl, ""), {})
 }
 
 @Composable
 fun ChildUserListScreen(
-    childUsers: List<Child>,
-    onClickChildUser: (Child) -> Unit,
+    viewModel: ChildUserListViewModel,
     onUpPressed: (() -> Unit)?
 ) {
+    val childUsers = viewModel.childUsers.collectAsState()
     Scaffold(
         topBar = {
             TopAppBarWithUpButton(
@@ -43,18 +44,20 @@ fun ChildUserListScreen(
             )
         }
     ) { innerPadding ->
+        // TODO: Nikesh - consume viewModel.showProgress
         LazyColumn(
             modifier = Modifier
                 .padding(innerPadding)
                 .fillMaxWidth(),
             content = {
-                itemsIndexed(childUsers, key = { _, item -> item.id}) { _: Int, childUser: Child ->
+                itemsIndexed(childUsers.value, key = { _, item -> item.id })
+                { _: Int, childUser: Child ->
                     Row(modifier = Modifier
                         .padding(
                             vertical = LocalDimens.current.itemPaddingVertical,
                             horizontal = LocalDimens.current.contentPaddingHorizontal
                         )
-                        .clickable { onClickChildUser(childUser) }
+                        .clickable { viewModel.onClickChildUser(childUser) }
                     ) {
                         Icon(
                             imageVector = Icons.Default.AccountCircle,

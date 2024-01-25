@@ -18,13 +18,13 @@ interface ApiInterface {
         phone: String? = null,
         deviceId: String? = null,
         pushNotificationToken: String? = null,
-    ): StateFlow<Result>
+    ): Flow<Result>
 
     /**
-     * Makes API requests to update the user. If null is passed, don't update that value.
+     * Makes API request to update the user. If null is passed, don't update that value.
      * Only the non-null value must be updated in the server
      */
-    fun updateUser(name: String? = null, phone: String? = null, ): StateFlow<Result>
+    fun updateUser(name: String? = null, phone: String? = null, ): Flow<Result>
 
 
     /**
@@ -34,8 +34,14 @@ interface ApiInterface {
     fun pairWithParent(childUserId: String, parentEmailAddress: String): Flow<Result>
 
     /**
+     * Makes API request to fetch all the paired child users.
+     * @param parentUserId : Id of the parent user for which child users needed to be fetched
+     */
+    fun fetchChildUsers(parentUserId: String): Flow<Result>
+
+    /**
      * Pushes [message] to the server.
      */
-    fun pushMessage(message: Message): StateFlow<Result>
+    fun pushMessage(message: Message): Flow<Result>
 
 }

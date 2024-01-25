@@ -2,13 +2,11 @@ package com.ndhunju.relay.api
 
 import com.ndhunju.relay.ui.messages.Message
 import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.StateFlow
 
 /**
  * Class with dummy implementation of [ApiInterface]
  */
-class ApiInterfaceDummyImpl: ApiInterface {
+object ApiInterfaceDummyImpl: ApiInterface {
 
     override fun createUser(
         name: String?,
@@ -16,19 +14,27 @@ class ApiInterfaceDummyImpl: ApiInterface {
         phone: String?,
         deviceId: String?,
         pushNotificationToken: String?
-    ): StateFlow<Result> {
-        return MutableStateFlow(Result.Failure(Throwable("This is a dummy implementation")))
+    ): Flow<Result> {
+        return returnFailure()
     }
 
-    override fun updateUser(name: String?, phone: String?): StateFlow<Result> {
-        return MutableStateFlow(Result.Failure(Throwable("This is a dummy implementation")))
+    override fun updateUser(name: String?, phone: String?): Flow<Result> {
+        return returnFailure()
     }
 
     override fun pairWithParent(childUserId: String, parentEmailAddress: String): Flow<Result> {
-        return MutableStateFlow(Result.Failure(Throwable("This is a dummy implementation")))
+        return returnFailure()
     }
 
-    override fun pushMessage(message: Message): StateFlow<Result> {
-        return MutableStateFlow(Result.Failure(Throwable("This is a dummy implementation")))
+    override fun fetchChildUsers(parentUserId: String): Flow<Result> {
+        return returnFailure()
+    }
+
+    override fun pushMessage(message: Message): Flow<Result> {
+        return returnFailure()
+    }
+
+    private fun returnFailure(): Flow<Result> {
+        return returnFailure()
     }
 }
