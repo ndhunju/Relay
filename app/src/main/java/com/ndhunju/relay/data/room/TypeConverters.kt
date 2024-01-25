@@ -3,7 +3,7 @@ package com.ndhunju.relay.data.room
 import androidx.room.TypeConverter
 import com.ndhunju.relay.api.Result
 
-class TypeConverters {
+object TypeConverters {
 
     @TypeConverter
     fun fromCustomType(value: Result): String {

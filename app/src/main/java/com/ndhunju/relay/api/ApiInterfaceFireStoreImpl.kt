@@ -41,6 +41,7 @@ class ApiInterfaceFireStoreImpl(
      */
     private val userCollectionRef = Firebase.firestore.collection("User")
     private val parentChildCollectionRef = Firebase.firestore.collection("ParentChild")
+    private val messageCollectionRef = Firebase.firestore.collection("Message")
     private val localIoScope = CoroutineScope(SupervisorJob() + Dispatchers.IO)
 
     /**
@@ -173,6 +174,30 @@ class ApiInterfaceFireStoreImpl(
             }
 
             flow.value = Result.Success(childList)
+        }
+
+        return flow
+    }
+
+    override fun fetchMessagesFromChildUsers(childUserIds: List<String>): Flow<Result> {
+        val flow = MutableStateFlow<Result>(Result.Pending)
+        localIoScope.launch {
+            val childUserIdToMessages = mutableMapOf<String, List<Message>>()
+            try {
+                for (childUserId in childUserIds) {
+                    val messages = messageCollectionRef
+                        .whereEqualTo("SenderUserId", childUserId)
+                        .get()
+                        .await()
+                        .documents
+                        .map { gson.fromJson(it.get("PayLoad") as String, Message::class.java) }
+
+                    childUserIdToMessages[childUserId] = messages
+                }
+                flow.value = Result.Success(childUserIdToMessages)
+            } catch (ex: Exception) {
+                flow.value = Result.Failure(ex)
+            }
         }
 
         return flow

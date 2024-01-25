@@ -44,10 +44,14 @@ val RelayViewModelFactory: ViewModelProvider.Factory = object : ViewModelProvide
                     ) as T
                 }
                 isAssignableFrom(ChildUserListViewModel::class.java) -> {
-                    ChildUserListViewModel(apiInterface, CurrentUser.user.id) as T
+                    ChildUserListViewModel(
+                        apiInterface,
+                        CurrentUser,
+                        userSettingsPersistService
+                    ) as T
                 }
                 isAssignableFrom(MessagesFromChildViewModel::class.java) -> {
-                    MessagesFromChildViewModel() as T
+                    MessagesFromChildViewModel(apiInterface) as T
                 }
                 else -> throw IllegalArgumentException(
                     "Unknown ViewModel class: ${modelClass.name}"

@@ -30,6 +30,10 @@ object ApiInterfaceDummyImpl: ApiInterface {
         return returnFailure()
     }
 
+    override fun fetchMessagesFromChildUsers(childUserIds: List<String>): Flow<Result> {
+        return returnFailure()
+    }
+
     override fun pushMessage(message: Message): Flow<Result> {
         return returnFailure()
     }

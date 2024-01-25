@@ -45,7 +45,7 @@ class UserSettingsPersistServiceSharedPreferenceImpl @Inject constructor(
  * Dummy implementation of [UserSettingsPersistService].
  * Can be used for UI Preview.
  */
-class UserSettingsPersistServiceDummyImpl: UserSettingsPersistService {
+object UserSettingsPersistServiceDummyImpl: UserSettingsPersistService {
     override fun save(user: User) {
         throw Exception("This is a dummy implementation")
     }

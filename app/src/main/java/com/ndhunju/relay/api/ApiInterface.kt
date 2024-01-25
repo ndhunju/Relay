@@ -39,6 +39,11 @@ interface ApiInterface {
     fun fetchChildUsers(parentUserId: String): Flow<Result>
 
     /**
+     * Makes API request to fetch all [Message]s sent by [childUserIds]
+     */
+    fun fetchMessagesFromChildUsers(childUserIds: List<String>): Flow<Result>
+
+    /**
      * Pushes [message] to the server.
      */
     fun pushMessage(message: Message): Flow<Result>

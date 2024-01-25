@@ -31,7 +31,7 @@ fun PairWithParentScreenPreview() {
         PairWithParentViewModel(
             ApiInterfaceDummyImpl,
             CurrentUser,
-            UserSettingsPersistServiceDummyImpl()
+            UserSettingsPersistServiceDummyImpl
         )
     )
 }

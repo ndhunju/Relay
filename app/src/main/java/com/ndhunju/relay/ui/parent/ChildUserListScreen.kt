@@ -28,13 +28,19 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.ndhunju.relay.R
 import com.ndhunju.relay.api.ApiInterfaceDummyImpl
+import com.ndhunju.relay.service.UserSettingsPersistServiceDummyImpl
 import com.ndhunju.relay.ui.custom.TopAppBarWithUpButton
 import com.ndhunju.relay.ui.theme.LocalDimens
+import com.ndhunju.relay.util.CurrentUser
 
 @Preview
 @Composable
 fun ChildUserListScreenPreview() {
-    ChildUserListScreen(ChildUserListViewModel(ApiInterfaceDummyImpl, ""), {})
+    ChildUserListScreen(ChildUserListViewModel(
+        ApiInterfaceDummyImpl,
+        CurrentUser,
+        UserSettingsPersistServiceDummyImpl
+    ), {})
 }
 
 @Composable

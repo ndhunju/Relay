@@ -11,6 +11,9 @@ import com.ndhunju.relay.data.room.MainDatabase
 import com.ndhunju.relay.data.SmsInfoRepository
 import com.ndhunju.relay.api.ApiInterface
 import com.ndhunju.relay.api.ApiInterfaceFireStoreImpl
+import com.ndhunju.relay.api.Result
+import com.ndhunju.relay.util.gson.ResultDeserializer
+import com.ndhunju.relay.util.gson.ResultSerializer
 import com.ndhunju.relay.service.UserSettingsPersistService
 import com.ndhunju.relay.service.UserSettingsPersistServiceSharedPreferenceImpl
 import com.ndhunju.relay.util.CurrentUser
@@ -30,7 +33,10 @@ class AppModule(private val application: Application) {
 
     @Provides
     @Singleton
-    fun providesGson(): Gson = GsonBuilder().create()
+    fun providesGson(): Gson = GsonBuilder()
+        .registerTypeAdapter(Result::class.java, ResultSerializer())
+        .registerTypeAdapter(Result::class.java, ResultDeserializer())
+        .create()
 
     /**
      * Even though [CurrentUser] is a class owned by us,
