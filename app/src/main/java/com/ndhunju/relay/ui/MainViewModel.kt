@@ -41,14 +41,14 @@ class MainViewModel(
         get() {return _messageFromUiState}
 
     // UI Events
-    var onClickSearchIcon = {
+    val onClickSearchIcon = {
         _state.value.showSearchTextField = !_state.value.showSearchTextField
     }
 
     val onSearchTextChanged: (String) -> Unit = {}
     val onClickAccountIcon = { doOpenAccountFragment?.invoke() }
     val onClickMessage: (Message) -> Unit = { doOpenMessageFromFragment?.invoke(it) }
-    val onClickGrantPermission = { doRequestPermission?.invoke() }
+    val onClickGrantPermission: () -> Unit = { doRequestPermission?.invoke() }
 
     val onClickNavItem: (NavItem) -> Unit = { navItem ->
         when (navItem) {

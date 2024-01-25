@@ -8,6 +8,7 @@ import android.view.ViewGroup
 import androidx.compose.ui.platform.ComposeView
 import androidx.fragment.app.viewModels
 import com.ndhunju.relay.RelayViewModelFactory
+import com.ndhunju.relay.ui.parent.messagesfromchild.MessagesFromChildFragment
 import com.ndhunju.relay.ui.theme.RelayTheme
 
 /**
@@ -19,7 +20,20 @@ class ChildUserListFragment : Fragment() {
 
     private val viewModel: ChildUserListViewModel by viewModels { RelayViewModelFactory }
 
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
 
+        viewModel.doOpenMessagesFromChildFragment = { child ->
+            parentFragmentManager.beginTransaction()
+                .add(
+                    android.R.id.content,
+                    MessagesFromChildFragment.newInstance(child.id, child.email)
+                )
+                .addToBackStack(MessagesFromChildFragment.TAG)
+                .commit()
+
+        }
+    }
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?

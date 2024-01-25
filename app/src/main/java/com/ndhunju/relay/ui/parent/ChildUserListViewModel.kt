@@ -20,11 +20,13 @@ class ChildUserListViewModel(
     private val _showProgress = MutableStateFlow(false)
     val showProgress = _showProgress.asStateFlow()
 
+    var doOpenMessagesFromChildFragment: ((Child) -> Unit)? = null
+
     /**
-     * User click on [childUsers]
+     * User clicked on [childUsers]
      */
     fun onClickChildUser(childUser: Child) {
-
+        doOpenMessagesFromChildFragment?.invoke(childUser)
     }
 
     init {

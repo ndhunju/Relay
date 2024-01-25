@@ -8,6 +8,7 @@ import com.ndhunju.relay.ui.MainViewModel
 import com.ndhunju.relay.ui.account.AccountViewModel
 import com.ndhunju.relay.ui.pair.PairWithParentViewModel
 import com.ndhunju.relay.ui.parent.ChildUserListViewModel
+import com.ndhunju.relay.ui.parent.messagesfromchild.MessagesFromChildViewModel
 import com.ndhunju.relay.util.CurrentUser
 
 val RelayViewModelFactory: ViewModelProvider.Factory = object : ViewModelProvider.Factory {
@@ -44,6 +45,9 @@ val RelayViewModelFactory: ViewModelProvider.Factory = object : ViewModelProvide
                 }
                 isAssignableFrom(ChildUserListViewModel::class.java) -> {
                     ChildUserListViewModel(apiInterface, CurrentUser.user.id) as T
+                }
+                isAssignableFrom(MessagesFromChildViewModel::class.java) -> {
+                    MessagesFromChildViewModel() as T
                 }
                 else -> throw IllegalArgumentException(
                     "Unknown ViewModel class: ${modelClass.name}"

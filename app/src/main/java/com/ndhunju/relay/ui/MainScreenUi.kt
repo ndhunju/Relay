@@ -124,13 +124,31 @@ fun MainDrawerContent(
     }
 }
 
-@OptIn(ExperimentalFoundationApi::class)
 @Composable
 fun MainContent(
     viewModel: MainViewModel,
     onClickMenuIcon: () -> Unit
 ) {
-    val viewState by viewModel.state.collectAsStateWithLifecycle()
+    MainContent(
+        viewState = viewModel.state.collectAsStateWithLifecycle().value,
+        viewModel.onClickSearchIcon,
+        viewModel.onSearchTextChanged,
+        viewModel.onClickGrantPermission,
+        viewModel.onClickMessage,
+        onClickMenuIcon
+    )
+}
+
+@OptIn(ExperimentalFoundationApi::class)
+@Composable
+fun MainContent(
+    viewState: MainScreenUiState,
+    onClickSearchIcon: () -> Unit,
+    onSearchTextChanged: (String) -> Unit,
+    onClickGrantPermission: () -> Unit,
+    onClickMessage: (Message) -> Unit,
+    onClickMenuIcon: () -> Unit
+) {
     val composeCoroutineScope = rememberCoroutineScope()
     val state = rememberLazyListState()
     // Use derivedStateOf to avoid recomposition everytime state changes.
@@ -143,8 +161,8 @@ fun MainContent(
                 viewState.showSearchTextField,
                 // Put all callbacks inside lambda so that recomposition
                 // is not triggered when reference to those callback changes?
-                { viewModel.onClickSearchIcon() },
-                { viewModel.onSearchTextChanged(it) },
+                { onClickSearchIcon() },
+                { onSearchTextChanged(it) },
                 onClickMenuIcon
             )
         },
@@ -180,7 +198,7 @@ fun MainContent(
                     textAlign = TextAlign.Center
                 )
                 Button(
-                    onClick = { viewModel.onClickGrantPermission() },
+                    onClick = { onClickGrantPermission() },
                     modifier = Modifier.padding(16.dp)
                     ) {
                     Text(text = stringResource(R.string.grant_permissions))
@@ -202,7 +220,7 @@ fun MainContent(
                         MessageListItem(
                             Modifier.animateItemPlacement(tween(durationMillis = 250)),
                             message,
-                            viewModel.onClickMessage
+                            onClickMessage
                         )
                     }
                 })

@@ -24,8 +24,8 @@ val mockMessages = listOf(
         Result.Success()
     ),
     Message(
-        "1",
-        "ThreadId2",
+        "2",
+        "ThreadId3",
         "Bikesh",
         "This is a sample long messages that should overflow to the next line at the minimum",
         System.currentTimeMillis().toString(),
