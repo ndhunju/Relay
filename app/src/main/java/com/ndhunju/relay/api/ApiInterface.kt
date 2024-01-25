@@ -2,7 +2,6 @@ package com.ndhunju.relay.api
 
 import com.ndhunju.relay.ui.messages.Message
 import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.StateFlow
 
 /**
  * Abstracts the API that allows interaction with some kind of BE server

@@ -29,6 +29,7 @@ class ChildUserListViewModel(
 
     init {
         viewModelScope.launch(Dispatchers.IO) {
+            _showProgress.value = true
             apiInterface.fetchChildUsers(parentUserId).collect { result ->
                 when (result) {
                     is Result.Failure -> {
