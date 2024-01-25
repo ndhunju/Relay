@@ -1,13 +1,14 @@
 package com.ndhunju.relay.ui.parent
 
-import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import androidx.work.OneTimeWorkRequestBuilder
+import androidx.work.WorkManager
 import com.ndhunju.relay.api.ApiInterface
 import com.ndhunju.relay.api.Result
 import com.ndhunju.relay.service.UserSettingsPersistService
-import com.ndhunju.relay.ui.messages.Message
 import com.ndhunju.relay.util.CurrentUser
+import com.ndhunju.relay.util.worker.SyncChildMessagesWorker
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -15,6 +16,7 @@ import kotlinx.coroutines.launch
 
 class ChildUserListViewModel(
     apiInterface: ApiInterface,
+    private val workManager: WorkManager,
     private val currentUser: CurrentUser,
     userSettingsPersistService: UserSettingsPersistService,
 ): ViewModel() {
@@ -57,28 +59,14 @@ class ChildUserListViewModel(
                         )
 
                         userSettingsPersistService.save(currentUser.user)
-
-                        // TODO: Nikesh - Move this logic to a Service?
-                        // Also fetch messages from all child
-                        apiInterface.fetchMessagesFromChildUsers(
-                            currentUser.user.childUserIds
-                        ).collect { result2 ->
-                            when (result2) {
-                                is Result.Failure -> {
-                                    Log.d("TAG", "Failure: ${result2.throwable}")
-                                }
-                                Result.Pending -> {}
-                                is Result.Success -> {
-                                    val messages = result2.data as MutableMap<String, List<Message>>
-                                    Log.d("TAG", "messages: $messages")
-                                    // Store in database
-
-                                }
-                            }
-                        }
+                        doSyncChildMessagesFromServer()
                     }
                 }
             }
         }
+    }
+
+    private fun doSyncChildMessagesFromServer() {
+        workManager.enqueue(OneTimeWorkRequestBuilder<SyncChildMessagesWorker>().build())
     }
 }

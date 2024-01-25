@@ -89,6 +89,11 @@ dependencies {
     // Encrypted shared preference
     implementation("androidx.security:security-crypto:1.0.0")
 
+    // WorkManager
+    implementation("androidx.work:work-runtime-ktx:${rootProject.extra["work_version"]}")
+    androidTestImplementation("androidx.work:work-testing:${rootProject.extra["work_version"]}") // Test helpers
+
+
     testImplementation("junit:junit:4.13.2")
     androidTestImplementation("androidx.test.ext:junit:1.1.5")
     androidTestImplementation("androidx.test.espresso:espresso-core:3.5.1")

@@ -3,6 +3,7 @@ package com.ndhunju.relay.di
 import android.app.Application
 import android.content.Context
 import androidx.security.crypto.EncryptedSharedPreferences
+import androidx.work.WorkManager
 import com.google.gson.Gson
 import com.google.gson.GsonBuilder
 import com.ndhunju.relay.RelayApplication
@@ -94,5 +95,9 @@ class AndroidAppModule(private val application: Application) {
     @Provides
     @Singleton
     fun providesContext(): Context = application
+
+    @Provides
+    @Singleton
+    fun providesWorkManager(): WorkManager = WorkManager.getInstance(providesContext())
 
 }

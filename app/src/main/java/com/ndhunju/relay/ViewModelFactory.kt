@@ -24,6 +24,7 @@ val RelayViewModelFactory: ViewModelProvider.Factory = object : ViewModelProvide
         val apiInterface = application.appComponent.apiInterface()
         val smsInfoRepository = application.appComponent.smsInfoRepository()
         val userSettingsPersistService = application.appComponent.userSettingsPersistService()
+        val workManager = application.appComponent.workManager()
         with(modelClass) {
             return when {
                 isAssignableFrom(MainViewModel::class.java) -> {
@@ -46,6 +47,7 @@ val RelayViewModelFactory: ViewModelProvider.Factory = object : ViewModelProvide
                 isAssignableFrom(ChildUserListViewModel::class.java) -> {
                     ChildUserListViewModel(
                         apiInterface,
+                        workManager,
                         CurrentUser,
                         userSettingsPersistService
                     ) as T

@@ -1,5 +1,6 @@
 package com.ndhunju.relay.di
 
+import androidx.work.WorkManager
 import com.ndhunju.relay.service.DeviceSmsReaderService
 import com.ndhunju.relay.data.SmsInfoRepository
 import com.ndhunju.relay.api.ApiInterface
@@ -23,5 +24,7 @@ interface AppComponent {
     fun smsInfoRepository(): SmsInfoRepository
 
     fun userSettingsPersistService(): UserSettingsPersistService
+
+    fun workManager(): WorkManager
 
 }

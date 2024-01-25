@@ -2,6 +2,7 @@ package com.ndhunju.relay.ui.parent.messagesfromchild
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.ndhunju.relay.api.ApiInterface
 import com.ndhunju.relay.ui.MainScreenUiState
 import com.ndhunju.relay.ui.messages.Message
 import com.ndhunju.relay.ui.messagesfrom.MessagesFromFragment
@@ -10,7 +11,9 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
 
-class MessagesFromChildViewModel: ViewModel() {
+class MessagesFromChildViewModel(
+    apiInterface: ApiInterface,
+): ViewModel() {
 
     private var _state = MutableStateFlow(MainScreenUiState())
     val state: StateFlow<MainScreenUiState>
