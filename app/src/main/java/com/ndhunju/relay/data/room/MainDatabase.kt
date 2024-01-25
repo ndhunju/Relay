@@ -14,7 +14,7 @@ import com.ndhunju.relay.data.SmsInfo
  */
 @Database(
     entities = [SmsInfo::class, ChildSmsInfo::class],
-    version = 2, // When You change schema of the database table, you've to increase the version
+    version = 3, // When You change schema of the database table, you've to increase the version
     exportSchema = true // Set to true to keep schema version history backups.
 )
 abstract class MainDatabase: RoomDatabase() {

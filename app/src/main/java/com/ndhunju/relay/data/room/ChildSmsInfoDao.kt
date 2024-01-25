@@ -3,6 +3,7 @@ package com.ndhunju.relay.data.room
 import androidx.room.Dao
 import androidx.room.Delete
 import androidx.room.Insert
+import androidx.room.OnConflictStrategy
 import androidx.room.Query
 import androidx.room.Update
 import com.ndhunju.relay.data.ChildSmsInfo
@@ -11,7 +12,7 @@ import kotlinx.coroutines.flow.Flow
 @Dao
 interface ChildSmsInfoDao {
 
-    @Insert
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insert(childSmsInfo: ChildSmsInfo): Long
 
     @Query("SELECT * FROM ChildSmsInfo WHERE childUserId=:childUserId")

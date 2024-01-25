@@ -5,7 +5,7 @@ import androidx.room.PrimaryKey
 
 @Entity
 class ChildSmsInfo(
-    @PrimaryKey(autoGenerate = true) val id: Int = 0,
+    @PrimaryKey(autoGenerate = true) val id: Long = 0,
     var childUserId: String,
     val idInAndroidDb: String?,
     val threadId: String,

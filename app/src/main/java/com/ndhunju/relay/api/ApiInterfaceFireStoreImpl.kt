@@ -183,8 +183,7 @@ class ApiInterfaceFireStoreImpl(
     override fun fetchMessagesFromChildUsers(childUserIds: List<String>): Flow<Result> {
         val flow = MutableStateFlow<Result>(Result.Pending)
         localIoScope.launch {
-            // TODO: Nikesh - Make it just a list since we don't need a map as of now
-            val childUserIdToMessages = mutableMapOf<String, List<ChildSmsInfo>>()
+            val childSmsInfoList = mutableListOf<ChildSmsInfo>()
             try {
                 for (childUserId2 in childUserIds) {
                     val childSmsInfo = messageCollectionRef
@@ -199,9 +198,9 @@ class ApiInterfaceFireStoreImpl(
                             ).apply { childUserId = childUserId2 }
                         }
 
-                    childUserIdToMessages[childUserId2] = childSmsInfo
+                    childSmsInfoList.addAll(childSmsInfo)
                 }
-                flow.value = Result.Success(childUserIdToMessages)
+                flow.value = Result.Success(childSmsInfoList)
             } catch (ex: Exception) {
                 flow.value = Result.Failure(ex)
             }
@@ -246,24 +245,6 @@ class ApiInterfaceFireStoreImpl(
 
         return stateFlow
     }
-
-    /**
-     * WIP
-     * Fetches messages meant for [currentUser]
-     */
-//    fun fetchMessages() {
-//        val database = Firebase.firestore
-//        val messageCollection = database.collection("Message")
-//
-//        val exitingEntry = database.collection("Message ")
-//        exitingEntry.get().addOnSuccessListener { result ->
-//            for (document in result) {
-//                Log.d("888", "pushMessageToServer: $document")
-//            }
-//        }.addOnFailureListener { exception ->
-//            Log.d("888", "pushMessageToServer: $exception")
-//        }
-//    }
 }
 
 /**

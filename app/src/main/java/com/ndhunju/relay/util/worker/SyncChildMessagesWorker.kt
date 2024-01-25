@@ -45,7 +45,7 @@ class SyncChildMessagesWorker(
                         Pending -> {}
                         is Success -> {
                             insertIntoLocalRepository(
-                                result2.data as MutableMap<String, List<ChildSmsInfo>>
+                                result2.data as List<ChildSmsInfo>
                             )
                             result = Result.success()
                             return@collect
@@ -63,21 +63,16 @@ class SyncChildMessagesWorker(
      * Insert [childUserIdToChildSmsInfoList] to local repository
      */
     private suspend fun insertIntoLocalRepository(
-        childUserIdToChildSmsInfoList: Map<String, List<ChildSmsInfo>>
+        childUserIdToChildSmsInfoList: List<ChildSmsInfo>
     ): Boolean {
         try {
             val childSmsInfoRepository = appComponent.childSmsInfoRepository()
-            for ((childUserId, childSmsInfoList) in childUserIdToChildSmsInfoList) {
-                for (childSmsInfo in childSmsInfoList) {
-                    val insertedRowId = childSmsInfoRepository.insert(
-                        childSmsInfo
+            for (childSmsInfo in childUserIdToChildSmsInfoList) {
+                val insertedRowId = childSmsInfoRepository.insert(childSmsInfo)
+                if (insertedRowId < 0) {
+                    throw RuntimeException(
+                        "Failed to insert childSmsInfo with body ${childSmsInfo.body}"
                     )
-
-                    if (insertedRowId < 0) {
-                        throw RuntimeException(
-                            "Failed to insert childSmsInfo with body ${childSmsInfo.body}"
-                        )
-                    }
                 }
             }
 
