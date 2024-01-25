@@ -6,6 +6,7 @@ import com.google.firebase.firestore.FieldPath
 import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.ktx.Firebase
 import com.google.gson.Gson
+import com.ndhunju.relay.data.ChildSmsInfo
 import com.ndhunju.relay.ui.messages.Message
 import com.ndhunju.relay.ui.parent.Child
 import com.ndhunju.relay.util.CurrentUser
@@ -182,17 +183,23 @@ class ApiInterfaceFireStoreImpl(
     override fun fetchMessagesFromChildUsers(childUserIds: List<String>): Flow<Result> {
         val flow = MutableStateFlow<Result>(Result.Pending)
         localIoScope.launch {
-            val childUserIdToMessages = mutableMapOf<String, List<Message>>()
+            // TODO: Nikesh - Make it just a list since we don't need a map as of now
+            val childUserIdToMessages = mutableMapOf<String, List<ChildSmsInfo>>()
             try {
-                for (childUserId in childUserIds) {
-                    val messages = messageCollectionRef
-                        .whereEqualTo("SenderUserId", childUserId)
+                for (childUserId2 in childUserIds) {
+                    val childSmsInfo = messageCollectionRef
+                        .whereEqualTo("SenderUserId", childUserId2)
                         .get()
                         .await()
                         .documents
-                        .map { gson.fromJson(it.get("PayLoad") as String, Message::class.java) }
+                        .map {
+                            gson.fromJson(
+                                it.get("PayLoad") as String,
+                                ChildSmsInfo::class.java
+                            ).apply { childUserId = childUserId2 }
+                        }
 
-                    childUserIdToMessages[childUserId] = messages
+                    childUserIdToMessages[childUserId2] = childSmsInfo
                 }
                 flow.value = Result.Success(childUserIdToMessages)
             } catch (ex: Exception) {
@@ -220,15 +227,12 @@ class ApiInterfaceFireStoreImpl(
         val userId = CurrentUser.user.id
 
         // Write a message to the database
-        val database = Firebase.firestore
-        val messageCollection = database.collection("Message")
-
         val newMessage = hashMapOf(
             "PayLoad" to gson.toJson(message),
             "SenderUserId" to userId
         )
 
-        messageCollection.add(newMessage)
+        messageCollectionRef.add(newMessage)
             .addOnSuccessListener {
                 Log.d(TAG, "pushMessageToServer: is successful")
                 stateFlow.value = Result.Success()

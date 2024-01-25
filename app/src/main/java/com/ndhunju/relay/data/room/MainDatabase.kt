@@ -4,6 +4,7 @@ import android.content.Context
 import androidx.room.Database
 import androidx.room.Room
 import androidx.room.RoomDatabase
+import com.ndhunju.relay.data.ChildSmsInfo
 import com.ndhunju.relay.data.SmsInfo
 
 /**
@@ -12,13 +13,15 @@ import com.ndhunju.relay.data.SmsInfo
  * the data once.
  */
 @Database(
-    entities = [SmsInfo::class],
-    version = 1, // When You change schema of the database table, you've to increase the version
+    entities = [SmsInfo::class, ChildSmsInfo::class],
+    version = 2, // When You change schema of the database table, you've to increase the version
     exportSchema = true // Set to true to keep schema version history backups.
 )
 abstract class MainDatabase: RoomDatabase() {
 
     abstract fun smsInfoDao(): SmsInfoDao
+
+    abstract fun childSmsInfoDao(): ChildSmsInfoDao
 
     companion object {
 

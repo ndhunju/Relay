@@ -4,6 +4,7 @@ import androidx.work.WorkManager
 import com.ndhunju.relay.service.DeviceSmsReaderService
 import com.ndhunju.relay.data.SmsInfoRepository
 import com.ndhunju.relay.api.ApiInterface
+import com.ndhunju.relay.data.ChildSmsInfoRepository
 import com.ndhunju.relay.service.UserSettingsPersistService
 import dagger.Component
 import javax.inject.Singleton
@@ -22,6 +23,8 @@ interface AppComponent {
     fun apiInterface(): ApiInterface
 
     fun smsInfoRepository(): SmsInfoRepository
+
+    fun childSmsInfoRepository(): ChildSmsInfoRepository
 
     fun userSettingsPersistService(): UserSettingsPersistService
 

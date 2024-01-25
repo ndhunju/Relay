@@ -13,6 +13,8 @@ import com.ndhunju.relay.data.SmsInfoRepository
 import com.ndhunju.relay.api.ApiInterface
 import com.ndhunju.relay.api.ApiInterfaceFireStoreImpl
 import com.ndhunju.relay.api.Result
+import com.ndhunju.relay.data.ChildSmsInfoRepository
+import com.ndhunju.relay.data.OfflineChildSmsInfoRepository
 import com.ndhunju.relay.util.gson.ResultDeserializer
 import com.ndhunju.relay.util.gson.ResultSerializer
 import com.ndhunju.relay.service.UserSettingsPersistService
@@ -58,6 +60,12 @@ class AppModule(private val application: Application) {
     @Singleton
     fun provideSmsInfoRepository(): SmsInfoRepository = OfflineSmsInfoRepository(
         MainDatabase.getDatabase(application).smsInfoDao()
+    )
+
+    @Provides
+    @Singleton
+    fun provideChildSmsInfoRepository(): ChildSmsInfoRepository = OfflineChildSmsInfoRepository(
+        MainDatabase.getDatabase(application).childSmsInfoDao()
     )
 
     @Provides
