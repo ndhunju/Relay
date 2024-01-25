@@ -39,7 +39,7 @@ fun MessageListItem(
         val itemVerticalPadding = LocalDimens.current.itemPaddingVertical
         val contentHorizontalPadding = LocalDimens.current.contentPaddingHorizontal
 
-        LogCompositions(tag = "MessageListItem", msg = "MessageListItem scope")
+        //LogCompositions(tag = "MessageListItem", msg = "MessageListItem scope")
 
         Divider(Modifier.constrainAs(divider) {
             top.linkTo(parent.top)
