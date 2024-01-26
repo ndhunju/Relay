@@ -108,7 +108,7 @@ data class Message(
     val threadId: String,
     val from: String,
     val body: String,
-    val date: String,
+    val date: Long,
     val type: String,
     /**
      * Null means this instance of the Message/Sms was sent before our app was installed.
@@ -118,7 +118,7 @@ data class Message(
     val extra: String? = null
 ) {
     fun getFormattedTime(): String {
-        val dateAsLong = date.toLongOrNull() ?: 0
+        val dateAsLong = date
         return dateFormat.format(dateAsLong)
     }
 

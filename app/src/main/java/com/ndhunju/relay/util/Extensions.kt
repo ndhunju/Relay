@@ -17,6 +17,19 @@ fun Cursor.getStringForColumn(column: String): String {
 }
 
 /**
+ * Returns String value for passed [column] if it exists.
+ * Otherwise, empty string is returned
+ */
+fun Cursor.getLongForColumn(column: String): Long {
+    val columnIndex = getColumnIndex(column)
+    if (columnIndex >= 0) {
+        return getLong(columnIndex)
+    }
+
+    return 0
+}
+
+/**
  * Returns a [Flow] whose values are generated with [transform] function by combining
  * the most recently emitted values by each flow.
  */

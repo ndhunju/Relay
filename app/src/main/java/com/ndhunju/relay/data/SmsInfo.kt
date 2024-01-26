@@ -15,6 +15,6 @@ data class SmsInfo(
     @PrimaryKey(autoGenerate = true) val id: Long = 0,
     val idInAndroidOsTable: String,
     val threadId: String,
-    val date: String,
+    val date: Long,
     val syncStatus: Result?
 )

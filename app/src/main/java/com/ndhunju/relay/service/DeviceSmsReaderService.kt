@@ -5,6 +5,7 @@ import android.database.Cursor
 import android.net.Uri
 import android.util.Log
 import com.ndhunju.relay.ui.messages.Message
+import com.ndhunju.relay.util.getLongForColumn
 import com.ndhunju.relay.util.getStringForColumn
 import javax.inject.Inject
 import javax.inject.Singleton
@@ -107,7 +108,7 @@ class DeviceSmsReaderService @Inject constructor(private val context: Context) {
                     cursor.getStringForColumn("thread_id"),
                     cursor.getStringForColumn("address"),
                     cursor.getStringForColumn("body"),
-                    cursor.getStringForColumn("date"),
+                    cursor.getLongForColumn("date"),
                     cursor.getStringForColumn("type"),
                     null,
                     null

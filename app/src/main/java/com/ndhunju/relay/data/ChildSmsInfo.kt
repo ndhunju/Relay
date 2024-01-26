@@ -7,11 +7,11 @@ import androidx.room.PrimaryKey
 class ChildSmsInfo(
     @PrimaryKey(autoGenerate = true) val id: Long = 0,
     var childUserId: String,
-    val idInAndroidDb: String?,
+    val idInAndroidDb: String,
     val threadId: String,
     val from: String,
     val body: String,
-    val date: String,
+    val date: Long,
     val type: String,
     val extra: String? = null
 )
