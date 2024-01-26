@@ -25,15 +25,21 @@ class DeviceSmsReaderService @Inject constructor(private val context: Context) {
      */
     fun getLastMessageForEachThread(): List<Message> {
         // TODO: Nikesh - This is not returning last message sent in the thread but by the user
-        val cursor: Cursor? = context.contentResolver.query(
-            smsUri,
-            smsColumns,
-            "thread_id IS NOT NULL) GROUP BY (thread_id", //GROUP BY,
-            null,
-            "date DESC" // Show newest message at the top
-        )
+        try {
+            val cursor: Cursor? = context.contentResolver.query(
+                smsUri,
+                smsColumns,
+                "thread_id IS NOT NULL) GROUP BY (thread_id", //GROUP BY,
+                null,
+                "date DESC" // Show newest message at the top
+            )
 
-       return fromCursor(cursor)
+            return fromCursor(cursor)
+        } catch (ex: Exception) {
+            Log.d(TAG, "getLastMessageForEachThread: ${ex.message}")
+        }
+
+        return emptyList()
     }
 
     /**
