@@ -13,6 +13,9 @@ class OfflineChildSmsInfoRepository(
     override fun getAllChildSmsInfo(childUserId: String): Flow<List<ChildSmsInfo>>
     = childSmsInfoDao.getAllChildSmsInfo(childUserId)
 
+    override fun getLastSmsInfoOfChild(childUserId: String): Flow<List<ChildSmsInfo>>
+    = childSmsInfoDao.getLastSmsOfChild(childUserId)
+
     override fun update(childSmsInfo: ChildSmsInfo)
     = childSmsInfoDao.update(childSmsInfo)
 

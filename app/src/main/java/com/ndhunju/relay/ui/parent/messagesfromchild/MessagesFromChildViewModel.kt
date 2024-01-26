@@ -42,8 +42,20 @@ class MessagesFromChildViewModel(
 
     fun getLastSmsInfoOfEachChild(childUserId: String) {
         viewModelScope.launch {
-            // TODO: Nikesh - Add logic to get last messages from the given child
-            _state.value = MainScreenUiState(mockMessages)
+            childSmsInfoRepository.getLastSmsInfoOfChild(childUserId).collect { childSmsInfoList ->
+                _state.value.lastMessageList.addAll(childSmsInfoList.map {
+                    Message(
+                        it.idInAndroidDb,
+                        it.threadId,
+                        it.from,
+                        it.body,
+                        it.date,
+                        it.type,
+                        null,
+                        it.extra
+                    )
+                })
+            }
         }
     }
 

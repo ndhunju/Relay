@@ -18,14 +18,10 @@ interface ChildSmsInfoDao {
     @Query("SELECT * FROM ChildSmsInfo WHERE childUserId=:childUserId")
     fun getAllChildSmsInfo(childUserId: String): Flow<List<ChildSmsInfo>>
 
-    @Query("SELECT * " +
-            "FROM ChildSmsInfo a "+
-            "INNER JOIN (" +
-            "   SELECT childUserId, threadId, MAX(date) maxDate" +
-            "   FROM ChildSmsInfo" +
-            "   WHERE childUserId = :childUserId" +
-            "   GROUP BY threadId" +
-            ") b ON a.childUserId = b.childUserId AND a.threadId = b.threadId AND a.date = b.maxDate")
+    @Query("SELECT *, MAX(date) AS max_date\n" +
+            "    FROM ChildSmsInfo\n" +
+            "    WHERE childUserId = :childUserId\n" +
+            "    GROUP BY threadId")
     fun getLastSmsOfChild(childUserId: String): Flow<List<ChildSmsInfo>>
 
     @Update

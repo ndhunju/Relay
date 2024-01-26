@@ -62,6 +62,12 @@ class MessagesFromChildFragment : Fragment() {
         }
     }
 
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+        val childUserId = childUserId ?: return
+        viewModel.getLastSmsInfoOfEachChild(childUserId)
+    }
+
     companion object {
 
         val TAG: String = MessagesFromChildFragment::class.java.name
