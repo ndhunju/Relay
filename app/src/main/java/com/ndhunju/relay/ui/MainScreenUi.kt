@@ -15,6 +15,7 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material.icons.filled.KeyboardArrowUp
 import androidx.compose.material.icons.filled.Menu
 import androidx.compose.material.icons.rounded.Search
@@ -74,7 +75,7 @@ fun MainScreen(viewModel: MainViewModel) {
             coroutineScope.launch { drawerState.close() }
         }}
     ) {
-        MainContent(viewModel = viewModel, onClickMenuIcon = {
+        MainContent(viewModel = viewModel, onClickMenuOrUpIcon = {
             coroutineScope.launch { drawerState.open() }
         })
     }
@@ -128,7 +129,7 @@ fun MainDrawerContent(
 @Composable
 fun MainContent(
     viewModel: MainViewModel,
-    onClickMenuIcon: () -> Unit
+    onClickMenuOrUpIcon: () -> Unit
 ) {
     MainContent(
         viewState = viewModel.state.collectAsStateWithLifecycle().value,
@@ -136,7 +137,7 @@ fun MainContent(
         viewModel.onSearchTextChanged,
         viewModel.onClickGrantPermission,
         viewModel.onClickMessage,
-        onClickMenuIcon
+        onClickMenuOrUpIcon
     )
 }
 
@@ -148,7 +149,7 @@ fun MainContent(
     onSearchTextChanged: (String) -> Unit,
     onClickGrantPermission: () -> Unit,
     onClickMessage: (Message) -> Unit,
-    onClickMenuIcon: () -> Unit
+    onClickMenuOrUpIcon: () -> Unit
 ) {
     val composeCoroutineScope = rememberCoroutineScope()
     val state = rememberLazyListState()
@@ -161,11 +162,12 @@ fun MainContent(
             MainScreenAppBar(
                 title = viewState.title,
                 viewState.showSearchTextField,
+                viewState.showUpIcon,
                 // Put all callbacks inside lambda so that recomposition
                 // is not triggered when reference to those callback changes?
                 { onClickSearchIcon() },
                 { onSearchTextChanged(it) },
-                onClickMenuIcon
+                onClickMenuOrUpIcon
             )
         },
         floatingActionButton = {
@@ -236,22 +238,32 @@ fun MainContent(
 fun MainScreenAppBar(
     title: State<String>,
     showSearchTextField: Boolean = false,
+    showUpIcon: Boolean = false,
     onClickSearchIcon: () -> Unit = {},
     onSearchTextChanged: (String) -> Unit = {},
-    onClickMenuIcon: () -> Unit = {}
+    onClickMenuOrUpIcon: () -> Unit = {}
 ) {
     TopAppBar(
         modifier = Modifier
             .fillMaxWidth()
             .wrapContentHeight(align = Alignment.Top),
         navigationIcon = {
-            IconButton(onClick = onClickMenuIcon) {
-                Icon(
-                    imageVector = Icons.Default.Menu,
-                    contentDescription = stringResource(
-                        androidx.compose.ui.R.string.navigation_menu
+            if (showUpIcon) {
+                IconButton(onClick = onClickMenuOrUpIcon) {
+                    Icon(
+                        imageVector = Icons.Default.ArrowBack,
+                        contentDescription = stringResource(id = R.string.image_description_go_back)
                     )
-                )
+                }
+            } else {
+                IconButton(onClick = onClickMenuOrUpIcon) {
+                    Icon(
+                        imageVector = Icons.Default.Menu,
+                        contentDescription = stringResource(
+                            androidx.compose.ui.R.string.navigation_menu
+                        )
+                    )
+                }
             }
         },
         title = {

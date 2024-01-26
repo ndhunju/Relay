@@ -16,7 +16,7 @@ class MessagesFromChildViewModel(
     private val childSmsInfoRepository: ChildSmsInfoRepository
 ): ViewModel() {
 
-    private var _state = MutableStateFlow(MainScreenUiState())
+    private var _state = MutableStateFlow(MainScreenUiState(showUpIcon = true))
     val state: StateFlow<MainScreenUiState>
         get() { return _state }
 

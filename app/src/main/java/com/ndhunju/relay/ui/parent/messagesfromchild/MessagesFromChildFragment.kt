@@ -53,10 +53,9 @@ class MessagesFromChildFragment : Fragment() {
                         onClickSearchIcon = viewModel.onClickSearchIcon,
                         onSearchTextChanged = viewModel.onSearchTextChanged,
                         onClickGrantPermission = {},
-                        onClickMessage = viewModel.onClickMessage
-                    ) {
-
-                    }
+                        onClickMessage = viewModel.onClickMessage,
+                        onClickMenuOrUpIcon = { parentFragmentManager.popBackStack() }
+                    )
                 }
             }
         }

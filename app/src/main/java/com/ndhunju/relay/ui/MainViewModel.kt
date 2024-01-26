@@ -195,7 +195,8 @@ class MainViewModel(
  * class body from the generated implementations.
  */
 data class MainScreenUiState(
-    private var lastMessageForEachThread: List<Message> = emptyList()
+    private var lastMessageForEachThread: List<Message> = emptyList(),
+    val showUpIcon: Boolean = false
 ) {
     var lastMessageList = mutableStateListOf<Message>()
     // Note: Compose doesn't track inner fields for change unless we use mutableStateOf
