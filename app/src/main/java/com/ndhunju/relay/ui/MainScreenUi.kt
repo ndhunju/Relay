@@ -34,6 +34,7 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.rememberDrawerState
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.State
 import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
@@ -158,6 +159,7 @@ fun MainContent(
     Scaffold(
         topBar = {
             MainScreenAppBar(
+                title = viewState.title,
                 viewState.showSearchTextField,
                 // Put all callbacks inside lambda so that recomposition
                 // is not triggered when reference to those callback changes?
@@ -232,6 +234,7 @@ fun MainContent(
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun MainScreenAppBar(
+    title: State<String>,
     showSearchTextField: Boolean = false,
     onClickSearchIcon: () -> Unit = {},
     onSearchTextChanged: (String) -> Unit = {},
@@ -256,7 +259,7 @@ fun MainScreenAppBar(
                 if (showSearchTextField) {
                     SearchTextField(onSearchTextChanged = onSearchTextChanged)
                 } else {
-                    Text(text = stringResource(id = R.string.app_name))
+                    Text(text = title.value)
                 }
             }
         },

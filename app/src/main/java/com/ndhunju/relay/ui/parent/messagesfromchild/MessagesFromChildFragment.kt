@@ -36,6 +36,8 @@ class MessagesFromChildFragment : Fragment() {
         viewModel.doOpenMessageFromFragment = {
             // TODO: Nikesh - Open screen to show messages
         }
+
+        viewModel.childUserEmail = childUserEmail
     }
 
     override fun onCreateView(

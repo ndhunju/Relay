@@ -143,6 +143,10 @@ class MainViewModel(
         }
     }
 
+    fun setTitle(title: String) {
+        _state.value.title.value = title
+    }
+
     /**
      * Returns list of message for passed [threadId]
      */
@@ -196,6 +200,7 @@ data class MainScreenUiState(
     // Note: Compose doesn't track inner fields for change unless we use mutableStateOf
     var showErrorMessageForPermissionDenied: Boolean by mutableStateOf(false)
     var showSearchTextField: Boolean by mutableStateOf(false)
+    var title = mutableStateOf("")
 
     init {
         updateLastMessages(lastMessageForEachThread)

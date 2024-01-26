@@ -19,12 +19,13 @@ val RelayViewModelFactory: ViewModelProvider.Factory = object : ViewModelProvide
         extras: CreationExtras
     ): T {
         // Get the Application object from extras
-        val application = checkNotNull(extras[APPLICATION_KEY]) as RelayApplication
-        val deviceSmsReaderService = application.appComponent.deviceSmsReaderService()
-        val apiInterface = application.appComponent.apiInterface()
-        val smsInfoRepository = application.appComponent.smsInfoRepository()
-        val userSettingsPersistService = application.appComponent.userSettingsPersistService()
-        val workManager = application.appComponent.workManager()
+        val appComponent = (checkNotNull(extras[APPLICATION_KEY]) as RelayApplication).appComponent
+        val deviceSmsReaderService = appComponent.deviceSmsReaderService()
+        val apiInterface = appComponent.apiInterface()
+        val smsInfoRepository = appComponent.smsInfoRepository()
+        val childSmsInfoRepository = appComponent.childSmsInfoRepository()
+        val userSettingsPersistService = appComponent.userSettingsPersistService()
+        val workManager = appComponent.workManager()
         with(modelClass) {
             return when {
                 isAssignableFrom(MainViewModel::class.java) -> {
@@ -53,7 +54,7 @@ val RelayViewModelFactory: ViewModelProvider.Factory = object : ViewModelProvide
                     ) as T
                 }
                 isAssignableFrom(MessagesFromChildViewModel::class.java) -> {
-                    MessagesFromChildViewModel(apiInterface) as T
+                    MessagesFromChildViewModel(apiInterface, childSmsInfoRepository) as T
                 }
                 else -> throw IllegalArgumentException(
                     "Unknown ViewModel class: ${modelClass.name}"

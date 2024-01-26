@@ -63,6 +63,8 @@ class MainActivity : FragmentActivity() {
             }
         }
 
+        viewModel.setTitle(getString(R.string.app_name))
+
         viewModel.doRequestPermission = {
             requestPermission(requestPermissionLauncher)
         }
