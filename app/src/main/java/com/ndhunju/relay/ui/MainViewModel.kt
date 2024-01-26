@@ -118,17 +118,6 @@ class MainViewModel(
                 }
             }
 
-            if (oldLastMessageIndex > -1) {
-                // Update last message shown with the new message
-                state.value.lastMessageList[oldLastMessageIndex].copy(
-                    body = smsMessage.messageBody,
-                    date = smsMessage.timestampMillis.toString()
-                ).let { state.value.lastMessageList[oldLastMessageIndex] = it }
-            } else {
-                // Update the entire list since matching thread wasn't found
-                updateLastMessagesWithCorrectSyncStatus()
-            }
-
             // Push new message to the cloud database
             val result = apiInterface.pushMessage(messageFromAndroidDb)
             // Update the sync status in the local DB
@@ -136,10 +125,22 @@ class MainViewModel(
                 id = idOfInsertedSmsInfo,
                 syncStatus = result)
             )
-            // Update the icon based on update call status
-            state.value.lastMessageList[oldLastMessageIndex].copy(
-                syncStatus = result
-            ).let { state.value.lastMessageList[oldLastMessageIndex] = it }
+
+            if (oldLastMessageIndex > -1) {
+                // Update last message shown with the new message
+                state.value.lastMessageList[oldLastMessageIndex].copy(
+                    body = smsMessage.messageBody,
+                    date = smsMessage.timestampMillis
+                ).let { state.value.lastMessageList[oldLastMessageIndex] = it }
+
+                // Update the icon based on update call status
+                state.value.lastMessageList[oldLastMessageIndex].copy(
+                    syncStatus = result
+                ).let { state.value.lastMessageList[oldLastMessageIndex] = it }
+            } else {
+                // Update the entire list since matching thread wasn't found
+                updateLastMessagesWithCorrectSyncStatus()
+            }
         }
     }
 
@@ -207,6 +208,7 @@ data class MainScreenUiState(
     }
 
     fun updateLastMessages(messages: List<Message>) {
+        lastMessageList.clear()
         lastMessageList.addAll(messages)
     }
 }
