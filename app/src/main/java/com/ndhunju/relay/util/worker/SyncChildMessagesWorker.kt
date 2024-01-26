@@ -26,9 +26,11 @@ class SyncChildMessagesWorker(
     }
 
     override suspend fun doWork(): Result {
-        val apiInterface = appComponent.apiInterface()
         val workResult = withContext(Dispatchers.IO) {
-            val result = apiInterface.fetchMessagesFromChildUsers(CurrentUser.user.childUserIds)
+            val result = appComponent.apiInterface().fetchMessagesFromChildUsers(
+                CurrentUser.user.childUserIds
+            )
+
             when (result) {
                 is Failure -> {
                     //Log.d("TAG", "Failure: ${result.throwable}")

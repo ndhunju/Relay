@@ -40,27 +40,29 @@ class ChildUserListViewModel(
         viewModelScope.launch(Dispatchers.IO) {
             _showProgress.value = true
             // TODO: Nikesh - Check if the child users are already stored and is not stale
-            apiInterface.fetchChildUsers(currentUser.user.id).collect { result ->
-                when (result) {
-                    is Result.Failure -> {
-                        _showProgress.value = false
-                    }
-                    Result.Pending -> {
-                        _showProgress.value = true
-                    }
-                    is Result.Success -> {
-                        _showProgress.value = false
-                        _childUsers.value = result.data as List<Child>
+            val result = apiInterface.fetchChildUsers(
+                currentUser.user.id
+            )
 
-                        // Persist it locally
-                        currentUser.user = currentUser.user.copy(
-                            childUserIds = _childUsers.value.map { it.id },
-                            childUserEmails = _childUsers.value.map { it.email }
-                        )
+            when (result) {
+                is Result.Failure -> {
+                    _showProgress.value = false
+                }
+                Result.Pending -> {
+                    _showProgress.value = true
+                }
+                is Result.Success -> {
+                    _showProgress.value = false
+                    _childUsers.value = result.data as List<Child>
 
-                        userSettingsPersistService.save(currentUser.user)
-                        doSyncChildMessagesFromServer()
-                    }
+                    // Persist it locally
+                    currentUser.user = currentUser.user.copy(
+                        childUserIds = _childUsers.value.map { it.id },
+                        childUserEmails = _childUsers.value.map { it.email }
+                    )
+
+                    userSettingsPersistService.save(currentUser.user)
+                    doSyncChildMessagesFromServer()
                 }
             }
         }

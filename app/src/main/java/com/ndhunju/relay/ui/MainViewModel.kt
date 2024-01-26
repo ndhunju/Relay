@@ -130,17 +130,16 @@ class MainViewModel(
             }
 
             // Push new message to the cloud database
-            apiInterface.pushMessage(messageFromAndroidDb).collect { result ->
-                // Update the sync status in the local DB
-                smsInfoRepository.updateSmsInfo(smsInfoToInsert.copy(
-                    id = idOfInsertedSmsInfo,
-                    syncStatus = result)
-                )
-                // Update the icon based on update call status
-                state.value.lastMessageList[oldLastMessageIndex].copy(
-                    syncStatus = result
-                ).let { state.value.lastMessageList[oldLastMessageIndex] = it }
-            }
+            val result = apiInterface.pushMessage(messageFromAndroidDb)
+            // Update the sync status in the local DB
+            smsInfoRepository.updateSmsInfo(smsInfoToInsert.copy(
+                id = idOfInsertedSmsInfo,
+                syncStatus = result)
+            )
+            // Update the icon based on update call status
+            state.value.lastMessageList[oldLastMessageIndex].copy(
+                syncStatus = result
+            ).let { state.value.lastMessageList[oldLastMessageIndex] = it }
         }
     }
 

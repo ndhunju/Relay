@@ -122,30 +122,30 @@ class AccountViewModel(
      * Creates new user in the server or cloud database
      */
     private suspend fun createNewUserInServer() {
-        apiInterface.createUser(
+        showProgress.value = true
+        val result = apiInterface.createUser(
             name = name.value,
             email = email.value,
             phone = phone.value
-        ).collect { result ->
-            when (result) {
-                Result.Pending -> showProgress.value = true
-                is Result.Success -> {
-                    val userId = (result.data as? String)
-                        ?: throw RuntimeException("User id not provided.")
-                    // Update local copy of user
-                    user = createUserFromCurrentState(userId)
-                    // If this is current user, update it too
-                    if (user.id == CurrentUser.user.id) {
-                        CurrentUser.user = user
-                        // Store registered user's id persistently
-                        userSettingsPersistService.save(user)
-                    }
-                    showProgress.value = false
+        )
+        when (result) {
+            Result.Pending -> {}
+            is Result.Success -> {
+                val userId = (result.data as? String)
+                    ?: throw RuntimeException("User id not provided.")
+                // Update local copy of user
+                user = createUserFromCurrentState(userId)
+                // If this is current user, update it too
+                if (user.id == CurrentUser.user.id) {
+                    CurrentUser.user = user
+                    // Store registered user's id persistently
+                    userSettingsPersistService.save(user)
                 }
-                else -> {
-                    errorStrIdGeneric.value = R.string.account_user_create_failed
-                    showProgress.value = false
-                }
+                showProgress.value = false
+            }
+            else -> {
+                errorStrIdGeneric.value = R.string.account_user_create_failed
+                showProgress.value = false
             }
         }
     }
@@ -154,27 +154,28 @@ class AccountViewModel(
      * Pushes updates in [user] to the server or cloud database
      */
     private suspend fun pushUserUpdatesToServer() {
-        apiInterface.updateUser(
+        showProgress.value = true
+        val result = apiInterface.updateUser(
             name = name.value,
             phone = phone.value
-        ).collect { result ->
-            when (result) {
-                Result.Pending -> showProgress.value = true
-                is Result.Success -> {
-                    // Update local copy of user
-                    user = createUserFromCurrentState()
-                    // If this is current user, update it too
-                    if (user.id == CurrentUser.user.id) {
-                        CurrentUser.user = user
-                        // Store registered user's id persistently
-                        userSettingsPersistService.save(user)
-                    }
-                    showProgress.value = false
+        )
+
+        when (result) {
+            Result.Pending -> showProgress.value = true
+            is Result.Success -> {
+                // Update local copy of user
+                user = createUserFromCurrentState()
+                // If this is current user, update it too
+                if (user.id == CurrentUser.user.id) {
+                    CurrentUser.user = user
+                    // Store registered user's id persistently
+                    userSettingsPersistService.save(user)
                 }
-                else -> {
-                    showProgress.value = false
-                    errorStrIdGeneric.value = R.string.account_user_update_failed
-                }
+                showProgress.value = false
+            }
+            else -> {
+                showProgress.value = false
+                errorStrIdGeneric.value = R.string.account_user_update_failed
             }
         }
     }

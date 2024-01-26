@@ -49,39 +49,42 @@ class PairWithParentViewModel(
 
         viewModelScope.launch {
             // TODO: Handle the scenario where "Unpair" button text is shown
-            apiInterface.pairWithParent(currentChildUser.user.id, parentEmailAddress.value)
-                .collect { result ->
-                    when (result) {
-                        is Result.Failure -> {
-                            _showProgress.value = false
-                            _isPaired.value = evaluateIsPaired()
-                            if (result.throwable is EmailNotFoundException) {
-                                _errorMsgResId.value = R.string.pair_screen_user_email_not_found
-                            }
-                            else {
-                                _errorMsgResId.value = R.string.pair_screen_pair_failed
-                            }
-                        }
+            _showProgress.value = true
+            val result = apiInterface.pairWithParent(
+                currentChildUser.user.id,
+                parentEmailAddress.value
+            )
 
-                        Result.Pending -> _showProgress.value = true
-                        is Result.Success -> {
-                            // Persist the value
-                            val parentUserId = result.data as String
-                            currentChildUser.user = currentChildUser.user.copy(
-                                parentUserIds = currentChildUser.user.parentUserIds
-                                    .apply { add(parentUserId) },
-                                parentUserEmails = currentChildUser.user.parentUserEmails
-                                    .apply { add(0, _parentEmailAddress.value) },
-                            )
-                            userSettingsPersistService.save(currentChildUser.user)
-
-                            // Update the UI
-                            _showProgress.value = false
-                            _errorMsgResId.value = null
-                            _isPaired.value = evaluateIsPaired()
-                            _pairedUserEmailList.value = currentChildUser.user.parentUserEmails
-                        }
+            when (result) {
+                is Result.Failure -> {
+                    _showProgress.value = false
+                    _isPaired.value = evaluateIsPaired()
+                    if (result.throwable is EmailNotFoundException) {
+                        _errorMsgResId.value = R.string.pair_screen_user_email_not_found
                     }
+                    else {
+                        _errorMsgResId.value = R.string.pair_screen_pair_failed
+                    }
+                }
+
+                Result.Pending -> _showProgress.value = true
+                is Result.Success -> {
+                    // Persist the value
+                    val parentUserId = result.data as String
+                    currentChildUser.user = currentChildUser.user.copy(
+                        parentUserIds = currentChildUser.user.parentUserIds
+                            .apply { add(parentUserId) },
+                        parentUserEmails = currentChildUser.user.parentUserEmails
+                            .apply { add(0, _parentEmailAddress.value) },
+                    )
+                    userSettingsPersistService.save(currentChildUser.user)
+
+                    // Update the UI
+                    _showProgress.value = false
+                    _errorMsgResId.value = null
+                    _isPaired.value = evaluateIsPaired()
+                    _pairedUserEmailList.value = currentChildUser.user.parentUserEmails
+                }
             }
         }
     }

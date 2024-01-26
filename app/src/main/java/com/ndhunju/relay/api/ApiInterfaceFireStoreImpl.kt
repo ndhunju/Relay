@@ -13,10 +13,7 @@ import com.ndhunju.relay.util.CurrentUser
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.SupervisorJob
-import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.StateFlow
-import kotlinx.coroutines.launch
 import kotlinx.coroutines.tasks.await
 
 private val TAG = ApiInterfaceFireStoreImpl::class.simpleName
@@ -31,10 +28,10 @@ class ApiInterfaceFireStoreImpl(
 
     private var userId: String
         get() {
-           return CurrentUser.user.id
+           return currentUser.user.id
         }
         set(value) {
-            CurrentUser.user = CurrentUser.user.copy(id = value)
+            currentUser.user = currentUser.user.copy(id = value)
         }
 
     /**
@@ -49,55 +46,45 @@ class ApiInterfaceFireStoreImpl(
      * Creates user in the cloud database.
      * TODO: Nikesh - Use third party Identity Provider to authenticate and create user
      */
-    override fun createUser(
+    override suspend fun createUser(
         name: String?,
         email: String?,
         phone: String?,
         deviceId: String?,
         pushNotificationToken: String?,
-    ): StateFlow<Result> {
-        val flow = MutableStateFlow<Result>(Result.Pending)
+    ): Result {
         val newUser = makeMapForUserCollection(name, email, phone, deviceId, pushNotificationToken)
 
         // TODO: Nikesh - Check for duplicate user email before creating new account
-        userCollectionRef.add(newUser)
-            .addOnSuccessListener { documentRef ->
-                val docId = documentRef.id
-                userId = docId //
-                flow.value = Result.Success(userId)
-            }
-            .addOnFailureListener {ex ->
-                Log.d(TAG, "createUser: Failed with $ex")
-                flow.value = Result.Failure(ex)
-            }
-
-        return flow
+        return try {
+            userId = userCollectionRef.add(newUser).await().id
+            Result.Success(userId)
+        } catch (ex: Exception) {
+            Log.d(TAG, "createUser: Failed with $ex")
+            Result.Failure(ex)
+        }
     }
 
     /**
      * Updates user in cloud database
      */
-    override fun updateUser(
+    override suspend fun updateUser(
         name: String?,
         phone: String?,
-    ): StateFlow<Result> {
-        val stateFlow = MutableStateFlow<Result>(Result.Pending)
-        val userId = CurrentUser.user.id
-
+    ): Result {
         // If null is passed, use existing values
         val finalName = name ?: CurrentUser.user.name
         val finalPhone = phone ?: CurrentUser.user.phone
 
-        userCollectionRef.document(userId).update(
-            makeMapForUserCollection(name = finalName, phone = finalPhone).toMap()
-        ).addOnSuccessListener {
-            stateFlow.value = Result.Success()
-        }.addOnFailureListener {
+        return try {
+            userCollectionRef.document(userId).update(
+                makeMapForUserCollection(name = finalName, phone = finalPhone).toMap()
+            ).await()
+            Result.Success()
+        } catch (ex: Exception) {
             Log.d(TAG, "updateUser: Failed to update user")
-            stateFlow.value = Result.Failure(it)
+            Result.Failure(ex)
         }
-
-        return stateFlow
     }
 
     /**
@@ -122,38 +109,33 @@ class ApiInterfaceFireStoreImpl(
         it.value?.isNotEmpty() == true
     }
 
-    override fun pairWithParent(childUserId: String, parentEmailAddress: String): Flow<Result> {
+    override suspend fun pairWithParent(childUserId: String, parentEmailAddress: String): Result {
         val flow = MutableStateFlow<Result>(Result.Pending)
         // TODO: Nikesh - check if user has already paired with 3 parents
         // Check that such parent email address already exists
-        val queryByEmail = userCollectionRef.whereEqualTo("Email", parentEmailAddress)
-        queryByEmail.get().addOnSuccessListener { querySnapshot ->
+        return try {
+            val queryByEmail = userCollectionRef.whereEqualTo("Email", parentEmailAddress)
+            val querySnapshot = queryByEmail.get().await()
             if (querySnapshot.isEmpty) {
-                flow.value = Result.Failure(EmailNotFoundException("Parent email id not found"))
-                return@addOnSuccessListener
+                return Result.Failure(EmailNotFoundException("Parent email id not found"))
             }
-
             val parentUserId = querySnapshot.documents.first().id
 
             // Register this pairing in the database
             parentChildCollectionRef.add(hashMapOf(
                 "ChildUserId" to childUserId,
                 "ParentUserId" to parentUserId
-            )).addOnSuccessListener {
-                // Pass parent user's id back
-                flow.value = Result.Success(parentUserId)
-            }.addOnFailureListener { ex ->
-                //Log.d(TAG, "pairWithParent: $ex")
-                flow.value = Result.Failure(ex)
-            }
+            )).await()
+
+            Result.Success(parentUserId)
+        } catch (ex: Exception) {
+            Result.Failure(ex)
         }
 
-        return flow
     }
 
-    override fun fetchChildUsers(parentUserId: String): Flow<Result> {
-        val flow = MutableStateFlow<Result>(Result.Pending)
-        localIoScope.launch {
+    override suspend fun fetchChildUsers(parentUserId: String): Result {
+        return try {
             // Fetch the list of child user ids for passed parent
             val childUserIds = parentChildCollectionRef
                 .whereEqualTo("ParentUserId", parentUserId)
@@ -174,10 +156,11 @@ class ApiInterfaceFireStoreImpl(
                 Child(childUserId, email)
             }
 
-            flow.value = Result.Success(childList)
+            Result.Success(childList)
+        } catch (ex: Exception) {
+            return Result.Failure(ex)
         }
 
-        return flow
     }
 
     override suspend fun fetchMessagesFromChildUsers(childUserIds: List<String>): Result {
@@ -207,38 +190,29 @@ class ApiInterfaceFireStoreImpl(
     /**
      * Pushes [message] to the cloud database.
      */
-    override fun pushMessage(
-        message: Message
-    ): StateFlow<Result> {
-
-        val stateFlow = MutableStateFlow<Result>(Result.Pending)
+    override suspend fun pushMessage(message: Message): Result {
 
         if (CurrentUser.isUserSignedIn().not()) {
-            stateFlow.value = Result.Failure(UserSignedOutException("User is not signed in."))
-            return stateFlow
+            return Result.Failure(UserSignedOutException("User is not signed in."))
         }
 
         val userId = CurrentUser.user.id
-
         // Write a message to the database
         val newMessage = hashMapOf(
             "PayLoad" to gson.toJson(message),
             "SenderUserId" to userId
         )
 
-        messageCollectionRef.add(newMessage)
-            .addOnSuccessListener {
-                Log.d(TAG, "pushMessageToServer: is successful")
-                stateFlow.value = Result.Success()
-            }
-            .addOnFailureListener { exception ->
-                // TODO: Nikesh - Log this error in Firebase
-                // TODO: Nikesh - Make a logger class
-                Log.d(TAG, "pushMessageToServer: $exception")
-                stateFlow.value = Result.Failure(exception)
-            }
-
-        return stateFlow
+        return try {
+            messageCollectionRef.add(newMessage).await().id
+            Log.d(TAG, "pushMessageToServer: is successful")
+            Result.Success()
+        } catch (ex: Exception) {
+            // TODO: Nikesh - Log this error in Firebase
+            // TODO: Nikesh - Make a logger class
+            Log.d(TAG, "pushMessageToServer: $ex")
+            Result.Failure(ex)
+        }
     }
 }
 
