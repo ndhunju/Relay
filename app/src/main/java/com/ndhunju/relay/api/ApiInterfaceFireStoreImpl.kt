@@ -180,33 +180,28 @@ class ApiInterfaceFireStoreImpl(
         return flow
     }
 
-    override fun fetchMessagesFromChildUsers(childUserIds: List<String>): Flow<Result> {
-        val flow = MutableStateFlow<Result>(Result.Pending)
-        localIoScope.launch {
-            val childSmsInfoList = mutableListOf<ChildSmsInfo>()
-            try {
-                for (childUserId2 in childUserIds) {
-                    val childSmsInfo = messageCollectionRef
-                        .whereEqualTo("SenderUserId", childUserId2)
-                        .get()
-                        .await()
-                        .documents
-                        .map {
-                            gson.fromJson(
-                                it.get("PayLoad") as String,
-                                ChildSmsInfo::class.java
-                            ).apply { childUserId = childUserId2 }
-                        }
+    override suspend fun fetchMessagesFromChildUsers(childUserIds: List<String>): Result {
+        val childSmsInfoList = mutableListOf<ChildSmsInfo>()
+        try {
+            for (childUserId2 in childUserIds) {
+                val childSmsInfo = messageCollectionRef
+                    .whereEqualTo("SenderUserId", childUserId2)
+                    .get()
+                    .await()
+                    .documents
+                    .map {
+                        gson.fromJson(
+                            it.get("PayLoad") as String,
+                            ChildSmsInfo::class.java
+                        ).apply { childUserId = childUserId2 }
+                    }
 
-                    childSmsInfoList.addAll(childSmsInfo)
-                }
-                flow.value = Result.Success(childSmsInfoList)
-            } catch (ex: Exception) {
-                flow.value = Result.Failure(ex)
+                childSmsInfoList.addAll(childSmsInfo)
             }
+            return Result.Success(childSmsInfoList)
+        } catch (ex: Exception) {
+            return Result.Failure(ex)
         }
-
-        return flow
     }
 
     /**

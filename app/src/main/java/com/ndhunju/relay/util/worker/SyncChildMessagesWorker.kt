@@ -3,7 +3,6 @@ package com.ndhunju.relay.util.worker
 import android.content.Context
 import android.util.Log
 import androidx.work.CoroutineWorker
-import androidx.work.Data
 import androidx.work.WorkerParameters
 import com.ndhunju.relay.RelayApplication
 import com.ndhunju.relay.api.Result.*
@@ -11,7 +10,6 @@ import com.ndhunju.relay.data.ChildSmsInfo
 import com.ndhunju.relay.di.AppComponent
 import com.ndhunju.relay.util.CurrentUser
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.async
 import kotlinx.coroutines.withContext
 import java.lang.RuntimeException
 
@@ -29,34 +27,26 @@ class SyncChildMessagesWorker(
 
     override suspend fun doWork(): Result {
         val apiInterface = appComponent.apiInterface()
-        return withContext(Dispatchers.IO) {
-            var result: Result? = null
-            val job = async {
-                apiInterface.fetchMessagesFromChildUsers(
-                    CurrentUser.user.childUserIds
-                ).collect { result2 ->
-                    when (result2) {
-                        is Failure -> {
-                            Log.d("TAG", "Failure: ${result2.throwable}")
-                            result = Result.failure(Data.Builder().build())
-                            return@collect
-                        }
+        val workResult = withContext(Dispatchers.IO) {
+            val result = apiInterface.fetchMessagesFromChildUsers(CurrentUser.user.childUserIds)
+            when (result) {
+                is Failure -> {
+                    //Log.d("TAG", "Failure: ${result.throwable}")
+                    return@withContext Result.failure()
+                }
 
-                        Pending -> {}
-                        is Success -> {
-                            insertIntoLocalRepository(
-                                result2.data as List<ChildSmsInfo>
-                            )
-                            result = Result.success()
-                            return@collect
-                        }
-                    }
+                Pending -> {}
+                is Success -> {
+                    val isSuccess = insertIntoLocalRepository(result.data as List<ChildSmsInfo>)
+                    return@withContext if (isSuccess) Result.success() else Result.failure()
                 }
             }
 
-            job.await()
-            return@withContext result ?: Result.failure()
+            return@withContext Result.failure()
         }
+
+        Log.d("TAG", "doWork: finished")
+        return workResult
     }
 
     /**

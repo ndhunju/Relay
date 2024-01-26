@@ -41,7 +41,7 @@ interface ApiInterface {
     /**
      * Makes API request to fetch all [Message]s sent by [childUserIds]
      */
-    fun fetchMessagesFromChildUsers(childUserIds: List<String>): Flow<Result>
+    suspend fun fetchMessagesFromChildUsers(childUserIds: List<String>): Result
 
     /**
      * Pushes [message] to the server.

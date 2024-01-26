@@ -2,6 +2,7 @@ package com.ndhunju.relay.api
 
 import com.ndhunju.relay.ui.messages.Message
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.MutableStateFlow
 
 /**
  * Class with dummy implementation of [ApiInterface]
@@ -30,8 +31,8 @@ object ApiInterfaceDummyImpl: ApiInterface {
         return returnFailure()
     }
 
-    override fun fetchMessagesFromChildUsers(childUserIds: List<String>): Flow<Result> {
-        return returnFailure()
+    override suspend fun fetchMessagesFromChildUsers(childUserIds: List<String>): Result {
+        return Result.Failure()
     }
 
     override fun pushMessage(message: Message): Flow<Result> {
@@ -39,6 +40,6 @@ object ApiInterfaceDummyImpl: ApiInterface {
     }
 
     private fun returnFailure(): Flow<Result> {
-        return returnFailure()
+        return MutableStateFlow(Result.Failure())
     }
 }
