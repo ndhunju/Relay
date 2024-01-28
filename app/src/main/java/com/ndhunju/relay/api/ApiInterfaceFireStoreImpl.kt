@@ -181,11 +181,14 @@ class ApiInterfaceFireStoreImpl(
                     .get()
                     .await()
                     .documents
-                    .map {
+                    .map { doc ->
                         gson.fromJson(
-                            it.get("PayLoad") as String,
+                            doc.get("PayLoad") as String,
                             ChildSmsInfo::class.java
-                        ).apply { childUserId = childUserId2 }
+                        ).apply {
+                            childUserId = childUserId2
+                            idInServerDb = doc.id
+                        }
                     }
 
                 childSmsInfoList.addAll(childSmsInfo)
@@ -193,6 +196,21 @@ class ApiInterfaceFireStoreImpl(
             return Result.Success(childSmsInfoList)
         } catch (ex: Exception) {
             return Result.Failure(ex)
+        }
+    }
+
+    override suspend fun notifyDidSaveFetchedMessages(messageIds: List<String>): Result {
+        return try {
+            messageIds.forEach { messageId ->
+                // Ideally, we should use "Functions" feature of Firestore where the logic
+                // there would delete the message only after all the parents have fetched
+                // and saved the messages. But since "Functions" feature costs money,
+                // directly deleting fetched messages from client side
+                messageCollectionRef.document(messageId).delete().await()
+            }
+            Result.Success()
+        } catch (ex: Exception) {
+            Result.Failure(ex)
         }
     }
 

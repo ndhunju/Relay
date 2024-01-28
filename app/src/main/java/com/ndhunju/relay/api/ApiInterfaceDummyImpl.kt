@@ -32,7 +32,11 @@ object ApiInterfaceDummyImpl: ApiInterface {
     }
 
     override suspend fun fetchMessagesFromChildUsers(childUserIds: List<String>): Result {
-        return Result.Failure()
+        return returnFailure()
+    }
+
+    override suspend fun notifyDidSaveFetchedMessages(messageIds: List<String>): Result {
+        return returnFailure()
     }
 
     override suspend fun pushMessage(message: Message): Result {

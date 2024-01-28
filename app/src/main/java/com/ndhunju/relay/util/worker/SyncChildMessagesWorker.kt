@@ -39,7 +39,12 @@ class SyncChildMessagesWorker(
 
                 Pending -> {}
                 is Success -> {
-                    val isSuccess = insertIntoLocalRepository(result.data as List<ChildSmsInfo>)
+                    val childSmsInfoList = result.data as List<ChildSmsInfo>
+                    val isSuccess = insertIntoLocalRepository(childSmsInfoList)
+                    // Tell back end that the messages have been saved locally
+                    appComponent.apiInterface().notifyDidSaveFetchedMessages(
+                        childSmsInfoList.map { it.idInServerDb }
+                    )
                     return@withContext if (isSuccess) Result.success() else Result.failure()
                 }
             }

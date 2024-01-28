@@ -11,6 +11,7 @@ import androidx.room.PrimaryKey
 class ChildSmsInfo(
     @PrimaryKey(autoGenerate = true) val id: Long = 0,
     var childUserId: String,
+    var idInServerDb: String,
     val idInAndroidDb: String,
     val threadId: String,
     val from: String,

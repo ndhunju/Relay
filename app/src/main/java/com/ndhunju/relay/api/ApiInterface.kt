@@ -43,6 +43,12 @@ interface ApiInterface {
     suspend fun fetchMessagesFromChildUsers(childUserIds: List<String>): Result
 
     /**
+     * Makes API request to notify the back end that this client did save the messages
+     * with id in [messageIds]
+     */
+    suspend fun notifyDidSaveFetchedMessages(messageIds: List<String>): Result
+
+    /**
      * Pushes [message] to the server.
      */
     suspend fun pushMessage(message: Message): Result
