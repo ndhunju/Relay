@@ -10,6 +10,8 @@ import androidx.fragment.app.viewModels
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.ndhunju.relay.RelayViewModelFactory
 import com.ndhunju.relay.ui.MainContent
+import com.ndhunju.relay.ui.messagesfrom.MessagesFromFragment
+import com.ndhunju.relay.ui.parent.messagesinthreadfromchild.MessagesInThreadFromChildFragment
 import com.ndhunju.relay.ui.theme.RelayTheme
 
 private const val ARG_CHILD_USER_ID = "ARG_CHILD_USER_ID"
@@ -33,8 +35,20 @@ class MessagesFromChildFragment : Fragment() {
             childUserEmail = it.getString(ARG_CHILD_USER_EMAIL)
         }
 
-        viewModel.doOpenMessageFromFragment = {
-            // TODO: Nikesh - Open screen to show messages
+        val childUserId = childUserId ?: return
+
+        viewModel.doOpenMessagesInThreadFromChildFragment = { message ->
+            parentFragmentManager.beginTransaction()
+                .add(
+                    android.R.id.content,
+                    MessagesInThreadFromChildFragment.newInstance(
+                        childUserId,
+                        message.threadId,
+                        message.from
+                    )
+                )
+                .addToBackStack(MessagesFromFragment.TAG)
+                .commit()
         }
 
         viewModel.childUserEmail = childUserEmail

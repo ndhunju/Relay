@@ -24,6 +24,12 @@ interface ChildSmsInfoDao {
             "    GROUP BY threadId")
     fun getLastSmsOfChild(childUserId: String): Flow<List<ChildSmsInfo>>
 
+    @Query("SELECT * FROM ChildSmsInfo WHERE childUserId=:childUserId AND threadId=:threadId")
+    fun getAllChildSmsInfoOfChildAndThread(
+        childUserId: String,
+        threadId: String
+    ): Flow<List<ChildSmsInfo>>
+
     @Update
     fun update(childSmsInfo: ChildSmsInfo)
 

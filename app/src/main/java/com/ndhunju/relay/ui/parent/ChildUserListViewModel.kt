@@ -38,8 +38,16 @@ class ChildUserListViewModel(
 
     init {
         viewModelScope.launch(Dispatchers.IO) {
-            _showProgress.value = true
-            // TODO: Nikesh - Check if the child users are already stored and is not stale
+            // Show pair child users that were saved previously
+            _childUsers.value = currentUser.user.childUserEmails.mapIndexed{ i, email ->
+                Child(currentUser.user.childUserIds[i], email)
+            }
+
+            // If no child users are saved before,
+            // show spinner until network call to get them finishes
+            _showProgress.value = currentUser.user.childUserEmails.isEmpty()
+
+            // Fetch child users in case there are new ones since last time
             val result = apiInterface.fetchChildUsers(
                 currentUser.user.id
             )

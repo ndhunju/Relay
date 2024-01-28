@@ -26,13 +26,12 @@ class MessagesFromChildViewModel(
     }
 
     val onSearchTextChanged: (String) -> Unit = {}
-    val onClickMessage: (Message) -> Unit = { doOpenMessageFromFragment?.invoke(it) }
-
+    val onClickMessage: (Message) -> Unit = { doOpenMessagesInThreadFromChildFragment?.invoke(it) }
 
     /**
      * Invoked when [MessagesFromFragment] needs to be opened
      */
-    var doOpenMessageFromFragment: ((Message) -> Unit)? = null
+    var doOpenMessagesInThreadFromChildFragment: ((Message) -> Unit)? = null
 
     var childUserEmail: String? = null
         set(value) {
