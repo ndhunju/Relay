@@ -56,6 +56,8 @@
     <string name="button_label_update">Update</string>
     <!-- Error message show below the Email text field -->
     <string name="account_invalid_email">Email is invalid.</string>
+    <!-- Error message shown below the Email text field when the email user entered is already used-->
+    <string name="account_duplicate_email">Email already exits.</string>
     <!-- Error message show below the Name text field -->
     <string name="account_invalid_name">Name is invalid.</string>
     <!-- Error message show below the Phone number text field -->

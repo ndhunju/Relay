@@ -55,7 +55,16 @@ class ApiInterfaceFireStoreImpl(
     ): Result {
         val newUser = makeMapForUserCollection(name, email, phone, deviceId, pushNotificationToken)
 
-        // TODO: Nikesh - Check for duplicate user email before creating new account
+        val userWithEmailExits = userCollectionRef
+            .whereEqualTo("Email", email)
+            .get().await().documents.isNotEmpty()
+
+        if (userWithEmailExits) {
+            return Result.Failure(
+                EmailAlreadyExistException("User with email $email already exits.")
+            )
+        }
+
         return try {
             userId = userCollectionRef.add(newUser).await().id
             Result.Success(userId)
@@ -220,6 +229,11 @@ class ApiInterfaceFireStoreImpl(
  * Exception thrown when email address is not registered already
  */
 class EmailNotFoundException(message: String): Exception(message)
+
+/**
+ * Exception thrown when email address is already used
+ */
+class EmailAlreadyExistException(message: String): Exception(message)
 
 /**
  * Exception thrown when user is not signed in

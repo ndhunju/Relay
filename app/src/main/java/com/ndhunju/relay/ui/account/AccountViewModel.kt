@@ -8,6 +8,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.ndhunju.relay.R
 import com.ndhunju.relay.api.ApiInterface
+import com.ndhunju.relay.api.EmailAlreadyExistException
 import com.ndhunju.relay.api.Result
 import com.ndhunju.relay.service.UserSettingsPersistService
 import com.ndhunju.relay.util.CurrentUser
@@ -143,9 +144,14 @@ class AccountViewModel(
                 }
                 showProgress.value = false
             }
-            else -> {
-                errorStrIdGeneric.value = R.string.account_user_create_failed
-                showProgress.value = false
+            is Result.Failure -> {
+                if (result.throwable is EmailAlreadyExistException) {
+                    errorStrIdForEmail.value = R.string.account_duplicate_email
+                    showProgress.value = false
+                } else {
+                    errorStrIdGeneric.value = R.string.account_user_create_failed
+                    showProgress.value = false
+                }
             }
         }
     }
