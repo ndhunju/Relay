@@ -1,9 +1,13 @@
 package com.ndhunju.relay.data
 
 import androidx.room.Entity
+import androidx.room.Index
 import androidx.room.PrimaryKey
 
-@Entity
+@Entity(
+    // Make idInAndroidDb unique so that there is no duplicates
+    indices = [Index("idInAndroidDb", unique = true)]
+)
 class ChildSmsInfo(
     @PrimaryKey(autoGenerate = true) val id: Long = 0,
     var childUserId: String,
