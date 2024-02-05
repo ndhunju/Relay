@@ -32,16 +32,9 @@ import com.ndhunju.relay.ui.theme.RelayTheme
 import com.ndhunju.relay.ui.theme.setStatusBarColor
 
 @Preview
+@Preview(name = "Dark", uiMode = Configuration.UI_MODE_NIGHT_YES)
 @Composable
 fun WelcomeScreenPreview() {
-    RelayTheme {
-        WelcomeScreen()
-    }
-}
-
-@Preview(uiMode = Configuration.UI_MODE_NIGHT_YES)
-@Composable
-fun WelcomeScreenDarkPreview() {
     RelayTheme {
         WelcomeScreen()
     }
