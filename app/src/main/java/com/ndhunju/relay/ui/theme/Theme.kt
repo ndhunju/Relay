@@ -3,6 +3,7 @@ package com.ndhunju.relay.ui.theme
 import android.app.Activity
 import android.os.Build
 import androidx.compose.foundation.isSystemInDarkTheme
+import androidx.compose.material3.ColorScheme
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.darkColorScheme
 import androidx.compose.material3.dynamicDarkColorScheme
@@ -11,6 +12,7 @@ import androidx.compose.material3.lightColorScheme
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.SideEffect
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.toArgb
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalContext
@@ -55,16 +57,19 @@ fun RelayTheme(
         darkTheme -> DarkColorScheme
         else -> LightColorScheme
     }
-    val view = LocalView.current
-    if (!view.isInEditMode) {
-        SideEffect {
-            val window = (view.context as Activity).window
-            window.statusBarColor = colorScheme.primary.toArgb()
-            WindowCompat.getInsetsController(window, view).isAppearanceLightStatusBars = darkTheme
-        }
-    }
+
+    setStatusBarColor(darkTheme, colorScheme.primary)
+
 
     // Provide correct dimens based on smallest width size
+    setUpLocalDimensProvider(colorScheme, content)
+}
+
+@Composable
+private fun setUpLocalDimensProvider(
+    colorScheme: ColorScheme,
+    content: @Composable () -> Unit
+): Boolean {
     val configuration = LocalConfiguration.current
     val dimensions = if (configuration.smallestScreenWidthDp < 600) {
         CompactDimensions
@@ -82,4 +87,23 @@ fun RelayTheme(
             content = content
         )
     }
+
+    return true
+}
+
+@Composable
+fun setStatusBarColor(
+    isDarkTheme: Boolean = isSystemInDarkTheme(),
+    color: Color  = MaterialTheme.colorScheme.primary
+): Boolean {
+    val view = LocalView.current
+    if (!view.isInEditMode) {
+        SideEffect {
+            val window = (view.context as Activity).window
+            window.statusBarColor = color.toArgb()
+            WindowCompat.getInsetsController(window, view).isAppearanceLightStatusBars = isDarkTheme
+        }
+    }
+
+    return true
 }

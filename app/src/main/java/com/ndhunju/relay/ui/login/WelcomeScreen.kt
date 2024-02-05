@@ -18,6 +18,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.ColorFilter
+import androidx.compose.ui.graphics.compositeOver
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
@@ -25,6 +26,7 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import com.ndhunju.relay.R
 import com.ndhunju.relay.ui.theme.LocalDimens
+import com.ndhunju.relay.ui.theme.setStatusBarColor
 
 @Preview
 @Composable
@@ -34,6 +36,13 @@ fun WelcomeScreenPreview() {
 
 @Composable
 fun WelcomeScreen() {
+    // Set suitable color to the status bar which is
+    // same as surface color with a tint of primary color
+    setStatusBarColor(
+        color = MaterialTheme.colorScheme.primary.copy(alpha = 0.08f)
+            .compositeOver(MaterialTheme.colorScheme.surface.copy())
+    )
+
     Surface {
         Scaffold(
             bottomBar = {
