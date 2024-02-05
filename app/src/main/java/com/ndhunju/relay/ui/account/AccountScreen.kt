@@ -34,6 +34,7 @@ fun AccountScreenPreview() {
 @Composable
 fun AccountScreen(
     accountScreenUiState: AccountScreenUiState,
+    showUpButton: Boolean = true,
     onUpPressed: () -> Unit = {},
     onEmailChange: (String) -> Unit = {},
     onNameChange: (String) -> Unit = {},
@@ -45,8 +46,37 @@ fun AccountScreen(
         Scaffold(
             topBar = { TopAppBarWithUpButton(
                 title = stringResource(R.string.screen_title_account),
-                onUpPressed = onUpPressed
-            )}
+                onUpPressed = onUpPressed,
+                showUpButton = showUpButton
+            )},
+            bottomBar = {
+                Button(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(
+                            horizontal = LocalDimens.current.contentPaddingHorizontal,
+                            vertical = LocalDimens.current.itemPaddingVertical
+                        ),
+                    enabled = accountScreenUiState.isCreateUpdateBtnEnabled(),
+                    onClick = onClickCreateUpdate
+                ) {
+                    if (accountScreenUiState.showProgress) {
+                        CircularProgressIndicator(
+                            modifier = Modifier.size(32.dp),
+                            color = MaterialTheme.colorScheme.onBackground
+                        )
+                    } else {
+                        Text(
+                            text = stringResource(
+                                when (accountScreenUiState.mode) {
+                                    Mode.Create -> R.string.button_label_create_account
+                                    Mode.Update -> R.string.button_label_update
+                                }
+                            )
+                        )
+                    }
+                }
+            }
         ) { innerPadding ->
             Column(
                 modifier = Modifier
@@ -76,27 +106,6 @@ fun AccountScreen(
                     onValueChange = onPhoneChange,
                     keyboardType = KeyboardType.Phone
                 )
-                Button(
-                    modifier = Modifier.fillMaxWidth(),
-                    enabled = accountScreenUiState.isCreateUpdateBtnEnabled(),
-                    onClick = onClickCreateUpdate
-                ) {
-                    if (accountScreenUiState.showProgress) {
-                        CircularProgressIndicator(
-                            modifier = Modifier.size(32.dp),
-                            color = MaterialTheme.colorScheme.onBackground
-                        )
-                    } else {
-                        Text(
-                            text = stringResource(
-                                when (accountScreenUiState.mode) {
-                                    Mode.Create -> R.string.button_label_create_account
-                                    Mode.Update -> R.string.button_label_update
-                                }
-                            )
-                        )
-                    }
-                }
 
                 if (accountScreenUiState.showDialog) {
                     AlertDialog(onDismissRequest = {}) {
