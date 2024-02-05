@@ -1,6 +1,8 @@
 package com.ndhunju.relay.ui.login
 
+import android.content.res.Configuration
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
@@ -26,12 +28,23 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import com.ndhunju.relay.R
 import com.ndhunju.relay.ui.theme.LocalDimens
+import com.ndhunju.relay.ui.theme.RelayTheme
 import com.ndhunju.relay.ui.theme.setStatusBarColor
 
 @Preview
 @Composable
 fun WelcomeScreenPreview() {
-    WelcomeScreen()
+    RelayTheme {
+        WelcomeScreen()
+    }
+}
+
+@Preview(uiMode = Configuration.UI_MODE_NIGHT_YES)
+@Composable
+fun WelcomeScreenDarkPreview() {
+    RelayTheme {
+        WelcomeScreen()
+    }
 }
 
 @Composable
@@ -97,7 +110,10 @@ fun WelcomeScreen() {
                     textAlign = TextAlign.Center,
                     style = MaterialTheme.typography.titleMedium,
                     fontWeight = FontWeight.SemiBold,
-                    fontSize = LocalDimens.current.welcomeBodyTextSize
+                    fontSize = LocalDimens.current.welcomeBodyTextSize,
+                    color = MaterialTheme.typography.titleMedium.color.copy(
+                        alpha = if (isSystemInDarkTheme()) 0F else 0.6F
+                    )
                 )
             }
         }
