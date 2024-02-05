@@ -48,7 +48,9 @@ fun WelcomeScreenDarkPreview() {
 }
 
 @Composable
-fun WelcomeScreen() {
+fun WelcomeScreen(
+    onClickNext: () -> Unit = {}
+) {
     // Set suitable color to the status bar which is
     // same as surface color with a tint of primary color
     setStatusBarColor(
@@ -60,7 +62,7 @@ fun WelcomeScreen() {
         Scaffold(
             bottomBar = {
                 OutlinedButton(
-                    onClick = { /*TODO*/ },
+                    onClick = onClickNext,
                     modifier = Modifier
                         .fillMaxWidth()
                         .padding(

@@ -61,7 +61,10 @@ fun SyncStatusIcon(syncStatus: Result?, modifier: Modifier = Modifier) {
 
 @Composable
 @OptIn(ExperimentalMaterial3Api::class)
-fun TopAppBarWithUpButton(title: String?, onUpPressed: (() -> Unit)?) {
+fun TopAppBarWithUpButton(
+    title: String?,
+    onUpPressed: (() -> Unit)?,
+    showUpButton: Boolean = true) {
     TopAppBar(
         modifier = Modifier.background(MaterialTheme.colorScheme.background).shadow(6.dp),
         title = {
@@ -71,12 +74,14 @@ fun TopAppBarWithUpButton(title: String?, onUpPressed: (() -> Unit)?) {
             )
         },
         navigationIcon = {
-            IconButton(onClick = { onUpPressed?.invoke() }) {
-                Icon(
-                    modifier = Modifier.padding(4.dp),
-                    imageVector = Icons.Filled.ArrowBack,
-                    contentDescription = stringResource(R.string.image_description_go_back)
-                )
+            if (showUpButton) {
+                IconButton(onClick = { onUpPressed?.invoke() }) {
+                    Icon(
+                        modifier = Modifier.padding(4.dp),
+                        imageVector = Icons.Filled.ArrowBack,
+                        contentDescription = stringResource(R.string.image_description_go_back)
+                    )
+                }
             }
         }
     )

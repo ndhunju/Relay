@@ -27,6 +27,8 @@ class AccountFragment: Fragment() {
                     val uiState = accountViewModel.state.collectAsStateWithLifecycle()
                     AccountScreen(
                         accountScreenUiState = uiState.value,
+                        // Show the UP button only when there are other fragments in the backstack
+                        showUpButton = parentFragmentManager.backStackEntryCount > 0,
                         onEmailChange = accountViewModel.onEmailChange,
                         onNameChange = accountViewModel.onNameChange,
                         onPhoneChange = accountViewModel.onPhoneChange,
