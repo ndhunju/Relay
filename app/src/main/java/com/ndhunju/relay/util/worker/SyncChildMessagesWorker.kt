@@ -28,7 +28,7 @@ class SyncChildMessagesWorker(
     override suspend fun doWork(): Result {
         val workResult = withContext(Dispatchers.IO) {
             val result = appComponent.apiInterface().fetchMessagesFromChildUsers(
-                CurrentUser.user.childUserIds
+                appComponent.currentUser().user.childUserIds
             )
 
             when (result) {

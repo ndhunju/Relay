@@ -33,7 +33,7 @@ import com.ndhunju.relay.api.ApiInterfaceDummyImpl
 import com.ndhunju.relay.service.UserSettingsPersistServiceDummyImpl
 import com.ndhunju.relay.ui.custom.TopAppBarWithUpButton
 import com.ndhunju.relay.ui.theme.LocalDimens
-import com.ndhunju.relay.util.CurrentUser
+import com.ndhunju.relay.util.CurrentUserImpl
 
 @Preview
 @Composable
@@ -41,7 +41,7 @@ fun ChildUserListScreenPreview() {
     ChildUserListScreen(ChildUserListViewModel(
         ApiInterfaceDummyImpl,
         WorkManager.getInstance(LocalContext.current),
-        CurrentUser,
+        CurrentUserImpl,
         UserSettingsPersistServiceDummyImpl
     ), {})
 }

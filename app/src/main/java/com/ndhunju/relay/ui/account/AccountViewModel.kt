@@ -25,6 +25,7 @@ import java.lang.RuntimeException
 class AccountViewModel(
     private val apiInterface: ApiInterface,
     private val userSettingsPersistService: UserSettingsPersistService,
+    private var currentUser: CurrentUser,
     private var user: User
 ): ViewModel() {
 
@@ -137,8 +138,8 @@ class AccountViewModel(
                 // Update local copy of user
                 user = createUserFromCurrentState(userId)
                 // If this is current user, update it too
-                if (user.id == CurrentUser.user.id) {
-                    CurrentUser.user = user
+                if (user.id == currentUser.user.id) {
+                    currentUser.user = user
                     // Store registered user's id persistently
                     userSettingsPersistService.save(user)
                 }
@@ -172,8 +173,8 @@ class AccountViewModel(
                 // Update local copy of user
                 user = createUserFromCurrentState()
                 // If this is current user, update it too
-                if (user.id == CurrentUser.user.id) {
-                    CurrentUser.user = user
+                if (user.id == currentUser.user.id) {
+                    currentUser.user = user
                     // Store registered user's id persistently
                     userSettingsPersistService.save(user)
                 }

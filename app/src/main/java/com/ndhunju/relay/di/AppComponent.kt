@@ -6,6 +6,7 @@ import com.ndhunju.relay.data.SmsInfoRepository
 import com.ndhunju.relay.api.ApiInterface
 import com.ndhunju.relay.data.ChildSmsInfoRepository
 import com.ndhunju.relay.service.UserSettingsPersistService
+import com.ndhunju.relay.util.CurrentUser
 import dagger.Component
 import javax.inject.Singleton
 
@@ -27,6 +28,8 @@ interface AppComponent {
     fun childSmsInfoRepository(): ChildSmsInfoRepository
 
     fun userSettingsPersistService(): UserSettingsPersistService
+
+    fun currentUser(): CurrentUser
 
     fun workManager(): WorkManager
 

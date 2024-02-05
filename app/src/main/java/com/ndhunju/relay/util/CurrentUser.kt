@@ -1,13 +1,22 @@
 package com.ndhunju.relay.util
 
+interface CurrentUser {
+
+    var user: User
+    fun isUserSignedIn(): Boolean
+}
+
 /**
  * References currently active/logged user.
  */
-object CurrentUser {
-    var user: User = User()
-    fun isUserSignedIn(): Boolean {
+object CurrentUserImpl: CurrentUser {
+
+    override var user: User = User()
+
+    override fun isUserSignedIn(): Boolean {
         return user.isRegistered && user.id.isNotEmpty()
     }
+
 }
 
 data class User(

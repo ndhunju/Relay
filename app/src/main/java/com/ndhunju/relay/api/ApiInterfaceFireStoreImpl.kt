@@ -10,9 +10,6 @@ import com.ndhunju.relay.data.ChildSmsInfo
 import com.ndhunju.relay.ui.messages.Message
 import com.ndhunju.relay.ui.parent.Child
 import com.ndhunju.relay.util.CurrentUser
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.tasks.await
 
@@ -40,7 +37,6 @@ class ApiInterfaceFireStoreImpl(
     private val userCollectionRef = Firebase.firestore.collection("User")
     private val parentChildCollectionRef = Firebase.firestore.collection("ParentChild")
     private val messageCollectionRef = Firebase.firestore.collection("Message")
-    private val localIoScope = CoroutineScope(SupervisorJob() + Dispatchers.IO)
 
     /**
      * Creates user in the cloud database.
@@ -82,8 +78,8 @@ class ApiInterfaceFireStoreImpl(
         phone: String?,
     ): Result {
         // If null is passed, use existing values
-        val finalName = name ?: CurrentUser.user.name
-        val finalPhone = phone ?: CurrentUser.user.phone
+        val finalName = name ?: currentUser.user.name
+        val finalPhone = phone ?: currentUser.user.phone
 
         return try {
             userCollectionRef.document(userId).update(
@@ -219,11 +215,11 @@ class ApiInterfaceFireStoreImpl(
      */
     override suspend fun pushMessage(message: Message): Result {
 
-        if (CurrentUser.isUserSignedIn().not()) {
+        if (currentUser.isUserSignedIn().not()) {
             return Result.Failure(UserSignedOutException("User is not signed in."))
         }
 
-        val userId = CurrentUser.user.id
+        val userId = currentUser.user.id
         // Write a message to the database
         val newMessage = hashMapOf(
             "PayLoad" to gson.toJson(message),

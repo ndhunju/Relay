@@ -5,7 +5,6 @@ import com.ndhunju.relay.di.AndroidAppModule
 import com.ndhunju.relay.di.AppComponent
 import com.ndhunju.relay.di.AppModule
 import com.ndhunju.relay.di.DaggerAppComponent
-import com.ndhunju.relay.util.CurrentUser
 import com.ndhunju.relay.util.User
 
 class RelayApplication: Application() {
@@ -22,7 +21,8 @@ class RelayApplication: Application() {
             .build()
 
         // Instantiate user in CurrentUser as app is dependent on it to function
-        CurrentUser.user = appComponent.userSettingsPersistService().retrieve() ?: User()
+        appComponent.currentUser().user = appComponent.userSettingsPersistService().retrieve()
+            ?: User()
         // TODO: Nikesh - Based on user's id, always fetch latest user info from server
     }
 }

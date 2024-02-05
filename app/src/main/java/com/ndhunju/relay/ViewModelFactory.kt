@@ -10,7 +10,6 @@ import com.ndhunju.relay.ui.pair.PairWithParentViewModel
 import com.ndhunju.relay.ui.parent.ChildUserListViewModel
 import com.ndhunju.relay.ui.parent.messagesfromchild.MessagesFromChildViewModel
 import com.ndhunju.relay.ui.parent.messagesinthreadfromchild.MessagesInThreadFromChildVM
-import com.ndhunju.relay.util.CurrentUser
 
 val RelayViewModelFactory: ViewModelProvider.Factory = object : ViewModelProvider.Factory {
 
@@ -26,6 +25,7 @@ val RelayViewModelFactory: ViewModelProvider.Factory = object : ViewModelProvide
         val smsInfoRepository = appComponent.smsInfoRepository()
         val childSmsInfoRepository = appComponent.childSmsInfoRepository()
         val userSettingsPersistService = appComponent.userSettingsPersistService()
+        val currentUser = appComponent.currentUser()
         val workManager = appComponent.workManager()
         with(modelClass) {
             return when {
@@ -36,13 +36,14 @@ val RelayViewModelFactory: ViewModelProvider.Factory = object : ViewModelProvide
                     AccountViewModel(
                         apiInterface,
                         userSettingsPersistService,
-                        CurrentUser.user
+                        currentUser,
+                        currentUser.user
                     ) as T
                 }
                 isAssignableFrom(PairWithParentViewModel::class.java) -> {
                     PairWithParentViewModel(
                         apiInterface,
-                        CurrentUser,
+                        currentUser,
                         userSettingsPersistService
                     ) as T
                 }
@@ -50,7 +51,7 @@ val RelayViewModelFactory: ViewModelProvider.Factory = object : ViewModelProvide
                     ChildUserListViewModel(
                         apiInterface,
                         workManager,
-                        CurrentUser,
+                        currentUser,
                         userSettingsPersistService
                     ) as T
                 }

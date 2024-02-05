@@ -20,6 +20,7 @@ import com.ndhunju.relay.util.gson.ResultSerializer
 import com.ndhunju.relay.service.UserSettingsPersistService
 import com.ndhunju.relay.service.UserSettingsPersistServiceSharedPreferenceImpl
 import com.ndhunju.relay.util.CurrentUser
+import com.ndhunju.relay.util.CurrentUserImpl
 import dagger.Module
 import dagger.Provides
 import javax.inject.Singleton
@@ -48,7 +49,7 @@ class AppModule(private val application: Application) {
      */
     @Provides
     @Singleton
-    fun providesCurrentUser(): CurrentUser = CurrentUser
+    fun providesCurrentUser(): CurrentUser = CurrentUserImpl
 
     @Provides
     @Singleton
