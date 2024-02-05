@@ -35,7 +35,6 @@ val RelayViewModelFactory: ViewModelProvider.Factory = object : ViewModelProvide
                 isAssignableFrom(AccountViewModel::class.java) -> {
                     AccountViewModel(
                         apiInterface,
-                        userSettingsPersistService,
                         currentUser,
                         currentUser.user
                     ) as T

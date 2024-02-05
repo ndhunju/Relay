@@ -22,7 +22,7 @@ import com.ndhunju.relay.ui.custom.ProgressButton
 import com.ndhunju.relay.ui.custom.RelayOutlinedTextField
 import com.ndhunju.relay.ui.custom.TopAppBarWithUpButton
 import com.ndhunju.relay.ui.theme.LocalDimens
-import com.ndhunju.relay.util.CurrentUserImpl
+import com.ndhunju.relay.util.PersistableCurrentUserImpl
 
 @Preview
 @Composable
@@ -30,7 +30,7 @@ fun PairWithParentScreenPreview() {
     PairWithParentScreen(
         PairWithParentViewModel(
             ApiInterfaceDummyImpl,
-            CurrentUserImpl,
+            PersistableCurrentUserImpl(),
             UserSettingsPersistServiceDummyImpl
         )
     )

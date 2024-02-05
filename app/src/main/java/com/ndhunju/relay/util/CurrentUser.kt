@@ -1,5 +1,10 @@
 package com.ndhunju.relay.util
 
+import com.ndhunju.relay.service.UserSettingsPersistService
+
+/**
+ * Provides API to interact with currently active/logged [User].
+ */
 interface CurrentUser {
 
     var user: User
@@ -7,11 +12,17 @@ interface CurrentUser {
 }
 
 /**
- * References currently active/logged user.
+ * Implements [CurrentUser] such that any changes to [CurrentUser.user] are persisted permanently
  */
-object CurrentUserImpl: CurrentUser {
+class PersistableCurrentUserImpl(
+    private val userSettingsPersistService: UserSettingsPersistService? = null
+): CurrentUser {
 
-    override var user: User = User()
+    override var user: User = userSettingsPersistService?.retrieve() ?: User()
+        set(value) {
+            field = value
+            userSettingsPersistService?.save(value)
+        }
 
     override fun isUserSignedIn(): Boolean {
         return user.isRegistered && user.id.isNotEmpty()

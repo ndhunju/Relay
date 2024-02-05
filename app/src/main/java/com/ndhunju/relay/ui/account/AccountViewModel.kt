@@ -24,7 +24,6 @@ import java.lang.RuntimeException
 
 class AccountViewModel(
     private val apiInterface: ApiInterface,
-    private val userSettingsPersistService: UserSettingsPersistService,
     private var currentUser: CurrentUser,
     private var user: User
 ): ViewModel() {
@@ -140,8 +139,6 @@ class AccountViewModel(
                 // If this is current user, update it too
                 if (user.id == currentUser.user.id) {
                     currentUser.user = user
-                    // Store registered user's id persistently
-                    userSettingsPersistService.save(user)
                 }
                 showProgress.value = false
             }
@@ -175,8 +172,6 @@ class AccountViewModel(
                 // If this is current user, update it too
                 if (user.id == currentUser.user.id) {
                     currentUser.user = user
-                    // Store registered user's id persistently
-                    userSettingsPersistService.save(user)
                 }
                 showProgress.value = false
             }
