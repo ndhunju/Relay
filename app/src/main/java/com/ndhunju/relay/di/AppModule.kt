@@ -96,7 +96,7 @@ class AppModule(private val application: Application) {
     @Provides
     @Singleton
     fun provideAppStateBroadcasterService(): AppStateBroadcastService {
-        return AppStateBroadcastServiceImpl()
+        return AppStateBroadcastServiceImpl(providesCurrentUser())
     }
 }
 

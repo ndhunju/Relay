@@ -41,19 +41,21 @@ interface AppStateBroadcastService {
 /**
  * Simple implementation of [AppStateBroadcastService]
  */
-class AppStateBroadcastServiceImpl: AppStateBroadcastService {
+class AppStateBroadcastServiceImpl(
+    currentUser: CurrentUser
+): AppStateBroadcastService {
 
-    private val _isUserLoggedIn = MutableStateFlow(false)
-    override val isUserSignedIn = _isUserLoggedIn.asStateFlow()
+    private val _isUserSignedIn = MutableStateFlow(currentUser.isUserSignedIn())
+    override val isUserSignedIn = _isUserSignedIn.asStateFlow()
 
     private val _isOnline = MutableStateFlow(true)
     override val isDeviceOnline = _isOnline.asStateFlow()
 
     override fun updateIsUserSignedIn(newValue: Boolean) {
-        if (newValue == _isUserLoggedIn.value) return
+        if (newValue == _isUserSignedIn.value) return
         // Log who made the update request
         Log.d(TAG, "updateIsUserSignedIn: ${Throwable().stackTrace.first()}")
-        _isUserLoggedIn.value = newValue
+        _isUserSignedIn.value = newValue
     }
 
     override fun updateIsDeviceOnline(newValue: Boolean) {
