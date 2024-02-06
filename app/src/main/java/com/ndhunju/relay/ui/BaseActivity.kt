@@ -1,37 +1,29 @@
 package com.ndhunju.relay.ui
 
-import android.annotation.SuppressLint
-import android.os.Build
 import android.os.Bundle
 import android.widget.Toast
 import androidx.fragment.app.FragmentActivity
 import com.ndhunju.relay.R
-import com.ndhunju.relay.util.connectivity.LollipopNetworkConnectionChecker
-import com.ndhunju.relay.util.connectivity.NetworkConnectionChecker
-import com.ndhunju.relay.util.connectivity.NougatNetworkConnectionChecker
+import com.ndhunju.relay.RelayApplication
+import com.ndhunju.relay.service.AppStateBroadcastService
+import javax.inject.Inject
 
-open class BaseActivity: FragmentActivity() {
+abstract class BaseActivity: FragmentActivity() {
 
-    private lateinit var networkConnectionChecker: NetworkConnectionChecker
+    /**
+     * Dagger will provide an instance of [AppStateBroadcastService] from the graph
+     */
+    @Inject lateinit var appStateBroadcastService: AppStateBroadcastService
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        initNetworkConnectionChecker()
+        injectFields()
+        observeDeviceOnlineState()
     }
 
-    /**
-     * Initializes [networkConnectionChecker] with appropriate implementation
-     */
-    @SuppressLint("ObsoleteSdkInt")
-    private fun initNetworkConnectionChecker() {
-        networkConnectionChecker = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
-            NougatNetworkConnectionChecker(this)
-        } else {
-            LollipopNetworkConnectionChecker(this)
-        }
-
-        networkConnectionChecker.observe(this) { isOnline ->
+    private fun observeDeviceOnlineState() {
+        appStateBroadcastService.isDeviceOnline.observe(this) { isOnline ->
             if (isOnline.not()) {
                 Toast.makeText(
                     this,
@@ -40,6 +32,14 @@ open class BaseActivity: FragmentActivity() {
                 ).show()
             }
         }
+    }
+
+    /**
+     * Injects fields annotated with @Inject
+     */
+    private fun injectFields() {
+        // Make Dagger instantiate @Inject fields in this activity
+        (applicationContext as RelayApplication).appComponent.inject(this)
     }
 
 }

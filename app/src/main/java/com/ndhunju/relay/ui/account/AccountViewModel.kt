@@ -137,10 +137,8 @@ class AccountViewModel(
                     ?: throw RuntimeException("User id not provided.")
                 // Update local copy of user
                 user = createUserFromCurrentState(userId)
-                // If this is current user, update it too
-                if (user.id == currentUser.user.id) {
-                    currentUser.user = user
-                }
+                // Update currentUser's user too
+                currentUser.user = user
                 showProgress.value = false
                 onNewUserCreated()
             }

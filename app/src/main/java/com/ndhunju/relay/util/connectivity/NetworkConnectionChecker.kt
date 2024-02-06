@@ -4,14 +4,14 @@ import android.content.Context
 import android.net.ConnectivityManager
 import android.net.NetworkCapabilities
 import androidx.core.content.ContextCompat
-import androidx.lifecycle.LiveData
+import androidx.lifecycle.MutableLiveData
 
 /**
  * Checks and notifies active observers whenever the network connection changes
  */
-abstract class NetworkConnectionChecker(val context: Context) : LiveData<Boolean>() {
+abstract class NetworkConnectionChecker(val context: Context) : MutableLiveData<Boolean>() {
 
-    var connectivityManager = ContextCompat.getSystemService(
+    open var connectivityManager = ContextCompat.getSystemService(
         context,
         ConnectivityManager::class.java
     )

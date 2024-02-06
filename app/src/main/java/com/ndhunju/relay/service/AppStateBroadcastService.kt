@@ -1,10 +1,10 @@
 package com.ndhunju.relay.service
 
 import android.util.Log
+import androidx.lifecycle.LiveData
+import androidx.lifecycle.MutableLiveData
 import com.ndhunju.relay.util.CurrentUser
-import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.StateFlow
-import kotlinx.coroutines.flow.asStateFlow
+import com.ndhunju.relay.util.connectivity.NetworkConnectionChecker
 
 /**
  * Provides fields to observe app wide state,
@@ -15,12 +15,12 @@ interface AppStateBroadcastService {
     /**
      * True if [CurrentUser] is signed in
      */
-    val isUserSignedIn: StateFlow<Boolean>
+    val isUserSignedIn: LiveData<Boolean>
 
     /**
      * True if device has internet
      */
-    val isDeviceOnline: StateFlow<Boolean>
+    val isDeviceOnline: LiveData<Boolean>
 
     /**
      * Updates [isUserSignedIn] if different and notifies observer
@@ -38,27 +38,28 @@ interface AppStateBroadcastService {
  * Simple implementation of [AppStateBroadcastService]
  */
 class AppStateBroadcastServiceImpl(
+    networkConnectionChecker: NetworkConnectionChecker,
     currentUser: CurrentUser
 ): AppStateBroadcastService {
 
-    private val _isUserSignedIn = MutableStateFlow(currentUser.isUserSignedIn())
-    override val isUserSignedIn = _isUserSignedIn.asStateFlow()
+    private val _isUserSignedIn = MutableLiveData(currentUser.isUserSignedIn())
+    override val isUserSignedIn = _isUserSignedIn
 
-    private val _isOnline = MutableStateFlow(true)
-    override val isDeviceOnline = _isOnline.asStateFlow()
+    private val _isOnline = networkConnectionChecker
+    override val isDeviceOnline = _isOnline
 
     override fun updateIsUserSignedIn(newValue: Boolean) {
         if (newValue == _isUserSignedIn.value) return
         // Log who made the update request
         Log.d(TAG, "updateIsUserSignedIn: ${Throwable().stackTrace.first()}")
-        _isUserSignedIn.value = newValue
+        _isUserSignedIn.postValue(newValue)
     }
 
     override fun updateIsDeviceOnline(newValue: Boolean) {
         if (newValue == _isOnline.value) return
         // Log who made the update request
         Log.d(TAG, "updateIsDeviceOnline: ${Throwable().stackTrace.first()}")
-        _isOnline.value = newValue
+        _isOnline.postValue(newValue)
     }
 
     companion object {

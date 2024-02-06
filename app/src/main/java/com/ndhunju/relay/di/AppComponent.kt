@@ -7,7 +7,7 @@ import com.ndhunju.relay.api.ApiInterface
 import com.ndhunju.relay.data.ChildSmsInfoRepository
 import com.ndhunju.relay.service.AppStateBroadcastService
 import com.ndhunju.relay.service.UserSettingsPersistService
-import com.ndhunju.relay.ui.login.LoginActivity
+import com.ndhunju.relay.ui.BaseActivity
 import com.ndhunju.relay.util.CurrentUser
 import dagger.Component
 import javax.inject.Singleton
@@ -38,9 +38,9 @@ interface AppComponent {
     fun appStateBroadcastService(): AppStateBroadcastService
 
     /**
-     * This tells Dagger that [LoginActivity] requests injection so the graph needs to
-     * satisfy all the dependencies of the fields that LoginActivity is requesting.
+     * This tells Dagger that [BaseActivity] requests injection so the graph needs to
+     * satisfy all the dependencies of the fields that it is requesting.
      */
-    fun inject(activity: LoginActivity)
+    fun inject(activity: BaseActivity)
 
 }

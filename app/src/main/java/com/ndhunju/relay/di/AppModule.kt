@@ -1,7 +1,9 @@
 package com.ndhunju.relay.di
 
+import android.annotation.SuppressLint
 import android.app.Application
 import android.content.Context
+import android.os.Build
 import androidx.security.crypto.EncryptedSharedPreferences
 import androidx.work.WorkManager
 import com.google.gson.Gson
@@ -24,6 +26,9 @@ import com.ndhunju.relay.service.UserSettingsPersistService
 import com.ndhunju.relay.service.UserSettingsPersistServiceSharedPreferenceImpl
 import com.ndhunju.relay.util.CurrentUser
 import com.ndhunju.relay.util.PersistableCurrentUserImpl
+import com.ndhunju.relay.util.connectivity.LollipopNetworkConnectionChecker
+import com.ndhunju.relay.util.connectivity.NetworkConnectionChecker
+import com.ndhunju.relay.util.connectivity.NougatNetworkConnectionChecker
 import dagger.Module
 import dagger.Provides
 import javax.inject.Singleton
@@ -96,7 +101,22 @@ class AppModule(private val application: Application) {
     @Provides
     @Singleton
     fun provideAppStateBroadcasterService(): AppStateBroadcastService {
-        return AppStateBroadcastServiceImpl(providesCurrentUser())
+        return AppStateBroadcastServiceImpl(
+            provideNetworkConnectionChecker(),
+            providesCurrentUser()
+        )
+    }
+
+    // Keeping check for older SDK in case we need to support older SDK in the future
+    @SuppressLint("ObsoleteSdkInt")
+    @Provides
+    @Singleton
+    fun provideNetworkConnectionChecker(): NetworkConnectionChecker {
+        return if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
+            NougatNetworkConnectionChecker(application)
+        } else {
+            LollipopNetworkConnectionChecker(application)
+        }
     }
 }
 
