@@ -3,7 +3,6 @@ package com.ndhunju.relay.ui.login
 import android.content.Intent
 import android.os.Bundle
 import androidx.activity.compose.setContent
-import androidx.fragment.app.FragmentActivity
 import androidx.lifecycle.asLiveData
 import com.ndhunju.relay.RelayApplication
 import com.ndhunju.relay.service.AppStateBroadcastService

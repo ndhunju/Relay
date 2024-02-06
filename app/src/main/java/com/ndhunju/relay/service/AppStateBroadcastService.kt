@@ -1,10 +1,6 @@
 package com.ndhunju.relay.service
 
-import android.content.Context
-import android.net.ConnectivityManager
-import android.net.NetworkCapabilities
 import android.util.Log
-import androidx.core.content.ContextCompat
 import com.ndhunju.relay.util.CurrentUser
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -69,17 +65,4 @@ class AppStateBroadcastServiceImpl(
         val TAG: String = AppStateBroadcastServiceImpl::class.java.simpleName
     }
 
-}
-
-/**
- * Convenient method to check if the device has internet connection or not
- */
-private fun checkIfDeviceHasInternet(context: Context): Boolean {
-    val cm = ContextCompat.getSystemService(context, ConnectivityManager::class.java)
-
-    val capabilities = cm?.getNetworkCapabilities(cm.activeNetwork)
-        ?: return false
-
-    return capabilities.hasCapability(NetworkCapabilities.NET_CAPABILITY_INTERNET)
-            && capabilities.hasCapability(NetworkCapabilities.NET_CAPABILITY_VALIDATED)
 }

@@ -1,6 +1,10 @@
 <resources>
     <string name="app_name">Relay</string>
 
+    <!-- General -->
+    <!-- Alert shown to user when the device is offline -->
+    <string name="alert_offline_body">You are offline.</string>
+
     <!-- General Image Descriptions -->
     <!-- Image description for search icon -->
     <string name="image_description_search">Search</string>
