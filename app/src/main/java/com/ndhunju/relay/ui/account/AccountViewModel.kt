@@ -10,7 +10,7 @@ import com.ndhunju.relay.R
 import com.ndhunju.relay.api.ApiInterface
 import com.ndhunju.relay.api.EmailAlreadyExistException
 import com.ndhunju.relay.api.Result
-import com.ndhunju.relay.service.UserSettingsPersistService
+import com.ndhunju.relay.service.AppStateBroadcastService
 import com.ndhunju.relay.util.CurrentUser
 import com.ndhunju.relay.util.User
 import com.ndhunju.relay.util.combine
@@ -23,6 +23,7 @@ import kotlinx.coroutines.launch
 import java.lang.RuntimeException
 
 class AccountViewModel(
+    private val appStateBroadcastService: AppStateBroadcastService,
     private val apiInterface: ApiInterface,
     private var currentUser: CurrentUser,
     private var user: User
@@ -141,6 +142,7 @@ class AccountViewModel(
                     currentUser.user = user
                 }
                 showProgress.value = false
+                onNewUserCreated()
             }
             is Result.Failure -> {
                 if (result.throwable is EmailAlreadyExistException) {
@@ -152,6 +154,13 @@ class AccountViewModel(
                 }
             }
         }
+    }
+
+    /**
+     * New [User] was created successfully
+     */
+    private fun onNewUserCreated() {
+        appStateBroadcastService.updateIsUserSignedIn(currentUser.isUserSignedIn())
     }
 
     /**

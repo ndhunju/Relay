@@ -27,6 +27,7 @@ val RelayViewModelFactory: ViewModelProvider.Factory = object : ViewModelProvide
         val userSettingsPersistService = appComponent.userSettingsPersistService()
         val currentUser = appComponent.currentUser()
         val workManager = appComponent.workManager()
+        val appStateBroadcasterService = appComponent.appStateBroadcastService()
         with(modelClass) {
             return when {
                 isAssignableFrom(MainViewModel::class.java) -> {
@@ -34,6 +35,7 @@ val RelayViewModelFactory: ViewModelProvider.Factory = object : ViewModelProvide
                 }
                 isAssignableFrom(AccountViewModel::class.java) -> {
                     AccountViewModel(
+                        appStateBroadcasterService,
                         apiInterface,
                         currentUser,
                         currentUser.user
