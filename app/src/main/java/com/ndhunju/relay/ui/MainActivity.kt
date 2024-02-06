@@ -28,7 +28,7 @@ import com.ndhunju.relay.util.areNeededPermissionGranted
 import com.ndhunju.relay.util.checkIfPermissionGranted
 import com.ndhunju.relay.util.requestPermission
 
-class MainActivity : FragmentActivity() {
+class MainActivity : BaseActivity() {
 
     // Member Variables
     val viewModel: MainViewModel by viewModels { RelayViewModelFactory }

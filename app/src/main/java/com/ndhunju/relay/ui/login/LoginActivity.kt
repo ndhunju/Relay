@@ -7,12 +7,13 @@ import androidx.fragment.app.FragmentActivity
 import androidx.lifecycle.asLiveData
 import com.ndhunju.relay.RelayApplication
 import com.ndhunju.relay.service.AppStateBroadcastService
+import com.ndhunju.relay.ui.BaseActivity
 import com.ndhunju.relay.ui.MainActivity
 import com.ndhunju.relay.ui.account.AccountFragment
 import com.ndhunju.relay.ui.theme.RelayTheme
 import javax.inject.Inject
 
-class LoginActivity: FragmentActivity() {
+class LoginActivity: BaseActivity() {
 
     /**
      * Dagger will provide an instance of [AppStateBroadcastService] from the graph
