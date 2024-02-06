@@ -46,8 +46,12 @@ abstract class NetworkConnectionChecker(val context: Context) : MutableLiveData<
             connectivityManager?.activeNetwork
         ) ?: return false
 
+        // isValidated is false on emulator
+        //val hasInternet = capabilities.hasCapability(NetworkCapabilities.NET_CAPABILITY_INTERNET)
+        //val isValidated = capabilities.hasCapability(NetworkCapabilities.NET_CAPABILITY_VALIDATED)
+        //Log.d("TAG", "checkIfDeviceHasInternet: hasInternet=$hasInternet;isValidated=$isValidated")
+        //Throwable().printStackTrace()
         return capabilities.hasCapability(NetworkCapabilities.NET_CAPABILITY_INTERNET)
-                && capabilities.hasCapability(NetworkCapabilities.NET_CAPABILITY_VALIDATED)
     }
 
     /**
