@@ -12,7 +12,6 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
@@ -27,6 +26,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import com.ndhunju.relay.R
+import com.ndhunju.relay.ui.custom.AnimatedTextButton
 import com.ndhunju.relay.ui.theme.LocalDimens
 import com.ndhunju.relay.ui.theme.RelayTheme
 import com.ndhunju.relay.ui.theme.setStatusBarColor
@@ -54,14 +54,14 @@ fun WelcomeScreen(
     Surface {
         Scaffold(
             bottomBar = {
-                OutlinedButton(
+                AnimatedTextButton(
                     onClick = onClickNext,
                     modifier = Modifier
                         .fillMaxWidth()
                         .padding(
                             horizontal = LocalDimens.current.contentPaddingHorizontal,
                             vertical = LocalDimens.current.itemPaddingVertical
-                        ),
+                        )
                 ) {
                     Text(text = stringResource(R.string.welcome_screen_create_account_btn))
                 }
