@@ -3,6 +3,7 @@ package com.ndhunju.relay.ui.login
 import android.content.Intent
 import android.os.Bundle
 import androidx.activity.compose.setContent
+import com.ndhunju.relay.R
 import com.ndhunju.relay.ui.BaseActivity
 import com.ndhunju.relay.ui.MainActivity
 import com.ndhunju.relay.ui.account.AccountFragment
@@ -17,7 +18,14 @@ class LoginActivity: BaseActivity() {
             RelayTheme {
                 WelcomeScreen(onClickNext = {
                     supportFragmentManager.beginTransaction()
-                        .add(android.R.id.content, AccountFragment.newInstance())
+                        .setCustomAnimations(
+                            R.anim.enter_from_right,
+                            R.anim.exit_to_left,
+                            R.anim.enter_from_left,
+                            R.anim.exit_to_right
+                        )
+                        .replace(android.R.id.content, AccountFragment.newInstance())
+                        .addToBackStack(AccountFragment.TAG)
                         .commit()
                 })
             }
