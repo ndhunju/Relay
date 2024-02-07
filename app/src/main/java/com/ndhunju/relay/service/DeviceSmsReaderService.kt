@@ -29,12 +29,12 @@ class DeviceSmsReaderService @Inject constructor(private val context: Context) {
             val cursor: Cursor? = context.contentResolver.query(
                 smsUri,
                 smsColumns,
-                "thread_id IS NOT NULL) GROUP BY (thread_id", //GROUP BY,
+                null,
                 null,
                 "date DESC" // Show newest message at the top
             )
 
-            return fromCursor(cursor)
+            return fromCursorToMapOfThreadToLastMessage(cursor).map { entry -> entry.value }
         } catch (ex: Exception) {
             Log.d(TAG, "getLastMessageForEachThread: ${ex.message}")
         }
@@ -55,7 +55,7 @@ class DeviceSmsReaderService @Inject constructor(private val context: Context) {
             null
         )
 
-        return fromCursor(cursor)
+        return fromCursorToMessageList(cursor)
     }
 
     /**
@@ -72,7 +72,7 @@ class DeviceSmsReaderService @Inject constructor(private val context: Context) {
             null
         )
 
-        val messages = fromCursor(cursor)
+        val messages = fromCursorToMessageList(cursor)
 
         if (messages.size > 1) {
             Log.e(TAG, "getMessageBy: Found multiple messages for passed body and address")
@@ -94,7 +94,7 @@ class DeviceSmsReaderService @Inject constructor(private val context: Context) {
             null
         )
 
-        return  fromCursor(cursor)
+        return  fromCursorToMessageList(cursor)
     }
 
     /**
@@ -105,25 +105,55 @@ class DeviceSmsReaderService @Inject constructor(private val context: Context) {
         "reply_path_present", "subject", "body", "service_center", "locked", "error_code", "seen"
     )
 
-    private fun fromCursor(cursor: Cursor?): List<Message> {
+    /**
+     * Reads the [cursor] and return the list of [Message]
+     */
+    private fun fromCursorToMessageList(cursor: Cursor?): List<Message> {
         val messages = mutableListOf<Message>()
         if (cursor != null && cursor.moveToFirst()) {
             do {
-                messages.add(Message(
-                    cursor.getStringForColumn("_id"),
-                    cursor.getStringForColumn("thread_id"),
-                    cursor.getStringForColumn("address"),
-                    cursor.getStringForColumn("body"),
-                    cursor.getLongForColumn("date"),
-                    cursor.getStringForColumn("type"),
-                    null,
-                    null
-                ))
+                messages.add(fromCursorToMessage(cursor))
             } while (cursor.moveToNext())
             cursor.close()
         }
 
         return messages
     }
+
+    /**
+     * Reads the [cursor] and returns a map of thread id to last message in that thread
+     */
+    private fun fromCursorToMapOfThreadToLastMessage(cursor: Cursor?): Map<String, Message> {
+        val messagesByThreads = mutableMapOf<String, Message>()
+        if (cursor != null && cursor.moveToFirst()) {
+            do {
+                val message = fromCursorToMessage(cursor)
+                if (messagesByThreads[message.threadId] == null) {
+                    messagesByThreads[message.threadId] = message
+                } else {
+                    if ((messagesByThreads[message.threadId]?.date ?: 0) < message.date) {
+                        messagesByThreads[message.threadId] = message
+                    }
+                }
+            } while (cursor.moveToNext())
+            cursor.close()
+        }
+
+        return messagesByThreads
+    }
+
+    /**
+     * Returns a [Message] from the [cursor]
+     */
+    private fun fromCursorToMessage(cursor: Cursor) = Message(
+        cursor.getStringForColumn("_id"),
+        cursor.getStringForColumn("thread_id"),
+        cursor.getStringForColumn("address"),
+        cursor.getStringForColumn("body"),
+        cursor.getLongForColumn("date"),
+        cursor.getStringForColumn("type"),
+        null,
+        null
+    )
 
 }
