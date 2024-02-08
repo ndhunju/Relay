@@ -1,5 +1,6 @@
 package com.ndhunju.relay.api
 
+import com.ndhunju.relay.data.ChildSmsInfo
 import com.ndhunju.relay.ui.messages.Message
 
 /**
@@ -46,7 +47,7 @@ interface ApiInterface {
      * Makes API request to notify the back end that this client did save the messages
      * with id in [messageIds]
      */
-    suspend fun notifyDidSaveFetchedMessages(messageIds: List<String>): Result
+    suspend fun notifyDidSaveFetchedMessages(messageIds: List<ChildSmsInfo>): Result
 
     /**
      * Pushes [message] to the server.

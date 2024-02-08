@@ -3,14 +3,17 @@ package com.ndhunju.relay.api
 import android.util.Log
 import com.google.firebase.firestore.CollectionReference
 import com.google.firebase.firestore.FieldPath
+import com.google.firebase.firestore.Transaction
 import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.ktx.Firebase
 import com.google.gson.Gson
+import com.google.gson.reflect.TypeToken
 import com.ndhunju.relay.data.ChildSmsInfo
 import com.ndhunju.relay.ui.messages.Message
 import com.ndhunju.relay.ui.parent.Child
 import com.ndhunju.relay.util.CurrentUser
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.runBlocking
 import kotlinx.coroutines.tasks.await
 
 private val TAG = ApiInterfaceFireStoreImpl::class.simpleName
@@ -37,6 +40,10 @@ class ApiInterfaceFireStoreImpl(
     private val userCollectionRef = Firebase.firestore.collection("User")
     private val parentChildCollectionRef = Firebase.firestore.collection("ParentChild")
     private val messageCollectionRef = Firebase.firestore.collection("Message")
+    private val messageFetcherCollectionRef = Firebase.firestore.collection("MessageFetcher")
+
+    // TypeToken used for parsing list
+    private val listOfStringType = object : TypeToken<List<String>>(){}.type
 
     /**
      * Creates user in the cloud database.
@@ -195,18 +202,94 @@ class ApiInterfaceFireStoreImpl(
         }
     }
 
-    override suspend fun notifyDidSaveFetchedMessages(messageIds: List<String>): Result {
+    override suspend fun notifyDidSaveFetchedMessages(
+        childSmsInfoList: List<ChildSmsInfo>
+    ): Result {
         return try {
-            messageIds.forEach { messageId ->
+            val failedMessageIds = arrayListOf<String>()
+            childSmsInfoList.forEach{ childSmsInfo ->
                 // Ideally, we should use "Functions" feature of Firestore where the logic
                 // there would delete the message only after all the parents have fetched
                 // and saved the messages. But since "Functions" feature costs money,
-                // directly deleting fetched messages from client side
-                messageCollectionRef.document(messageId).delete().await()
+                // taking this workaround
+                val isSuccess = removeCurrentUserFromFetcherList(childSmsInfo)
+                if (isSuccess.not()) failedMessageIds.add(childSmsInfo.idInServerDb)
+                //Log.d(TAG, "notifyDidSaveFetchedMessages: updated for ${childSmsInfo.idInServerDb}")
+            }
+
+            if (failedMessageIds.isNotEmpty()) {
+                // Log all the failed transactions
+                Log.d(TAG, "notifyDidSaveFetchedMessages: " +
+                            "Failed ${failedMessageIds.size}/${childSmsInfoList.size}. "
+                )
             }
             Result.Success()
         } catch (ex: Exception) {
             Result.Failure(ex)
+        }
+    }
+
+    /**
+     * Removes current user from the list of FetcherUserIds list stored in
+     * [messageFetcherCollectionRef]. Also, deletes the entire document/entry
+     * in [messageFetcherCollectionRef] and [messageCollectionRef] if current
+     * user was the last fetcher.
+     */
+    private suspend fun removeCurrentUserFromFetcherList(childSmsInfo: ChildSmsInfo): Boolean {
+        return try {
+            Firebase.firestore.runTransaction { tx ->
+                runBlocking {
+                    removeCurrentUserFromFetcherListHelper(childSmsInfo, tx)
+                }
+            }.await()
+            Log.d(TAG, "updateEntriesInDatabase: Finished")
+            true
+        } catch (ex: Exception) {
+            Log.d(TAG, "updateEntriesInDatabase: Failed with $ex")
+            false
+        }
+    }
+
+    /**
+     * Just a helper for [removeCurrentUserFromFetcherList]
+     */
+    private suspend fun removeCurrentUserFromFetcherListHelper(
+        childSmsInfo: ChildSmsInfo,
+        tx: Transaction
+    ) {
+        // Get ID of the document that stores childSmsInfo
+        val childSmsInfoDocId = messageFetcherCollectionRef
+            .whereEqualTo("MessageId", childSmsInfo.idInServerDb)
+            .get().await().documents.firstOrNull()?.id ?: throw Exception("Not found")
+
+        // Get reference to the documents since tx need a doc ref
+        val childSmsInfoDocRef = messageFetcherCollectionRef.document(childSmsInfoDocId)
+        val messageDocRef = messageCollectionRef.document(childSmsInfo.idInServerDb)
+        // Get doc snapshot of the same document via tx so that it is always latest
+        val childSmsInfoTxDocSnap = tx.get(childSmsInfoDocRef)
+
+        // Retrieve the value stored in "ParentUserIds" field
+        val parentUserIds = gson.fromJson<List<String>>(
+            childSmsInfoTxDocSnap.get("FetcherUserIds") as String,
+            listOfStringType
+        )
+
+        //Log.d(TAG, "updateEntriesInDatabaseWithTx: " +
+        //        "Stored parentUserIds ${childSmsInfoTxDocSnap.get("FetcherUserIds") as String}")
+
+        // Remove current user from the list
+        val remainingParents = parentUserIds?.filter { parentUserId ->
+            parentUserId != currentUser.user.id
+        }
+
+        // Check if remainingParent is empty
+        if (remainingParents?.isEmpty() == true) {
+            // Delete the entry for current childSmsInfo in MessageFetcher collection
+            tx.delete(childSmsInfoDocRef)
+            // Delete the entry for current childSmsInfo in Message collection
+            tx.delete(messageDocRef)
+        } else {
+            tx.update(childSmsInfoDocRef, "FetcherUserIds", gson.toJson(remainingParents))
         }
     }
 
@@ -221,13 +304,20 @@ class ApiInterfaceFireStoreImpl(
 
         val userId = currentUser.user.id
         // Write a message to the database
+        // TODO: Nikesh - Also, encrypt the messages before sending it with a key from the user
         val newMessage = hashMapOf(
             "PayLoad" to gson.toJson(message),
             "SenderUserId" to userId
         )
 
         return try {
-            messageCollectionRef.add(newMessage).await().id
+            val messageIdInServer = messageCollectionRef.add(newMessage).await().id
+            // Store all the parent Ids as fetcherUserIds that needs to fetch this message
+            // before it could be deleted from the database
+            messageFetcherCollectionRef.add(hashMapOf(
+                "MessageId" to messageIdInServer,
+                "FetcherUserIds" to gson.toJson(currentUser.user.parentUserIds)
+            ))
             Log.d(TAG, "pushMessageToServer: is successful")
             Result.Success()
         } catch (ex: Exception) {

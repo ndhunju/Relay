@@ -8,7 +8,6 @@ import com.ndhunju.relay.RelayApplication
 import com.ndhunju.relay.api.Result.*
 import com.ndhunju.relay.data.ChildSmsInfo
 import com.ndhunju.relay.di.AppComponent
-import com.ndhunju.relay.util.CurrentUser
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import java.lang.RuntimeException
@@ -42,9 +41,7 @@ class SyncChildMessagesWorker(
                     val childSmsInfoList = result.data as List<ChildSmsInfo>
                     val isSuccess = insertIntoLocalRepository(childSmsInfoList)
                     // Tell back end that the messages have been saved locally
-                    appComponent.apiInterface().notifyDidSaveFetchedMessages(
-                        childSmsInfoList.map { it.idInServerDb }
-                    )
+                    appComponent.apiInterface().notifyDidSaveFetchedMessages(childSmsInfoList)
                     return@withContext if (isSuccess) Result.success() else Result.failure()
                 }
             }

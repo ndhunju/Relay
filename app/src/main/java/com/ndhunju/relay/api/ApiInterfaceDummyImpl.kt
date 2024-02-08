@@ -1,8 +1,7 @@
 package com.ndhunju.relay.api
 
+import com.ndhunju.relay.data.ChildSmsInfo
 import com.ndhunju.relay.ui.messages.Message
-import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.MutableStateFlow
 
 /**
  * Class with dummy implementation of [ApiInterface]
@@ -35,7 +34,7 @@ object ApiInterfaceDummyImpl: ApiInterface {
         return returnFailure()
     }
 
-    override suspend fun notifyDidSaveFetchedMessages(messageIds: List<String>): Result {
+    override suspend fun notifyDidSaveFetchedMessages(messageIds: List<ChildSmsInfo>): Result {
         return returnFailure()
     }
 
