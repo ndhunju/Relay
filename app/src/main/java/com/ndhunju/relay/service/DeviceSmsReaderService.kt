@@ -24,7 +24,6 @@ class DeviceSmsReaderService @Inject constructor(private val context: Context) {
      * Returns a list of last [Message] for each unique thread_id
      */
     fun getLastMessageForEachThread(): List<Message> {
-        // TODO: Nikesh - This is not returning last message sent in the thread but by the user
         try {
             val cursor: Cursor? = context.contentResolver.query(
                 smsUri,
@@ -91,6 +90,28 @@ class DeviceSmsReaderService @Inject constructor(private val context: Context) {
             smsColumns,
             "address='$address'",
             null,
+            null
+        )
+
+        return  fromCursorToMessageList(cursor)
+    }
+
+    /**
+     * Returns list of [Message] that was received after passed [time]
+     *
+     * Use following code to get messages from past 15 days
+     *
+     * Calendar.getInstance(Locale.getDefault()).apply {
+     *             timeInMillis = System.currentTimeMillis()
+     *             add(Calendar.DAY_OF_MONTH, -15)
+     *         }.timeInMillis
+     */
+    fun getMessagesSince(time: Long): List<Message> {
+        val cursor: Cursor? = context.contentResolver.query(
+            smsUri,
+            smsColumns,
+            "date >= ?",
+            arrayOf("$time"),
             null
         )
 
