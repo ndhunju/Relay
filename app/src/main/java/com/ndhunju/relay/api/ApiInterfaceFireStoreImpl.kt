@@ -37,10 +37,10 @@ class ApiInterfaceFireStoreImpl(
     /**
      * Holds [CollectionReference] for "User" collection
      */
-    private val userCollectionRef = Firebase.firestore.collection("User")
-    private val parentChildCollectionRef = Firebase.firestore.collection("ParentChild")
-    private val messageCollectionRef = Firebase.firestore.collection("Message")
-    private val messageFetcherCollectionRef = Firebase.firestore.collection("MessageFetcher")
+    private val userCollection = Firebase.firestore.collection(Collections.User)
+    private val parentChildCollection = Firebase.firestore.collection(Collections.ParentChild)
+    private val messageCollection = Firebase.firestore.collection(Collections.Message)
+    private val messageFetcherCollection = Firebase.firestore.collection(Collections.MessageFetcher)
 
     // TypeToken used for parsing list
     private val listOfStringType = object : TypeToken<List<String>>(){}.type
@@ -58,8 +58,8 @@ class ApiInterfaceFireStoreImpl(
     ): Result {
         val newUser = makeMapForUserCollection(name, email, phone, deviceId, pushNotificationToken)
 
-        val userWithEmailExits = userCollectionRef
-            .whereEqualTo("Email", email)
+        val userWithEmailExits = userCollection
+            .whereEqualTo(User.Email, email)
             .get().await().documents.isNotEmpty()
 
         if (userWithEmailExits) {
@@ -69,7 +69,7 @@ class ApiInterfaceFireStoreImpl(
         }
 
         return try {
-            userId = userCollectionRef.add(newUser).await().id
+            userId = userCollection.add(newUser).await().id
             Result.Success(userId)
         } catch (ex: Exception) {
             Log.d(TAG, "createUser: Failed with $ex")
@@ -89,7 +89,7 @@ class ApiInterfaceFireStoreImpl(
         val finalPhone = phone ?: currentUser.user.phone
 
         return try {
-            userCollectionRef.document(userId).update(
+            userCollection.document(userId).update(
                 makeMapForUserCollection(name = finalName, phone = finalPhone).toMap()
             ).await()
             Result.Success()
@@ -110,11 +110,11 @@ class ApiInterfaceFireStoreImpl(
         deviceId: String? = null,
         pushNotificationToken: String? = null
     ) = hashMapOf(
-        "Name" to name,
-        "Email" to email,
-        "Phone" to phone,
-        "DeviceId" to deviceId,
-        "PushNotificationToken" to pushNotificationToken
+        User.Name to name,
+        User.Email to email,
+        User.Phone to phone,
+        User.DeviceId to deviceId,
+        User.PushNotificationToken to pushNotificationToken
     ).filter {
         // Don't include in the map if the value is null as
         // Firebase overrides existing value with null
@@ -126,7 +126,7 @@ class ApiInterfaceFireStoreImpl(
         // TODO: Nikesh - check if user has already paired with 3 parents
         // Check that such parent email address already exists
         return try {
-            val queryByEmail = userCollectionRef.whereEqualTo("Email", parentEmailAddress)
+            val queryByEmail = userCollection.whereEqualTo("Email", parentEmailAddress)
             val querySnapshot = queryByEmail.get().await()
             if (querySnapshot.isEmpty) {
                 return Result.Failure(EmailNotFoundException("Parent email id not found"))
@@ -134,9 +134,9 @@ class ApiInterfaceFireStoreImpl(
             val parentUserId = querySnapshot.documents.first().id
 
             // Register this pairing in the database
-            parentChildCollectionRef.add(hashMapOf(
-                "ChildUserId" to childUserId,
-                "ParentUserId" to parentUserId
+            parentChildCollection.add(hashMapOf(
+                ParentChild.ChildUserId to childUserId,
+                ParentChild.ParentUserId to parentUserId
             )).await()
 
             Result.Success(parentUserId)
@@ -149,22 +149,22 @@ class ApiInterfaceFireStoreImpl(
     override suspend fun fetchChildUsers(parentUserId: String): Result {
         return try {
             // Fetch the list of child user ids for passed parent
-            val childUserIds = parentChildCollectionRef
-                .whereEqualTo("ParentUserId", parentUserId)
+            val childUserIds = parentChildCollection
+                .whereEqualTo(ParentChild.ParentUserId, parentUserId)
                 .get()
                 .await()
-                .documents.map { it.get("ChildUserId") as String }
+                .documents.map { it.get(ParentChild.ChildUserId) as String }
                 .distinct() // Filter out duplicates
                 .filter { it.isNotEmpty() } // Filter out empty strings
 
             // Fetch the email of each child user
             val childList = childUserIds.map { childUserId ->
-                val email = userCollectionRef
+                val email = userCollection
                     .whereEqualTo(FieldPath.documentId(), childUserId)
                     .get()
                     .await()
                     .documents.first()
-                    .get("Email") as String
+                    .get(User.Email) as String
                 Child(childUserId, email)
             }
 
@@ -179,14 +179,14 @@ class ApiInterfaceFireStoreImpl(
         val childSmsInfoList = mutableListOf<ChildSmsInfo>()
         try {
             for (childUserId2 in childUserIds) {
-                val childSmsInfo = messageCollectionRef
-                    .whereEqualTo("SenderUserId", childUserId2)
+                val childSmsInfo = messageCollection
+                    .whereEqualTo(MessageCollection.SenderUserId, childUserId2)
                     .get()
                     .await()
                     .documents
                     .map { doc ->
                         gson.fromJson(
-                            doc.get("PayLoad") as String,
+                            doc.get(MessageCollection.PayLoad) as String,
                             ChildSmsInfo::class.java
                         ).apply {
                             childUserId = childUserId2
@@ -231,8 +231,8 @@ class ApiInterfaceFireStoreImpl(
 
     /**
      * Removes current user from the list of FetcherUserIds list stored in
-     * [messageFetcherCollectionRef]. Also, deletes the entire document/entry
-     * in [messageFetcherCollectionRef] and [messageCollectionRef] if current
+     * [messageFetcherCollection]. Also, deletes the entire document/entry
+     * in [messageFetcherCollection] and [messageCollection] if current
      * user was the last fetcher.
      */
     private suspend fun removeCurrentUserFromFetcherList(childSmsInfo: ChildSmsInfo): Boolean {
@@ -258,19 +258,19 @@ class ApiInterfaceFireStoreImpl(
         tx: Transaction
     ) {
         // Get ID of the document that stores childSmsInfo
-        val childSmsInfoDocId = messageFetcherCollectionRef
-            .whereEqualTo("MessageId", childSmsInfo.idInServerDb)
+        val childSmsInfoDocId = messageFetcherCollection
+            .whereEqualTo(MessageFetcher.MessageId, childSmsInfo.idInServerDb)
             .get().await().documents.firstOrNull()?.id ?: throw Exception("Not found")
 
         // Get reference to the documents since tx need a doc ref
-        val childSmsInfoDocRef = messageFetcherCollectionRef.document(childSmsInfoDocId)
-        val messageDocRef = messageCollectionRef.document(childSmsInfo.idInServerDb)
+        val childSmsInfoDocRef = messageFetcherCollection.document(childSmsInfoDocId)
+        val messageDocRef = messageCollection.document(childSmsInfo.idInServerDb)
         // Get doc snapshot of the same document via tx so that it is always latest
         val childSmsInfoTxDocSnap = tx.get(childSmsInfoDocRef)
 
         // Retrieve the value stored in "ParentUserIds" field
         val parentUserIds = gson.fromJson<List<String>>(
-            childSmsInfoTxDocSnap.get("FetcherUserIds") as String,
+            childSmsInfoTxDocSnap.get(MessageFetcher.FetcherUserIds) as String,
             listOfStringType
         )
 
@@ -289,7 +289,11 @@ class ApiInterfaceFireStoreImpl(
             // Delete the entry for current childSmsInfo in Message collection
             tx.delete(messageDocRef)
         } else {
-            tx.update(childSmsInfoDocRef, "FetcherUserIds", gson.toJson(remainingParents))
+            tx.update(
+                childSmsInfoDocRef,
+                MessageFetcher.FetcherUserIds,
+                gson.toJson(remainingParents)
+            )
         }
     }
 
@@ -306,17 +310,17 @@ class ApiInterfaceFireStoreImpl(
         // Write a message to the database
         // TODO: Nikesh - Also, encrypt the messages before sending it with a key from the user
         val newMessage = hashMapOf(
-            "PayLoad" to gson.toJson(message),
-            "SenderUserId" to userId
+            MessageCollection.PayLoad to gson.toJson(message),
+            MessageCollection.SenderUserId to userId
         )
 
         return try {
-            val messageIdInServer = messageCollectionRef.add(newMessage).await().id
+            val messageIdInServer = messageCollection.add(newMessage).await().id
             // Store all the parent Ids as fetcherUserIds that needs to fetch this message
             // before it could be deleted from the database
-            messageFetcherCollectionRef.add(hashMapOf(
-                "MessageId" to messageIdInServer,
-                "FetcherUserIds" to gson.toJson(currentUser.user.parentUserIds)
+            messageFetcherCollection.add(hashMapOf(
+                MessageFetcher.MessageId to messageIdInServer,
+                MessageFetcher.FetcherUserIds to gson.toJson(currentUser.user.parentUserIds)
             ))
             Log.d(TAG, "pushMessageToServer: is successful")
             Result.Success()
@@ -326,6 +330,51 @@ class ApiInterfaceFireStoreImpl(
             Log.d(TAG, "pushMessageToServer: $ex")
             Result.Failure(ex)
         }
+    }
+
+    /**
+     * Represents all the [CollectionReference] we have
+     */
+    object Collections {
+        const val User = "User"
+        const val ParentChild = "ParentChild"
+        const val Message = "Message"
+        const val MessageFetcher = "MessageFetcher"
+    }
+
+    /**
+     * Represent fields of Message collection
+     */
+    object MessageCollection {
+        const val SenderUserId = "SenderUserId"
+        const val PayLoad = "PayLoad"
+    }
+
+    /**
+     * Represent fields of User collection
+     */
+    object User {
+        const val Name = "Name"
+        const val Phone = "Phone"
+        const val DeviceId = "DeviceId"
+        const val PushNotificationToken = "PushNotificationToken"
+        const val Email = "Email"
+    }
+
+    /**
+     * Represent fields of ParentChild collection
+     */
+    object ParentChild {
+        const val ChildUserId = "ChildUserId"
+        const val ParentUserId = "ParentUserId"
+    }
+
+    /**
+     * Represent fields of MessageFetcher collection
+     */
+    object MessageFetcher {
+        const val MessageId = "MessageId"
+        const val FetcherUserIds = "FetcherUserIds"
     }
 }
 
