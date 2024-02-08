@@ -40,7 +40,7 @@ interface SmsInfoDao {
      * and call it inside a coroutine scope.
      */
     @Query("SELECT * FROM SmsInfo WHERE id = :id")
-    fun getSmsInfo(id: Int): Flow<SmsInfo?>
+    fun getSmsInfo(id: Long): Flow<SmsInfo?>
 
     @Query("SELECT * FROM SmsInfo WHERE idInAndroidOsTable = :idInAndroidDb")
     suspend fun getSmsInfoByIdInAndroidDb(idInAndroidDb: String): List<SmsInfo>

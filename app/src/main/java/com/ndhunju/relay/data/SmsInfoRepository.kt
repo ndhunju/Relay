@@ -11,7 +11,7 @@ interface SmsInfoRepository {
     /**
      * Retrieve an [SmsInfo] from the given data source that matches with the [id]
      */
-    fun getSmsInfo(id: Int): Flow<SmsInfo?>
+    fun getSmsInfo(id: Long): Flow<SmsInfo?>
 
     /**
      * Retrieve list of [SmsInfo] from the given data source

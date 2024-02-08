@@ -8,7 +8,7 @@ import kotlinx.coroutines.flow.Flow
  */
 class OfflineSmsInfoRepository(private val smsInfoDao: SmsInfoDao): SmsInfoRepository {
 
-    override fun getSmsInfo(id: Int): Flow<SmsInfo?> = smsInfoDao.getSmsInfo(id)
+    override fun getSmsInfo(id: Long): Flow<SmsInfo?> = smsInfoDao.getSmsInfo(id)
 
     override suspend fun getSmsInfoForEachIdInAndroidDb(
         idInAndroidDbs: List<String>
