@@ -24,6 +24,11 @@ interface SimpleKeyValuePersistService {
     suspend fun save(key: String, value: String)
 
     /**
+     * Saves [value] for passed [key] if no value was saved previously
+     */
+    suspend fun saveFirstTime(key: String, value: String)
+
+    /**
      * Retrieves value for passed [key] if it was previously stored using [save] function
      */
     suspend fun retrieve(key: String): Flow<String?>
@@ -45,6 +50,14 @@ class DataStoreKeyValuePersistService(
     override suspend fun save(key: String, value: String) {
         context.dataStore.edit { pref ->
             pref[keyCache.getOrPut(key, stringPreferencesKey(key))] = value
+        }
+    }
+
+    override suspend fun saveFirstTime(key: String, value: String) {
+        retrieve(key).collect { savedValue ->
+            if (savedValue == null) {
+                save(key, value)
+            }
         }
     }
 
