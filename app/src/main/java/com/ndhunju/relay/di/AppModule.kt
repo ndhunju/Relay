@@ -19,7 +19,9 @@ import com.ndhunju.relay.data.ChildSmsInfoRepository
 import com.ndhunju.relay.data.OfflineChildSmsInfoRepository
 import com.ndhunju.relay.service.AppStateBroadcastService
 import com.ndhunju.relay.service.AppStateBroadcastServiceImpl
+import com.ndhunju.relay.service.DataStoreKeyValuePersistService
 import com.ndhunju.relay.service.DeviceSmsReaderService
+import com.ndhunju.relay.service.SimpleKeyValuePersistService
 import com.ndhunju.relay.util.gson.ResultDeserializer
 import com.ndhunju.relay.util.gson.ResultSerializer
 import com.ndhunju.relay.service.UserSettingsPersistService
@@ -117,6 +119,12 @@ class AppModule(private val application: Application) {
         } else {
             LollipopNetworkConnectionChecker(application)
         }
+    }
+
+    @Provides
+    @Singleton
+    fun provideSimpleKeyValuePersistService(): SimpleKeyValuePersistService {
+        return DataStoreKeyValuePersistService(application)
     }
 }
 

@@ -93,6 +93,8 @@ dependencies {
     implementation("androidx.work:work-runtime-ktx:${rootProject.extra["work_version"]}")
     androidTestImplementation("androidx.work:work-testing:${rootProject.extra["work_version"]}") // Test helpers
 
+    // Datastore (Replaces SharedPreferences)
+    implementation("androidx.datastore:datastore-preferences:1.0.0")
 
     testImplementation("junit:junit:4.13.2")
     androidTestImplementation("androidx.test.ext:junit:1.1.5")

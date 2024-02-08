@@ -56,3 +56,11 @@ inline fun <reified T1, reified T2, reified T3, reified T4, reified T5, reified 
             args[7] as T8,
         )
     }
+
+fun <K,V> MutableMap<K,V>.getOrPut(key: K, default: V): V {
+    if (this[key] == null) {
+        this[key] = default
+    }
+
+    return  this[key] ?: default
+}
