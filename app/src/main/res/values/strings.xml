@@ -104,4 +104,8 @@
     <string name="welcome_screen_body">First things first - to get started with %1$s, create your account.\n\nIt\'s a breeze - just provide your email, name and phone.\n\nWe\'ll send a one-time password to your inbox. Click \'verify\' in your email or enter the code here, and you\'re good to go!</string>
     <!-- Text shown inside a button -->
     <string name="welcome_screen_create_account_btn">Create Account</string>
+
+    <!-- Notification -->
+    <!-- Title used for notification shown when uploading new messages -->
+    <string name="notification_uploading_new_messages">Uploading new message</string>
 </resources>
