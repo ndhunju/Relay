@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!-- Created with Inkscape (http://www.inkscape.org/) -->
+
+<svg
+   width="512"
+   height="512"
+   viewBox="0 0 512 512"
+   version="1.1"
+   id="svg5"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:svg="http://www.w3.org/2000/svg">
+  <defs
+     id="defs2" />
+  <g
+     id="layer2"
+     style="display:inline">
+    <rect
+       style="fill:none;fill-opacity:0.283784;stroke:#000000;stroke-width:3.3;stroke-linecap:round;stroke-linejoin:bevel"
+       id="rect1062"
+       width="512"
+       height="512"
+       x="0"
+       y="0"
+       ry="1" />
+    <path
+       style="fill:none;stroke:#000000;stroke-width:1.32735px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
+       d="M 0.49513973,1.4856506 512,512"
+       id="path1037" />
+    <path
+       style="fill:none;stroke:#000000;stroke-width:1.33075px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
+       d="M 0,512 512,0"
+       id="path1035" />
+    <rect
+       style="fill:none;fill-opacity:0.283784;stroke:#000000;stroke-width:3.3;stroke-linecap:round;stroke-linejoin:bevel"
+       id="rect1792"
+       width="300"
+       height="300"
+       x="105.98043"
+       y="105.98042"
+       ry="42.532867" />
+  </g>
+  <g
+     id="layer1">
+    <path
+       fill="#ff0000"
+       stroke="#ff0000"
+       d="m 182.04474,346.44913 q -9.43281,0 -16.15012,-6.7173 -6.71731,-6.71731 -6.71731,-16.15014 V 217.8198 l -45.73487,-54.31015 h 217.24062 q 9.43283,0 16.15015,6.71731 6.7173,6.7173 6.7173,16.15011 v 137.20462 q 0,9.43283 -6.7173,16.15014 -6.71732,6.7173 -16.15015,6.7173 z m 0,-160.07206 v 137.20462 q 0,0 0,0 0,0 0,0 h 148.63832 q 0,0 0,0 0,0 0,0 V 186.37707 q 0,0 0,0 0,0 0,0 z m 74.31917,131.48777 16.00721,-16.00721 -12.57709,-12.57708 h 48.02161 V 266.41311 H 204.91218 Z m -51.45173,-74.31916 h 102.90346 l -51.45173,-51.45174 -16.00721,16.0072 12.5771,12.5771 h -48.02162 z m -22.86744,-57.16861 v 0 q 0,0 0,0 0,0 0,0 v 137.20462 q 0,0 0,0 0,0 0,0 v 0 q 0,0 0,0 0,0 0,0 z"
+       id="path864"
+       style="stroke-width:0.285842" />
+  </g>
+</svg>
