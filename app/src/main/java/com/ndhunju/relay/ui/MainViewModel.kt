@@ -1,18 +1,18 @@
 package com.ndhunju.relay.ui
 
-import android.telephony.SmsMessage
 import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.compose.runtime.snapshots.SnapshotStateList
+import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.ndhunju.relay.service.DeviceSmsReaderService
 import com.ndhunju.relay.data.SmsInfo
 import com.ndhunju.relay.data.SmsInfoRepository
-import com.ndhunju.relay.api.ApiInterface
+import com.ndhunju.relay.service.AppStateBroadcastService
 import com.ndhunju.relay.ui.account.AccountFragment
 import com.ndhunju.relay.ui.messages.Message
 import com.ndhunju.relay.ui.messagesfrom.MessagesFromFragment
@@ -25,7 +25,7 @@ import kotlinx.coroutines.launch
 class MainViewModel(
     private val deviceSmsReaderService: DeviceSmsReaderService,
     private val smsInfoRepository: SmsInfoRepository,
-    private val apiInterface: ApiInterface
+    private val appStateBroadcastService: AppStateBroadcastService
 ): ViewModel() {
 
     private var _state = MutableStateFlow(MainScreenUiState())
@@ -90,23 +90,25 @@ class MainViewModel(
         state.value.showErrorMessageForPermissionDenied = false
     }
 
-    val onNewSmsReceived: (SmsMessage) -> Unit = { smsMessage ->
+    private val newMessageObserver = Observer<List<Message>> { newMessages ->
+        newMessages.forEach { message ->
+            onNewSmsReceived(message)
+        }
+    }
+
+    init {
+        appStateBroadcastService.newProcessedMessages.observeForever(newMessageObserver)
+    }
+
+    override fun onCleared() {
+        appStateBroadcastService.newProcessedMessages.removeObserver(newMessageObserver)
+        super.onCleared()
+    }
+
+    val onNewSmsReceived: (Message) -> Unit = { messageFromAndroidDb ->
 
         // Update the UI to the the latest SMS
         viewModelScope.launch {
-
-            // Based on smsMessage, retrieve all info about this message from the database
-            val messageFromAndroidDb = deviceSmsReaderService.getMessageByAddressAndBody(
-                // We tried to use combination of timestamp and address
-                // but turns out smsMessage.timestampMillis is different
-                // that time stamp in the sms column for the same sms
-                smsMessage.originatingAddress ?: "",
-                smsMessage.messageBody
-            )
-
-            // Store the message on local database
-            val smsInfoToInsert = messageFromAndroidDb.toSmsInfo()
-            val idOfInsertedSmsInfo = smsInfoRepository.insertSmsInfo(messageFromAndroidDb.toSmsInfo())
 
             // Update the UI by thread Id instead of address
             var oldLastMessageIndex = -1
@@ -118,24 +120,16 @@ class MainViewModel(
                 }
             }
 
-            // Push new message to the cloud database
-            val result = apiInterface.pushMessage(messageFromAndroidDb)
-            // Update the sync status in the local DB
-            smsInfoRepository.updateSmsInfo(smsInfoToInsert.copy(
-                id = idOfInsertedSmsInfo,
-                syncStatus = result)
-            )
-
             if (oldLastMessageIndex > -1) {
                 // Update last message shown with the new message
                 state.value.lastMessageList[oldLastMessageIndex].copy(
-                    body = smsMessage.messageBody,
-                    date = smsMessage.timestampMillis
+                    body = messageFromAndroidDb.body,
+                    date = messageFromAndroidDb.date
                 ).let { state.value.lastMessageList[oldLastMessageIndex] = it }
 
                 // Update the icon based on update call status
                 state.value.lastMessageList[oldLastMessageIndex].copy(
-                    syncStatus = result
+                    syncStatus = messageFromAndroidDb.syncStatus
                 ).let { state.value.lastMessageList[oldLastMessageIndex] = it }
             } else {
                 // Update the entire list since matching thread wasn't found

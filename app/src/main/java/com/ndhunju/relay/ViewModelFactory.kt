@@ -31,7 +31,11 @@ val RelayViewModelFactory: ViewModelProvider.Factory = object : ViewModelProvide
         with(modelClass) {
             return when {
                 isAssignableFrom(MainViewModel::class.java) -> {
-                    MainViewModel(deviceSmsReaderService, smsInfoRepository, apiInterface) as T
+                    MainViewModel(
+                        deviceSmsReaderService,
+                        smsInfoRepository,
+                        appStateBroadcasterService
+                    ) as T
                 }
                 isAssignableFrom(AccountViewModel::class.java) -> {
                     AccountViewModel(

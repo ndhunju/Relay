@@ -3,11 +3,7 @@ package com.ndhunju.relay.ui
 import android.Manifest.permission.READ_SMS
 import android.app.AlertDialog
 import android.content.BroadcastReceiver
-import android.content.Context
-import android.content.Intent
-import android.content.IntentFilter
 import android.os.Bundle
-import android.provider.Telephony
 import androidx.activity.compose.setContent
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.activity.viewModels
@@ -30,15 +26,13 @@ import com.ndhunju.relay.util.requestPermission
 class MainActivity : BaseActivity() {
 
     // Member Variables
-    val viewModel: MainViewModel by viewModels { RelayViewModelFactory }
+    private val viewModel: MainViewModel by viewModels { RelayViewModelFactory }
 
     private val requestPermissionLauncher = registerForActivityResult(
         ActivityResultContracts.RequestMultiplePermissions()
     ) { permissions ->
         if (areNeededPermissionGranted(permissions)) {
             viewModel.onAllPermissionGranted()
-            // Create and register the SMS broadcast receiver
-            createAndRegisterBroadcastReceiver()
         } else {
             // Permissions denied
             viewModel.state.value.showErrorMessageForPermissionDenied = true
@@ -129,46 +123,6 @@ class MainActivity : BaseActivity() {
             } else {
                 requestPermission(requestPermissionLauncher)
             }
-        }
-    }
-
-    private fun createAndRegisterBroadcastReceiver() {
-        if (isRegistered.not()) {
-            smsReceiver = object : BroadcastReceiver() {
-                override fun onReceive(context: Context, intent: Intent) {
-
-                    if (intent.action == Telephony.Sms.Intents.SMS_RECEIVED_ACTION) {
-                        val smsMessages = Telephony.Sms.Intents.getMessagesFromIntent(intent)
-                        for (smsMessage in smsMessages) {
-                            //println("Received SMS: $messageBody")
-                            viewModel.onNewSmsReceived(smsMessage)
-                        }
-                    }
-                }
-            }
-
-            val intent = registerReceiver(
-                smsReceiver,
-                IntentFilter(Telephony.Sms.Intents.SMS_RECEIVED_ACTION)
-            )
-            isRegistered = intent != null
-        }
-    }
-
-    override fun onResume() {
-        super.onResume()
-
-        // Ensure permissions are granted before registering the receiver
-        if (checkIfPermissionGranted(this)) {
-            createAndRegisterBroadcastReceiver()
-        }
-    }
-
-    override fun onPause() {
-        super.onPause()
-
-        if (isRegistered) {
-            unregisterReceiver(smsReceiver)
         }
     }
 
