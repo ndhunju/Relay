@@ -15,6 +15,7 @@ import com.ndhunju.relay.service.NotificationManager
 import com.ndhunju.relay.service.SimpleKeyValuePersistService
 import com.ndhunju.relay.ui.messages.Message
 import com.ndhunju.relay.ui.toSmsInfo
+import com.ndhunju.relay.util.CurrentUser
 import com.ndhunju.relay.util.checkIfPermissionGranted
 import kotlinx.coroutines.flow.first
 import kotlin.getValue
@@ -60,6 +61,10 @@ class UploadNewMessagesWorker(
         appComponent.notificationManager()
     }
 
+    private val currentUser: CurrentUser by lazy {
+        appComponent.currentUser()
+    }
+
     override suspend fun getForegroundInfo(): ForegroundInfo {
         return ForegroundInfo(
             NotificationManager.ID_UPLOAD_NEW_MESSAGES,
@@ -70,6 +75,11 @@ class UploadNewMessagesWorker(
     override suspend fun doWork(): Result {
         if (checkIfPermissionGranted(applicationContext).not()) {
             // No work we can do for now
+            return Result.success()
+        }
+
+        if (currentUser.user.parentUserIds.isEmpty()) {
+            // No parents to forward the messages to
             return Result.success()
         }
 

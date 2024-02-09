@@ -1,10 +1,14 @@
 package com.ndhunju.relay
 
 import android.app.Application
+import androidx.work.Constraints
+import androidx.work.NetworkType
+import androidx.work.OneTimeWorkRequestBuilder
 import com.ndhunju.relay.di.AndroidAppModule
 import com.ndhunju.relay.di.AppComponent
 import com.ndhunju.relay.di.AppModule
 import com.ndhunju.relay.di.DaggerAppComponent
+import com.ndhunju.relay.util.worker.UploadNewMessagesWorker
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.SupervisorJob
@@ -21,6 +25,7 @@ class RelayApplication: Application() {
         super.onCreate()
         setUpDaggerAppComponent()
         saveAppInstallTime()
+        doEnqueueWorkerToUploadNewMessages()
 
         // TODO: Nikesh - Based on user's id, always fetch latest user info from server
     }
@@ -42,5 +47,13 @@ class RelayApplication: Application() {
                 System.currentTimeMillis().toString()
             )
         }
+    }
+
+    fun doEnqueueWorkerToUploadNewMessages() {
+        appComponent.workManager().enqueue(
+            OneTimeWorkRequestBuilder<UploadNewMessagesWorker>()
+                .setConstraints(Constraints(requiredNetworkType = NetworkType.CONNECTED))
+                .build()
+        )
     }
 }
