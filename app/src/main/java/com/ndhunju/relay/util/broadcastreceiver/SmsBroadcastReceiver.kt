@@ -13,7 +13,7 @@ import com.ndhunju.relay.util.worker.UploadNewMessagesWorker
 /**
  * This [BroadcastReceiver] instigates the process of uploading new messages to the server
  */
-class SmsBroadcastReceiver : BroadcastReceiver() {
+object SmsBroadcastReceiver : BroadcastReceiver() {
 
     override fun onReceive(context: Context, intent: Intent) {
 

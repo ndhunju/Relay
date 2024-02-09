@@ -2,8 +2,10 @@ package com.ndhunju.relay.ui
 
 import android.Manifest.permission.READ_SMS
 import android.app.AlertDialog
-import android.content.BroadcastReceiver
+import android.content.IntentFilter
 import android.os.Bundle
+import android.provider.Telephony
+import android.util.Log
 import androidx.activity.compose.setContent
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.activity.viewModels
@@ -20,6 +22,7 @@ import com.ndhunju.relay.ui.pair.PairWithParentFragment
 import com.ndhunju.relay.ui.parent.ChildUserListFragment
 import com.ndhunju.relay.ui.theme.RelayTheme
 import com.ndhunju.relay.util.areNeededPermissionGranted
+import com.ndhunju.relay.util.broadcastreceiver.SmsBroadcastReceiver
 import com.ndhunju.relay.util.checkIfPermissionGranted
 import com.ndhunju.relay.util.requestPermission
 
@@ -33,14 +36,13 @@ class MainActivity : BaseActivity() {
     ) { permissions ->
         if (areNeededPermissionGranted(permissions)) {
             viewModel.onAllPermissionGranted()
+            // Create and register the SMS broadcast receiver
+            createAndRegisterSmsBroadcastReceiver()
         } else {
             // Permissions denied
             viewModel.state.value.showErrorMessageForPermissionDenied = true
         }
     }
-
-    private lateinit var smsReceiver: BroadcastReceiver
-    private var isRegistered = false
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -110,6 +112,7 @@ class MainActivity : BaseActivity() {
         // Check if needed permissions are granted
         if (checkIfPermissionGranted(this)) {
             viewModel.onAllPermissionGranted()
+            createAndRegisterSmsBroadcastReceiver()
         } else {
             if (shouldShowRequestPermissionRationale(this, READ_SMS)) {
                 // Show an explanation as to why the app needs read and send SMS permission
@@ -123,6 +126,22 @@ class MainActivity : BaseActivity() {
             } else {
                 requestPermission(requestPermissionLauncher)
             }
+        }
+    }
+
+    private var isSmsBroadcastRegistered = false
+
+    private fun createAndRegisterSmsBroadcastReceiver() {
+        try {
+            if (isSmsBroadcastRegistered.not()) {
+                val intent = registerReceiver(
+                    SmsBroadcastReceiver,
+                    IntentFilter(Telephony.Sms.Intents.SMS_RECEIVED_ACTION)
+                )
+                isSmsBroadcastRegistered = intent != null
+            }
+        } catch (ex: Exception) {
+            Log.d("MainActivity", "createAndRegisterSmsBroadcastReceiver: failed ${ex.message}")
         }
     }
 
