@@ -32,6 +32,27 @@ android {
             )
         }
     }
+
+    // Need to specify at least one flavor dimension.
+    flavorDimensions += "version"
+
+    productFlavors {
+
+        create("production") {
+            dimension = "version"
+            applicationId = "com.ndhunju.relay"
+        }
+
+        create("demo") {
+            dimension = "version"
+            applicationIdSuffix = ".demo"
+            versionNameSuffix = "-demo"
+            // Set different App Name so that it is easy to differentiate
+            resValue("string", "app_name", "Demo Relay")
+        }
+
+    }
+
     compileOptions {
         sourceCompatibility = JavaVersion.VERSION_1_8
         targetCompatibility = JavaVersion.VERSION_1_8
