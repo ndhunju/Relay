@@ -44,7 +44,7 @@ fun BroaderPreview() {
     RelayTheme {
         Surface {
             AnimatedTextButton(
-                onClick = { /*TODO*/ },
+                onClick = { },
                 modifier = Modifier
                     .fillMaxWidth()
                     .padding(

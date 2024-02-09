@@ -156,7 +156,10 @@ class MainViewModel(
                 messages[i].syncStatus = smsInfo?.syncStatus
             }
 
-            // Update the state with the messages
+            // Since we are using same instance of this model, clear the messages
+            // in case it stored messages from another thread in previous use
+            _messageFromUiState.value.messagesInThread.clear()
+            // Update the state with the messages.
             _messageFromUiState.value.messagesInThread.addAll(messages)
             _messageFromUiState.value.isLoading.value = false
         }

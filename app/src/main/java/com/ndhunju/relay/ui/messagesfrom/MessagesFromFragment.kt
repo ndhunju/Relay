@@ -19,7 +19,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.ComposeView
 import androidx.compose.ui.unit.dp
 import androidx.fragment.app.Fragment
-import androidx.fragment.app.viewModels
+import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.ndhunju.relay.ui.MainViewModel
 import com.ndhunju.relay.RelayViewModelFactory
@@ -37,7 +37,7 @@ class MessagesFromFragment : Fragment() {
 
     private var threadId: String? = null
     private var senderAddress: String? = null
-    private val mainViewModel: MainViewModel by viewModels { RelayViewModelFactory }
+    private val mainViewModel: MainViewModel by activityViewModels { RelayViewModelFactory }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
