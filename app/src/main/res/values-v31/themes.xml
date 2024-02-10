@@ -2,7 +2,8 @@
 <resources>
 
     <style name="Theme.Relay" parent="android:Theme.Material.Light.NoActionBar">
-        <item name="android:windowSplashScreenBackground">@color/black_400</item>
+        <item name="android:windowSplashScreenBackground">@color/splash_screen_bg</item>
+        <item name="android:windowSplashScreenIconBackgroundColor">@color/splash_screen_icon_bg</item>
         <item name="android:windowSplashScreenAnimatedIcon">@drawable/ic_splash_screen</item>
     </style>
 </resources>
