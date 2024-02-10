@@ -20,6 +20,7 @@ import com.ndhunju.relay.ui.pair.PairWithParentFragment
 import com.ndhunju.relay.ui.parent.ChildUserListFragment
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
 
 class MainViewModel(
@@ -30,6 +31,9 @@ class MainViewModel(
 
     private var _state = MutableStateFlow(MainScreenUiState())
     private var _messageFromUiState = MutableStateFlow(MessageFromUiState())
+
+    private val _showSplashScreen = MutableStateFlow(true)
+    val showSplashScreen = _showSplashScreen.asStateFlow()
 
     val state: StateFlow<MainScreenUiState>
         get() { return _state }
@@ -181,6 +185,8 @@ class MainViewModel(
         }
 
         state.value.updateLastMessages(lastMessages)
+        // Hide splash screen
+        _showSplashScreen.value = false
     }
 
 }

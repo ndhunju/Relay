@@ -6,6 +6,8 @@ import android.content.IntentFilter
 import android.os.Bundle
 import android.provider.Telephony
 import android.util.Log
+import android.view.View
+import android.view.ViewTreeObserver
 import androidx.activity.compose.setContent
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.activity.viewModels
@@ -57,6 +59,8 @@ class MainActivity : BaseActivity() {
                 }
             }
         }
+
+        showSplashScreenUntilReady()
 
         viewModel.setTitle(getString(R.string.app_name))
 
@@ -127,6 +131,30 @@ class MainActivity : BaseActivity() {
                 requestPermission(requestPermissionLauncher)
             }
         }
+    }
+
+    /**
+     * Shows splash screen until the view model has finished loading data
+     */
+    private fun showSplashScreenUntilReady() {
+        // Set up an OnPreDrawListener to the root view.
+        val content: View = findViewById(android.R.id.content)
+        content.viewTreeObserver.addOnPreDrawListener(
+            object : ViewTreeObserver.OnPreDrawListener {
+                override fun onPreDraw(): Boolean {
+                    // Check whether the initial data is ready.
+                    return if (viewModel.showSplashScreen.value) {
+                        // The data isn't ready.
+                        // Suspend first draw which would hide splash screen
+                        false
+                    } else {
+                        // The content is ready. Start drawing.
+                        content.viewTreeObserver.removeOnPreDrawListener(this)
+                        true
+                    }
+                }
+            }
+        )
     }
 
     private var isSmsBroadcastRegistered = false
