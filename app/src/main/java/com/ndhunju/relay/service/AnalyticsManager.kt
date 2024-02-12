@@ -20,6 +20,16 @@ class AnalyticsManager @Inject constructor(): AnalyticsProvider {
     }
 
     /**
+     * Sets user id to all [AnalyticsProvider].
+     * This could be helpful when debugging issue of a specific user
+     */
+    override fun setUserId(userId: String?) {
+        analyticsProviders.forEach { analyticsProvider ->
+            analyticsProvider.setUserId(userId)
+        }
+    }
+
+    /**
      * Invokes [AnalyticsProvider.logEvent] of all the added [AnalyticsProvider]
      */
     override fun logEvent(name: String, message: String?) {

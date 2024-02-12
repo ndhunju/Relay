@@ -1,13 +1,14 @@
 package com.ndhunju.relay.util.worker
 
 import android.content.Context
-import android.util.Log
 import androidx.work.CoroutineWorker
 import androidx.work.WorkerParameters
 import com.ndhunju.relay.RelayApplication
+import com.ndhunju.relay.api.ApiInterface
 import com.ndhunju.relay.api.Result.*
 import com.ndhunju.relay.data.ChildSmsInfo
 import com.ndhunju.relay.di.AppComponent
+import com.ndhunju.relay.service.AnalyticsManager
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import java.lang.RuntimeException
@@ -24,16 +25,23 @@ class SyncChildMessagesWorker(
         (applicationContext as RelayApplication).appComponent
     }
 
+    private val apiInterface: ApiInterface by lazy {
+        appComponent.apiInterface()
+    }
+
+    private val analyticsManager: AnalyticsManager by lazy {
+        appComponent.analyticsManager()
+    }
+
     override suspend fun doWork(): Result {
         val workResult = withContext(Dispatchers.IO) {
-            val result = appComponent.apiInterface().fetchMessagesFromChildUsers(
+            val result = apiInterface.fetchMessagesFromChildUsers(
                 appComponent.currentUser().user.childUserIds
             )
 
             when (result) {
                 is Failure -> {
-                    //Log.d("TAG", "Failure: ${result.throwable}")
-                    return@withContext Result.failure()
+                    return@withContext returnFailure(result.throwable)
                 }
 
                 Pending -> {}
@@ -41,15 +49,14 @@ class SyncChildMessagesWorker(
                     val childSmsInfoList = result.data as List<ChildSmsInfo>
                     val isSuccess = insertIntoLocalRepository(childSmsInfoList)
                     // Tell back end that the messages have been saved locally
-                    appComponent.apiInterface().notifyDidSaveFetchedMessages(childSmsInfoList)
-                    return@withContext if (isSuccess) Result.success() else Result.failure()
+                    apiInterface.notifyDidSaveFetchedMessages(childSmsInfoList)
+                    return@withContext if (isSuccess) Result.success() else returnFailure()
                 }
             }
 
-            return@withContext Result.failure()
+            return@withContext returnFailure()
         }
 
-        Log.d("TAG", "doWork: finished")
         return workResult
     }
 
@@ -72,8 +79,16 @@ class SyncChildMessagesWorker(
 
             return true
         } catch (ex: Exception) {
-            ex.printStackTrace()
+            analyticsManager.logEvent("didFailToInsertIntoLocalRepo", ex.message)
             return false
         }
+    }
+
+    private suspend fun returnFailure(throwable: Throwable? = null): Result {
+        analyticsManager.logEvent(
+            "didFailToSyncChildMessage",
+            throwable?.message
+        )
+        return Result.failure()
     }
 }

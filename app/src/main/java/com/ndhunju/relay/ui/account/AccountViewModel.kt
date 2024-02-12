@@ -1,6 +1,5 @@
 package com.ndhunju.relay.ui.account
 
-import android.util.Log
 import android.util.Patterns
 import androidx.annotation.StringRes
 import androidx.core.util.PatternsCompat
@@ -10,6 +9,7 @@ import com.ndhunju.relay.R
 import com.ndhunju.relay.api.ApiInterface
 import com.ndhunju.relay.api.EmailAlreadyExistException
 import com.ndhunju.relay.api.Result
+import com.ndhunju.relay.service.AnalyticsManager
 import com.ndhunju.relay.service.AppStateBroadcastService
 import com.ndhunju.relay.util.CurrentUser
 import com.ndhunju.relay.util.User
@@ -24,6 +24,7 @@ import java.lang.RuntimeException
 
 class AccountViewModel(
     private val appStateBroadcastService: AppStateBroadcastService,
+    private var analyticsManager: AnalyticsManager,
     private val apiInterface: ApiInterface,
     private var currentUser: CurrentUser,
     private var user: User
@@ -111,8 +112,10 @@ class AccountViewModel(
                     showProgress = showProgress
                 )
             }.catch { throwable ->
-                // TODO: Nikesh - User Firebase logger
-                Log.d("Error", throwable.localizedMessage, throwable)
+                analyticsManager.logEvent(
+                    "didCatchErrorCreatingAccountScreenUiState",
+                    throwable.message
+                )
                 errorStrIdGeneric.value = R.string.general_error_message
             }.collect { accountScreenUiState ->
                 _state.value = accountScreenUiState

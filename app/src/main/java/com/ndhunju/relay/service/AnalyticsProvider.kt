@@ -14,6 +14,8 @@ interface AnalyticsProvider {
      * Client invokes this to log an event with [name] and [message]
      */
     fun logEvent(name: String, message: String? = null)
+
+    fun setUserId(userId: String?)
 }
 
 /**
@@ -26,6 +28,10 @@ class FirebaseAnalyticsProvider: AnalyticsProvider {
         bundle.putString("message", message)
         Firebase.analytics.logEvent(name, bundle)
     }
+
+    override fun setUserId(userId: String?) {
+        Firebase.analytics.setUserId(userId)
+    }
 }
 
 /**
@@ -36,6 +42,10 @@ class LocalAnalyticsProvider: AnalyticsProvider {
 
     override fun logEvent(name: String, message: String?) {
         Log.d(TAG, "logEvent: name:$name; message=$message")
+    }
+
+    override fun setUserId(userId: String?) {
+        // Can be ignored
     }
 
     companion object {

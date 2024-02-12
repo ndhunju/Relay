@@ -74,7 +74,7 @@ class ApiInterfaceFireStoreImpl(
             userId = userCollection.add(newUser).await().id
             Result.Success(userId)
         } catch (ex: Exception) {
-            Log.d(TAG, "createUser: Failed with $ex")
+            analyticsManager.logEvent("didFailToCreateUser", ex.message)
             Result.Failure(ex)
         }
     }
@@ -96,7 +96,7 @@ class ApiInterfaceFireStoreImpl(
             ).await()
             Result.Success()
         } catch (ex: Exception) {
-            Log.d(TAG, "updateUser: Failed to update user")
+            analyticsManager.logEvent("didFailToUpdateUser", ex.message)
             Result.Failure(ex)
         }
     }
@@ -221,8 +221,9 @@ class ApiInterfaceFireStoreImpl(
 
             if (failedMessageIds.isNotEmpty()) {
                 // Log all the failed transactions
-                Log.d(TAG, "notifyDidSaveFetchedMessages: " +
-                            "Failed ${failedMessageIds.size}/${childSmsInfoList.size}. "
+                analyticsManager.logEvent(
+                    "didFailToNotifyFetchedMessageForSome",
+                    "${failedMessageIds.size}/${childSmsInfoList.size}"
                 )
             }
             Result.Success()
@@ -244,10 +245,8 @@ class ApiInterfaceFireStoreImpl(
                     removeCurrentUserFromFetcherListHelper(childSmsInfo, tx)
                 }
             }.await()
-            Log.d(TAG, "updateEntriesInDatabase: Finished")
             true
         } catch (ex: Exception) {
-            Log.d(TAG, "updateEntriesInDatabase: Failed with $ex")
             false
         }
     }
@@ -326,9 +325,7 @@ class ApiInterfaceFireStoreImpl(
             ))
             Result.Success()
         } catch (ex: Exception) {
-            // TODO: Nikesh - Log this error in Firebase
-            // TODO: Nikesh - Make a logger class
-            Log.d(TAG, "pushMessageToServer: $ex")
+            analyticsManager.logEvent("didFailToPushMessage", ex.message)
             Result.Failure(ex)
         }
     }

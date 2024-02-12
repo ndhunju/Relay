@@ -169,7 +169,7 @@ class MainActivity : BaseActivity() {
                 isSmsBroadcastRegistered = intent != null
             }
         } catch (ex: Exception) {
-            Log.d("MainActivity", "createAndRegisterSmsBroadcastReceiver: failed ${ex.message}")
+            analyticsManager.logEvent("didFailToRegisterSmsBroadcastReceiver", ex.message)
         }
     }
 

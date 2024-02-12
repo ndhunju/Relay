@@ -78,6 +78,8 @@ class AppStateBroadcastServiceImpl(
     }
 
     override fun updateNewProcessedMessages(newValue: List<Message>) {
+        // Log who made the update request
+        Log.d(TAG, "updateNewProcessedMessages: ${Throwable().stackTrace.first()}")
         _newProcessedMessages.postValue(newValue)
     }
 

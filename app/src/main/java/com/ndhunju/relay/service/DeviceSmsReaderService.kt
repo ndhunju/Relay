@@ -16,7 +16,10 @@ private val TAG = DeviceSmsReaderService::class.simpleName
  * This class provides API to read SMS messages stored on the device in different ways.
  */
 @Singleton
-class DeviceSmsReaderService @Inject constructor(private val context: Context) {
+class DeviceSmsReaderService @Inject constructor(
+    private val context: Context,
+    private val analyticsManager: AnalyticsManager,
+) {
 
     private val smsUri = Uri.parse("content://sms")
 
@@ -35,7 +38,7 @@ class DeviceSmsReaderService @Inject constructor(private val context: Context) {
 
             return fromCursorToMapOfThreadToLastMessage(cursor).map { entry -> entry.value }
         } catch (ex: Exception) {
-            Log.d(TAG, "getLastMessageForEachThread: ${ex.message}")
+            analyticsManager.logEvent("didFailToGetLastMessage", ex.message)
         }
 
         return emptyList()
@@ -74,7 +77,7 @@ class DeviceSmsReaderService @Inject constructor(private val context: Context) {
         val messages = fromCursorToMessageList(cursor)
 
         if (messages.size > 1) {
-            Log.e(TAG, "getMessageBy: Found multiple messages for passed body and address")
+            analyticsManager.logEvent("didFindManyMessageForAddressAndBody", )
         }
 
         return messages.first()

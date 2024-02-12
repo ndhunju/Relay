@@ -5,6 +5,7 @@ import android.widget.Toast
 import androidx.fragment.app.FragmentActivity
 import com.ndhunju.relay.R
 import com.ndhunju.relay.RelayApplication
+import com.ndhunju.relay.service.AnalyticsManager
 import com.ndhunju.relay.service.AppStateBroadcastService
 import javax.inject.Inject
 
@@ -14,6 +15,7 @@ abstract class BaseActivity: FragmentActivity() {
      * Dagger will provide an instance of [AppStateBroadcastService] from the graph
      */
     @Inject lateinit var appStateBroadcastService: AppStateBroadcastService
+    @Inject lateinit var analyticsManager: AnalyticsManager
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
