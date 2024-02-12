@@ -1,18 +1,20 @@
 package com.ndhunju.relay
 
 import android.app.Application
-import androidx.work.Constraints
-import androidx.work.NetworkType
+import android.os.Build
 import androidx.work.OneTimeWorkRequestBuilder
 import com.ndhunju.relay.di.AndroidAppModule
 import com.ndhunju.relay.di.AppComponent
 import com.ndhunju.relay.di.AppModule
 import com.ndhunju.relay.di.DaggerAppComponent
-import com.ndhunju.relay.util.worker.UploadNewMessagesWorker
+import com.ndhunju.relay.util.worker.SecondaryAppStartTasksWorker
+import com.ndhunju.relay.util.worker.SecondaryAppStartTasksWorker.Companion.DELAY_IN_MILLIS
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.SupervisorJob
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
+import java.time.Duration
 
 class RelayApplication: Application() {
 
@@ -25,8 +27,7 @@ class RelayApplication: Application() {
         super.onCreate()
         setUpDaggerAppComponent()
         setUpAnalyticsManager()
-        saveAppInstallTime()
-        doEnqueueWorkerToUploadNewMessages()
+        doEnqueueSecondaryAppStartTasksWorker()
 
         // TODO: Nikesh - Based on user's id, always fetch latest user info from server
     }
@@ -39,23 +40,26 @@ class RelayApplication: Application() {
     }
 
     /**
-     * Save the time when the app was first installed
+     * Enqueues tasks that need to be run at app start up but could be delayed for
+     * [DELAY_IN_MILLIS]. This way, the app isn't doing too many work at start up
+     * which would increase app start up time.
      */
-    private fun saveAppInstallTime() {
-        applicationScope.launch(Dispatchers.IO) {
-            appComponent.simpleKeyValuePersistService().saveFirstTime(
-                "appInstallTime",
-                System.currentTimeMillis().toString()
+    private fun doEnqueueSecondaryAppStartTasksWorker() {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            appComponent.workManager().enqueue(
+                OneTimeWorkRequestBuilder<SecondaryAppStartTasksWorker>()
+                    .setInitialDelay(Duration.ofSeconds(DELAY_IN_MILLIS))
+                    .build()
             )
+        } else {
+            applicationScope.launch(Dispatchers.IO) {
+                delay(DELAY_IN_MILLIS)
+                appComponent.workManager().enqueue(
+                    OneTimeWorkRequestBuilder<SecondaryAppStartTasksWorker>()
+                        .build()
+                )
+            }
         }
-    }
-
-    fun doEnqueueWorkerToUploadNewMessages() {
-        appComponent.workManager().enqueue(
-            OneTimeWorkRequestBuilder<UploadNewMessagesWorker>()
-                .setConstraints(Constraints(requiredNetworkType = NetworkType.CONNECTED))
-                .build()
-        )
     }
 
     private fun setUpAnalyticsManager() {

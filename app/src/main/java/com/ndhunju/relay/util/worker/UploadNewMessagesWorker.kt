@@ -1,8 +1,11 @@
 package com.ndhunju.relay.util.worker
 
 import android.content.Context
+import androidx.work.Constraints
 import androidx.work.CoroutineWorker
 import androidx.work.ForegroundInfo
+import androidx.work.NetworkType
+import androidx.work.OneTimeWorkRequestBuilder
 import androidx.work.WorkerParameters
 import com.ndhunju.relay.RelayApplication
 import com.ndhunju.relay.api.ApiInterface
@@ -126,5 +129,17 @@ class UploadNewMessagesWorker(
         ))
 
         return result
+    }
+
+    companion object {
+
+        fun doEnqueueWorkerToUploadNewMessages(appComponent: AppComponent) {
+            appComponent.workManager().enqueue(
+                OneTimeWorkRequestBuilder<UploadNewMessagesWorker>()
+                    .setConstraints(Constraints(requiredNetworkType = NetworkType.CONNECTED))
+                    .build()
+            )
+        }
+
     }
 }

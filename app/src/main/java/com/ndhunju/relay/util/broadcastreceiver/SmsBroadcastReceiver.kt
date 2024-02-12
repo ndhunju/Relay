@@ -5,6 +5,7 @@ import android.content.Context
 import android.content.Intent
 import android.provider.Telephony
 import com.ndhunju.relay.RelayApplication
+import com.ndhunju.relay.util.worker.UploadNewMessagesWorker
 
 /**
  * This [BroadcastReceiver] instigates the process of uploading new messages to the server
@@ -20,7 +21,8 @@ object SmsBroadcastReceiver : BroadcastReceiver() {
     }
 
     private fun doEnqueueWorkerToUploadNewMessages(context: Context) {
-        ((context.applicationContext) as RelayApplication).doEnqueueWorkerToUploadNewMessages()
+        val appComponent = (context as RelayApplication).appComponent
+        UploadNewMessagesWorker.doEnqueueWorkerToUploadNewMessages(appComponent)
     }
 
     private fun processNewSmsMessages(intent: Intent) {
