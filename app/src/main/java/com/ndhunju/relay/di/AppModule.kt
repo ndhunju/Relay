@@ -64,7 +64,11 @@ class AppModule(private val application: Application) {
     @Provides
     @Singleton
     fun providesApiInterface(): ApiInterface {
-        return ApiInterfaceFireStoreImpl(providesGson(), providesCurrentUser())
+        return ApiInterfaceFireStoreImpl(
+            providesGson(),
+            providesCurrentUser(),
+            (application as RelayApplication).appComponent.analyticsManager()
+        )
     }
 
     @Provides

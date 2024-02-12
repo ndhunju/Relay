@@ -9,6 +9,7 @@ import com.google.firebase.ktx.Firebase
 import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
 import com.ndhunju.relay.data.ChildSmsInfo
+import com.ndhunju.relay.service.AnalyticsManager
 import com.ndhunju.relay.ui.messages.Message
 import com.ndhunju.relay.ui.parent.Child
 import com.ndhunju.relay.util.CurrentUser
@@ -23,7 +24,8 @@ private val TAG = ApiInterfaceFireStoreImpl::class.simpleName
  */
 class ApiInterfaceFireStoreImpl(
     private val gson: Gson,
-    private val currentUser: CurrentUser
+    private val currentUser: CurrentUser,
+    private val analyticsManager: AnalyticsManager
 ) : ApiInterface {
 
     private var userId: String
@@ -322,7 +324,6 @@ class ApiInterfaceFireStoreImpl(
                 MessageFetcher.MessageId to messageIdInServer,
                 MessageFetcher.FetcherUserIds to gson.toJson(currentUser.user.parentUserIds)
             ))
-            Log.d(TAG, "pushMessageToServer: is successful")
             Result.Success()
         } catch (ex: Exception) {
             // TODO: Nikesh - Log this error in Firebase

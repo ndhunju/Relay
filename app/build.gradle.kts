@@ -96,6 +96,8 @@ dependencies {
     // When using the BoM, you don't specify versions in Firebase library dependencies
     implementation("com.google.firebase:firebase-firestore")
     implementation("com.google.code.gson:gson:2.10.1")
+    // Analytics library
+    implementation("com.google.firebase:firebase-analytics")
 
 
     // Dagger

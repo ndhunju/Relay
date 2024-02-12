@@ -5,6 +5,7 @@ import com.ndhunju.relay.service.DeviceSmsReaderService
 import com.ndhunju.relay.data.SmsInfoRepository
 import com.ndhunju.relay.api.ApiInterface
 import com.ndhunju.relay.data.ChildSmsInfoRepository
+import com.ndhunju.relay.service.AnalyticsManager
 import com.ndhunju.relay.service.AppStateBroadcastService
 import com.ndhunju.relay.service.NotificationManager
 import com.ndhunju.relay.service.SimpleKeyValuePersistService
@@ -42,6 +43,8 @@ interface AppComponent {
     fun simpleKeyValuePersistService(): SimpleKeyValuePersistService
 
     fun notificationManager(): NotificationManager
+
+    fun analyticsManager(): AnalyticsManager
 
     /**
      * This tells Dagger that [BaseActivity] requests injection so the graph needs to
