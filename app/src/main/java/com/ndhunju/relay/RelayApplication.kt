@@ -24,6 +24,7 @@ class RelayApplication: Application() {
     override fun onCreate() {
         super.onCreate()
         setUpDaggerAppComponent()
+        setUpAnalyticsManager()
         saveAppInstallTime()
         doEnqueueWorkerToUploadNewMessages()
 
@@ -55,5 +56,9 @@ class RelayApplication: Application() {
                 .setConstraints(Constraints(requiredNetworkType = NetworkType.CONNECTED))
                 .build()
         )
+    }
+
+    private fun setUpAnalyticsManager() {
+        appComponent.analyticsManager().setUserId(appComponent.currentUser().user.id)
     }
 }
