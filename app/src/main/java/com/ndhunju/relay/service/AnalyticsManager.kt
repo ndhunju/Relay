@@ -1,5 +1,6 @@
 package com.ndhunju.relay.service
 
+import com.ndhunju.relay.service.analyticsprovider.AnalyticsProvider
 import javax.inject.Inject
 import javax.inject.Singleton
 
