@@ -7,6 +7,7 @@ to be able to receive calls and messages from your country's number.
 This app uses best practices for Android and uses the following libraries:
 
 - **Firestore Database**: For temporarily storing data in cloud
+- **Firesbase Analytics**: For logging key app events and logs for better debugging
 - **Jetpack Compose**: For building modern and declarative UIs.
 - **WorkManager**: For syncing server data to local database periodically.
 - **DateStore**: For storing simple key value persistently on device.
