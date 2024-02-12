@@ -11,6 +11,6 @@
     <color name="white">#FFFFFFFF</color>
 
     <color name="splash_screen_bg">#C7B7A3</color>
-    <color name="splash_screen_icon_bg">#E8D8C4</color>
+    <color name="splash_screen_icon_bg">#f0f0f0</color>
     <color name="splash_screen_icon">#561C24</color>
 </resources>

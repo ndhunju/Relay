@@ -1,10 +1,117 @@
-<vector xmlns:android="http://schemas.android.com/apk/res/android"
-    android:width="24dp"
-    android:height="24dp"
-    android:viewportWidth="512"
-    android:viewportHeight="512">
-    <path
-        android:fillColor="@color/splash_screen_icon"
-        android:pathData="m182.04,346.45q-9.43,0 -16.15,-6.72 -6.72,-6.72 -6.72,-16.15L159.18,217.82l-45.73,-54.31h217.24q9.43,0 16.15,6.72 6.72,6.72 6.72,16.15v137.2q0,9.43 -6.72,16.15 -6.72,6.72 -16.15,6.72zM182.04,186.38v137.2q0,0 0,0 0,0 0,0h148.64q0,0 0,0 0,0 0,0L330.68,186.38q0,0 0,0 0,0 0,0zM256.36,317.86 L272.37,301.86 259.79,289.28h48.02L307.82,266.41L204.91,266.41ZM204.91,243.55h102.9l-51.45,-51.45 -16.01,16.01 12.58,12.58h-48.02zM182.04,186.38v0q0,0 0,0 0,0 0,0v137.2q0,0 0,0 0,0 0,0v0q0,0 0,0 0,0 0,0z"
-        />
-</vector>
+<!-- Notes:
+     https://www.vectorpea.com/
+     Used this online vector editor tool to
+        1. copy parts of svg image icon into new layer
+        2. then color each copied objects
+        3. then transform the objects into starting position
+
+     https://colorkit.co/palette/ffadad-ffd6a5-fdffb6-caffbf-9bf6ff-a0c4ff-bdb2ff-ffc6ff/
+     Used this color palette to get colors for the icon
+
+     https://shapeshifter.design/
+     Used this tool to generate animated vector drawable. The outcome is this file. -->
+
+<animated-vector
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:aapt="http://schemas.android.com/aapt">
+    <aapt:attr name="android:drawable">
+        <vector
+            android:name="vector"
+            android:width="24dp"
+            android:height="24dp"
+            android:viewportWidth="512"
+            android:viewportHeight="512">
+            <group android:name="group">
+                <path
+                    android:name="path"
+                    android:pathData="M 182 346.4 Q 172.6 346.4 165.9 339.7 Q 159.2 333 159.2 323.6 L 159.2 217.8 L 113.4 163.5 L 330.7 163.5 Q 340.1 163.5 346.8 170.2 Q 353.6 176.9 353.6 186.4 L 353.6 323.6 Q 353.6 333 346.8 339.7 Q 340.1 346.4 330.7 346.4 Z M 182 186.4 L 182 323.6 L 330.6 323.6 L 330.6 186.4 Z M 182 186.4 L 182 323.6 Z"
+                    android:fillColor="#a0c4ff"
+                    android:strokeWidth="1"/>
+                <path
+                    android:name="path_1"
+                    android:pathData="M 158.9 243.5 L 261.8 243.5 L 210.4 192.1 L 194.4 208.1 L 206.9 220.7 L 158.9 220.7 Z"
+                    android:fillColor="#ffadad"
+                    android:strokeWidth="1"/>
+                <path
+                    android:name="path_2"
+                    android:pathData="M 302.4 317.9 L 318.4 301.9 L 305.8 289.3 L 353.8 289.3 L 353.8 266.4 L 250.9 266.4 Z"
+                    android:fillColor="#caffbf"
+                    android:strokeWidth="1"/>
+            </group>
+        </vector>
+    </aapt:attr>
+    <target android:name="path">
+        <aapt:attr name="android:animation">
+            <set>
+                <objectAnimator
+                    android:propertyName="fillColor"
+                    android:duration="600"
+                    android:valueFrom="#f0f0f0"
+                    android:valueTo="#a0c4ff"
+                    android:valueType="colorType"
+                    android:interpolator="@android:interpolator/fast_out_slow_in"/>
+                <objectAnimator
+                    android:propertyName="fillAlpha"
+                    android:duration="600"
+                    android:valueFrom="0.3"
+                    android:valueTo="1"
+                    android:valueType="floatType"
+                    android:interpolator="@android:interpolator/fast_out_slow_in"/>
+            </set>
+        </aapt:attr>
+    </target>
+    <target android:name="path_1">
+        <aapt:attr name="android:animation">
+            <set>
+                <objectAnimator
+                    android:propertyName="pathData"
+                    android:duration="600"
+                    android:valueFrom="M 158.9 243.5 L 261.8 243.5 L 210.4 192.1 L 194.4 208.1 L 206.9 220.7 L 158.9 220.7 Z"
+                    android:valueTo="M 204.9 243.5 L 307.8 243.5 L 256.4 192.1 L 240.4 208.1 L 252.9 220.7 L 204.9 220.7 Z"
+                    android:valueType="pathType"
+                    android:interpolator="@android:interpolator/fast_out_slow_in"/>
+                <objectAnimator
+                    android:propertyName="fillColor"
+                    android:duration="300"
+                    android:valueFrom="#f0f0f0"
+                    android:valueTo="#ffadad"
+                    android:valueType="colorType"
+                    android:interpolator="@android:interpolator/fast_out_slow_in"/>
+                <objectAnimator
+                    android:propertyName="fillAlpha"
+                    android:duration="300"
+                    android:valueFrom="0.3"
+                    android:valueTo="1"
+                    android:valueType="floatType"
+                    android:interpolator="@android:interpolator/fast_out_slow_in"/>
+            </set>
+        </aapt:attr>
+    </target>
+    <target android:name="path_2">
+        <aapt:attr name="android:animation">
+            <set>
+                <objectAnimator
+                    android:propertyName="fillColor"
+                    android:duration="600"
+                    android:valueFrom="#f0f0f0"
+                    android:valueTo="#caffbf"
+                    android:valueType="colorType"
+                    android:interpolator="@android:interpolator/fast_out_slow_in"/>
+                <objectAnimator
+                    android:propertyName="fillAlpha"
+                    android:duration="600"
+                    android:valueFrom="0.3"
+                    android:valueTo="1"
+                    android:valueType="floatType"
+                    android:interpolator="@android:interpolator/fast_out_slow_in"/>
+                <objectAnimator
+                    android:propertyName="pathData"
+                    android:duration="600"
+                    android:valueFrom="M 302.4 317.9 L 318.4 301.9 L 305.8 289.3 L 353.8 289.3 L 353.8 266.4 L 250.9 266.4 Z"
+                    android:valueTo="M 256.4 317.9 L 272.4 301.9 L 259.8 289.3 L 307.8 289.3 L 307.8 266.4 L 204.9 266.4 Z"
+                    android:valueType="pathType"
+                    android:interpolator="@android:interpolator/fast_out_slow_in"/>
+            </set>
+        </aapt:attr>
+    </target>
+</animated-vector>
