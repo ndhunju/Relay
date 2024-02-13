@@ -2,9 +2,10 @@
 <vector xmlns:android="http://schemas.android.com/apk/res/android"
     android:width="108dp"
     android:height="108dp"
+    android:tint="@color/splash_screen_icon_bg"
     android:viewportWidth="108"
     android:viewportHeight="108">
     <path
-        android:fillColor="#3DDC84"
+        android:fillColor="@color/white"
         android:pathData="M0,0h108v108h-108z" />
 </vector>

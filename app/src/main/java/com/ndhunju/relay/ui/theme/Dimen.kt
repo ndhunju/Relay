@@ -13,7 +13,7 @@ data class Dimensions(
     val dividerHeight: Dp = 1.dp,
 
     // Welcome Screen
-    val welcomeLauncherIconSize: Dp = 64.dp,
+    val welcomeLauncherIconSize: Dp = 128.dp,
     val welcomeHeaderTextSize: TextUnit = 32.sp,
     val welcomeBodyTextSize: TextUnit = 18.sp
 )
