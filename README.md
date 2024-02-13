@@ -17,13 +17,31 @@ This app uses best practices for Android and uses the following libraries:
 - **JUnit**: For unit testing.
 
 <table>
-  <tr>
-    <th colspan="2">Account Page</th>
+<tr>
+    <th>App Icon</th>
+    <th>App Icon Grid</th>
   </tr>
   <tr>
-    <td><img src="graphics/Relay-Account-Screen.jpg" width="80%" alt=""></td>
+    <td><img src="graphics/icons/ic_app/ic_app.svg" width="135" height="108" alt=""></td>
+    <td><img src="graphics/icons/ic_app/ic_app_with_grids.svg" width="135" height="108" alt=""></td>
+  </tr>
+  <tr>
+    <th>Splash Screen</th>
+    <th>Account Screen</th>
+  </tr>
+  <tr>
+    <td>
+        <video height="342" width="228" autoplay="autoplay">
+            <source src="graphics/screens/screen_splash.mp4" type="video/mp4">
+        </video>
+    <td>
+        <video height="342" width="228" autoplay="autoplay">
+            <source src="graphics/screens/screen_account.mp4" type="video/mp4">
+        </video>
+    </td>
   </tr>
 <tr>
+    <td><p>Splash Screen with animated app logo.</p></td>
     <td><p>Account Screen that respects dynamic theme set by the user.</p></td>
   </tr>
 </table>
