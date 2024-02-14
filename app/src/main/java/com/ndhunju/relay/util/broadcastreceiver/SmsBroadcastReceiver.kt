@@ -21,7 +21,7 @@ object SmsBroadcastReceiver : BroadcastReceiver() {
     }
 
     private fun doEnqueueWorkerToUploadNewMessages(context: Context) {
-        val appComponent = (context as RelayApplication).appComponent
+        val appComponent = (context.applicationContext as RelayApplication).appComponent
         UploadNewMessagesWorker.doEnqueueWorkerToUploadNewMessages(appComponent)
     }
 
