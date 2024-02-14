@@ -2,7 +2,6 @@ package com.ndhunju.relay.ui
 
 import androidx.compose.animation.core.tween
 import androidx.compose.foundation.ExperimentalFoundationApi
-import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -26,7 +25,6 @@ import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
-import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.ModalDrawerSheet
 import androidx.compose.material3.ModalNavigationDrawer
 import androidx.compose.material3.NavigationDrawerItem
@@ -42,7 +40,6 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
@@ -54,6 +51,7 @@ import com.ndhunju.relay.ui.custom.SearchTextField
 import com.ndhunju.relay.ui.messages.Message
 import com.ndhunju.relay.ui.messages.MessageListItem
 import com.ndhunju.relay.ui.theme.LocalDimens
+import com.ndhunju.relay.util.composibles.DynamicLauncherIconImage
 import kotlinx.coroutines.launch
 
 @Preview
@@ -90,13 +88,9 @@ fun MainDrawerContent(
         .fillMaxWidth(0.7f)
     ) {
         // Show big app icon
-        Image(
-            painter = painterResource(id = R.drawable.ic_launcher_foreground),
-            colorFilter = ColorFilter.tint(MaterialTheme.colorScheme.primary),
-            contentDescription = stringResource(id = R.string.image_description_app_logo),
-            modifier = Modifier
-                .size(112.dp)
-                .align(Alignment.CenterHorizontally)
+        DynamicLauncherIconImage(modifier = Modifier
+            .size(112.dp)
+            .align(Alignment.CenterHorizontally)
         )
 
         Divider()

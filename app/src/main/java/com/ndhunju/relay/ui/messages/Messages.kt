@@ -14,7 +14,6 @@ import com.ndhunju.relay.api.Result
 import com.ndhunju.relay.ui.custom.SyncStatusIcon
 import com.ndhunju.relay.ui.mockMessages
 import com.ndhunju.relay.ui.theme.LocalDimens
-import com.ndhunju.relay.util.LogCompositions
 import com.ndhunju.relay.util.dateFormat
 
 @Preview(showBackground = true)
