@@ -1,6 +1,9 @@
 package com.ndhunju.relay.service
 
 import com.ndhunju.relay.service.analyticsprovider.AnalyticsProvider
+import com.ndhunju.relay.service.analyticsprovider.FirebaseAnalyticsProvider
+import com.ndhunju.relay.service.analyticsprovider.Level
+import com.ndhunju.relay.service.analyticsprovider.LocalAnalyticsProvider
 import javax.inject.Inject
 import javax.inject.Singleton
 
@@ -9,6 +12,8 @@ import javax.inject.Singleton
  */
 @Singleton
 class AnalyticsManager @Inject constructor(): AnalyticsProvider {
+
+    override var logLevel = Level.NONE
 
     /**
      * List of all [AnalyticsProvider]
@@ -30,12 +35,24 @@ class AnalyticsManager @Inject constructor(): AnalyticsProvider {
         }
     }
 
+    override fun setLevel(logLevel: Level) {
+        analyticsProviders.forEach { analyticsProvider ->
+            analyticsProvider.setLevel(logLevel)
+        }
+    }
+
     /**
      * Invokes [AnalyticsProvider.logEvent] of all the added [AnalyticsProvider]
      */
     override fun logEvent(name: String, message: String?) {
         analyticsProviders.forEach { analyticsProvider ->
             analyticsProvider.logEvent(name, message)
+        }
+    }
+
+    override fun log(level: Level, tag: String, message: String) {
+        analyticsProviders.forEach { analyticsProvider ->
+            analyticsProvider.log(level, tag, message)
         }
     }
 

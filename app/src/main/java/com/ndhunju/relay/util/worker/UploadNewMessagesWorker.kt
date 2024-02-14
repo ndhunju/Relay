@@ -68,6 +68,10 @@ class UploadNewMessagesWorker(
         appComponent.currentUser()
     }
 
+    private val analyticsManager: AnalyticsManager by lazy {
+        appComponent.analyticsManager()
+    }
+
     override suspend fun getForegroundInfo(): ForegroundInfo {
         return ForegroundInfo(
             NotificationManager.ID_UPLOAD_NEW_MESSAGES,
@@ -83,6 +87,7 @@ class UploadNewMessagesWorker(
 
         if (currentUser.user.parentUserIds.isEmpty()) {
             // No parents to forward the messages to
+            analyticsManager.d(TAG, "Skipping since no parents found")
             return Result.success()
         }
 
