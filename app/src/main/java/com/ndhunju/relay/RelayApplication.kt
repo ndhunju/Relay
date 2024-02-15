@@ -1,8 +1,6 @@
 package com.ndhunju.relay
 
 import android.app.Application
-import android.os.Build
-import androidx.work.OneTimeWorkRequestBuilder
 import com.ndhunju.relay.di.AndroidAppModule
 import com.ndhunju.relay.di.AppComponent
 import com.ndhunju.relay.di.AppModule
@@ -10,11 +8,8 @@ import com.ndhunju.relay.di.DaggerAppComponent
 import com.ndhunju.relay.util.worker.SecondaryAppStartTasksWorker
 import com.ndhunju.relay.util.worker.SecondaryAppStartTasksWorker.Companion.DELAY_IN_MILLIS
 import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.SupervisorJob
-import kotlinx.coroutines.delay
-import kotlinx.coroutines.launch
-import java.time.Duration
+import kotlinx.coroutines.cancel
 
 class RelayApplication: Application() {
 
@@ -45,21 +40,9 @@ class RelayApplication: Application() {
      * which would increase app start up time.
      */
     private fun doEnqueueSecondaryAppStartTasksWorker() {
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-            appComponent.workManager().enqueue(
-                OneTimeWorkRequestBuilder<SecondaryAppStartTasksWorker>()
-                    .setInitialDelay(Duration.ofSeconds(DELAY_IN_MILLIS))
-                    .build()
-            )
-        } else {
-            applicationScope.launch(Dispatchers.IO) {
-                delay(DELAY_IN_MILLIS)
-                appComponent.workManager().enqueue(
-                    OneTimeWorkRequestBuilder<SecondaryAppStartTasksWorker>()
-                        .build()
-                )
-            }
-        }
+        // Useful when debugging to make sure only up-to-date workers exists in WorkerManager's database
+        //appComponent.workManager().cancelAllWork()
+        SecondaryAppStartTasksWorker.enqueue(appComponent.workManager(), applicationScope)
     }
 
     private fun setUpAnalyticsManager() {

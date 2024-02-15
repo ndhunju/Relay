@@ -4,6 +4,7 @@ import android.content.Context
 import android.provider.Telephony.Sms
 import androidx.work.Constraints
 import androidx.work.CoroutineWorker
+import androidx.work.ExistingWorkPolicy
 import androidx.work.ForegroundInfo
 import androidx.work.NetworkType
 import androidx.work.OneTimeWorkRequestBuilder
@@ -86,6 +87,7 @@ class UploadNewMessagesWorker(
     }
 
     override suspend fun doWork(): Result {
+        analyticsManager.d(TAG, "doWork() start")
         if (checkIfPermissionGranted(applicationContext).not()) {
             // No work we can do for now
             return Result.success()
@@ -113,20 +115,21 @@ class UploadNewMessagesWorker(
             result += processMessage(messageFromAndroidDb)
         }
 
-        val returnResult = if (result is Success) {
+        // Enqueue again to process new changes in Sms.Sms.CONTENT_URI since last SMS DB read
+        doEnqueueWorkerToUploadNewMessages(appComponent.workManager())
+
+        return if (result is Success) {
             // Save last upload start time
             keyValuePersistService.save(KEY_LAST_UPLOAD_TIME, uploadStartTime.toString())
             // Notify that new messages has been processed
             appStateBroadcastService.updateNewProcessedMessages(processedMessages)
+            analyticsManager.d(TAG, "doWork: Success")
             Result.success()
         } else {
+            analyticsManager.d(TAG, "doWork: Failure")
             Result.failure()
         }
 
-        // Enqueue again to process new changes in Sms.Sms.CONTENT_URI
-        doEnqueueWorkerToUploadNewMessages(appComponent.workManager())
-
-        return returnResult
     }
 
     private suspend fun processMessage(messageFromAndroidDb: Message): RelayResult {
@@ -149,7 +152,7 @@ class UploadNewMessagesWorker(
 
     companion object {
 
-        val TAG: String = UploadNewMessagesWorker::javaClass.name
+        val TAG: String = UploadNewMessagesWorker::class.java.simpleName
 
         private val constraints: Constraints by lazy {
             Constraints.Builder()
@@ -161,10 +164,14 @@ class UploadNewMessagesWorker(
         }
 
         fun doEnqueueWorkerToUploadNewMessages(workManager: WorkManager) {
-            workManager.enqueue(OneTimeWorkRequestBuilder<UploadNewMessagesWorker>()
-                .addTag(TAG)
-                .setConstraints(constraints)
-                .build()
+            workManager.enqueueUniqueWork(
+                TAG,
+                // NOTE: APPEND isn't triggering the worker at all
+                ExistingWorkPolicy.APPEND_OR_REPLACE,
+                OneTimeWorkRequestBuilder<UploadNewMessagesWorker>()
+                    .addTag(TAG)
+                    .setConstraints(constraints)
+                    .build()
             )
         }
 
