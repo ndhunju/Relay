@@ -128,7 +128,7 @@ class AccountViewModel(
      */
     private suspend fun createNewUserInServer() {
         showProgress.value = true
-        val result = apiInterface.createUser(
+        val result = apiInterface.postUser(
             name = name.value,
             email = email.value,
             phone = phone.value
@@ -169,7 +169,7 @@ class AccountViewModel(
      */
     private suspend fun pushUserUpdatesToServer() {
         showProgress.value = true
-        val result = apiInterface.updateUser(
+        val result = apiInterface.putUser(
             name = name.value,
             phone = phone.value
         )

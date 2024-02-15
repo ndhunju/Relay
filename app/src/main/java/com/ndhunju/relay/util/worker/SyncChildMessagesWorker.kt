@@ -35,7 +35,7 @@ class SyncChildMessagesWorker(
 
     override suspend fun doWork(): Result {
         val workResult = withContext(Dispatchers.IO) {
-            val result = apiInterface.fetchMessagesFromChildUsers(
+            val result = apiInterface.getMessagesFromChildUsers(
                 appComponent.currentUser().user.childUserIds
             )
 
@@ -49,7 +49,7 @@ class SyncChildMessagesWorker(
                     val childSmsInfoList = result.data as List<ChildSmsInfo>
                     val isSuccess = insertIntoLocalRepository(childSmsInfoList)
                     // Tell back end that the messages have been saved locally
-                    apiInterface.notifyDidSaveFetchedMessages(childSmsInfoList)
+                    apiInterface.postDidSaveFetchedMessages(childSmsInfoList)
                     return@withContext if (isSuccess) Result.success() else returnFailure()
                 }
             }

@@ -138,7 +138,7 @@ class UploadNewMessagesWorker(
         val idOfInsertedSmsInfo = smsInfoRepository.insertSmsInfo(smsInfoToInsert)
 
         // Push new message to the cloud database
-        val result = apiInterface.pushMessage(messageFromAndroidDb)
+        val result = apiInterface.postMessage(messageFromAndroidDb)
         // Update the sync status
         messageFromAndroidDb.syncStatus = result
         // Update the sync status in the local DB as well

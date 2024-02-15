@@ -8,7 +8,7 @@ import com.ndhunju.relay.ui.messages.Message
  */
 object ApiInterfaceDummyImpl: ApiInterface {
 
-    override suspend fun createUser(
+    override suspend fun postUser(
         name: String?,
         email: String?,
         phone: String?,
@@ -18,27 +18,27 @@ object ApiInterfaceDummyImpl: ApiInterface {
         return returnFailure()
     }
 
-    override suspend fun updateUser(name: String?, phone: String?): Result {
+    override suspend fun putUser(name: String?, phone: String?): Result {
         return returnFailure()
     }
 
-    override suspend fun pairWithParent(childUserId: String, parentEmailAddress: String): Result {
+    override suspend fun postPairWithParent(childUserId: String, parentEmailAddress: String): Result {
         return returnFailure()
     }
 
-    override suspend fun fetchChildUsers(parentUserId: String): Result {
+    override suspend fun getChildUsers(parentUserId: String): Result {
         return returnFailure()
     }
 
-    override suspend fun fetchMessagesFromChildUsers(childUserIds: List<String>): Result {
+    override suspend fun getMessagesFromChildUsers(childUserIds: List<String>): Result {
         return returnFailure()
     }
 
-    override suspend fun notifyDidSaveFetchedMessages(childSmsInfoList: List<ChildSmsInfo>): Result {
+    override suspend fun postDidSaveFetchedMessages(childSmsInfoList: List<ChildSmsInfo>): Result {
         return returnFailure()
     }
 
-    override suspend fun pushMessage(message: Message): Result {
+    override suspend fun postMessage(message: Message): Result {
         return returnFailure()
     }
 

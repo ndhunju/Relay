@@ -11,7 +11,7 @@ interface ApiInterface {
     /**
      * Makes API request to create user.
      */
-    suspend fun createUser(
+    suspend fun postUser(
         name: String? = null,
         email: String? = null,
         phone: String? = null,
@@ -23,36 +23,36 @@ interface ApiInterface {
      * Makes API request to update the user. If null is passed, don't update that value.
      * Only the non-null value must be updated in the server
      */
-    suspend fun updateUser(name: String? = null, phone: String? = null, ): Result
+    suspend fun putUser(name: String? = null, phone: String? = null, ): Result
 
 
     /**
      * Makes API request to pair [childUserId] with a
      * parent user whose email is [parentEmailAddress]
      */
-    suspend fun pairWithParent(childUserId: String, parentEmailAddress: String): Result
+    suspend fun postPairWithParent(childUserId: String, parentEmailAddress: String): Result
 
     /**
      * Makes API request to fetch all the paired child users.
      * @param parentUserId : Id of the parent user for which child users needed to be fetched
      */
-    suspend fun fetchChildUsers(parentUserId: String): Result
+    suspend fun getChildUsers(parentUserId: String): Result
 
     /**
      * Makes API request to fetch all [Message]s sent by [childUserIds]
      */
-    suspend fun fetchMessagesFromChildUsers(childUserIds: List<String>): Result
+    suspend fun getMessagesFromChildUsers(childUserIds: List<String>): Result
 
     /**
      * Makes API request to notify the back end that this client did save the messages
      * with id in [childSmsInfoList]
      */
-    suspend fun notifyDidSaveFetchedMessages(childSmsInfoList: List<ChildSmsInfo>): Result
+    suspend fun postDidSaveFetchedMessages(childSmsInfoList: List<ChildSmsInfo>): Result
 
     /**
      * Pushes [message] to the server.
      */
-    suspend fun pushMessage(message: Message): Result
+    suspend fun postMessage(message: Message): Result
 
     /**
      * Posts [token] to the server

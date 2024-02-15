@@ -48,7 +48,7 @@ class ChildUserListViewModel(
             _showProgress.value = currentUser.user.childUserEmails.isEmpty()
 
             // Fetch child users in case there are new ones since last time
-            val result = apiInterface.fetchChildUsers(
+            val result = apiInterface.getChildUsers(
                 currentUser.user.id
             )
 

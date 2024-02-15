@@ -50,7 +50,7 @@ class ApiInterfaceFireStoreImpl(
      * Creates user in the cloud database.
      * TODO: Nikesh - Use third party Identity Provider to authenticate and create user
      */
-    override suspend fun createUser(
+    override suspend fun postUser(
         name: String?,
         email: String?,
         phone: String?,
@@ -81,7 +81,7 @@ class ApiInterfaceFireStoreImpl(
     /**
      * Updates user in cloud database
      */
-    override suspend fun updateUser(
+    override suspend fun putUser(
         name: String?,
         phone: String?,
     ): Result {
@@ -122,7 +122,7 @@ class ApiInterfaceFireStoreImpl(
         it.value?.isNotEmpty() == true
     }
 
-    override suspend fun pairWithParent(childUserId: String, parentEmailAddress: String): Result {
+    override suspend fun postPairWithParent(childUserId: String, parentEmailAddress: String): Result {
         // TODO: Nikesh - check if user has already paired with 3 parents
         // Check that such parent email address already exists
         return try {
@@ -146,7 +146,7 @@ class ApiInterfaceFireStoreImpl(
 
     }
 
-    override suspend fun fetchChildUsers(parentUserId: String): Result {
+    override suspend fun getChildUsers(parentUserId: String): Result {
         return try {
             // Fetch the list of child user ids for passed parent
             val childUserIds = parentChildCollection
@@ -175,7 +175,7 @@ class ApiInterfaceFireStoreImpl(
 
     }
 
-    override suspend fun fetchMessagesFromChildUsers(childUserIds: List<String>): Result {
+    override suspend fun getMessagesFromChildUsers(childUserIds: List<String>): Result {
         val childSmsInfoList = mutableListOf<ChildSmsInfo>()
         try {
             for (childUserId2 in childUserIds) {
@@ -202,7 +202,7 @@ class ApiInterfaceFireStoreImpl(
         }
     }
 
-    override suspend fun notifyDidSaveFetchedMessages(
+    override suspend fun postDidSaveFetchedMessages(
         childSmsInfoList: List<ChildSmsInfo>
     ): Result {
         return try {
@@ -299,7 +299,7 @@ class ApiInterfaceFireStoreImpl(
     /**
      * Pushes [message] to the cloud database.
      */
-    override suspend fun pushMessage(message: Message): Result {
+    override suspend fun postMessage(message: Message): Result {
 
         if (currentUser.isUserSignedIn().not()) {
             return Result.Failure(UserSignedOutException("User is not signed in."))
