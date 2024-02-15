@@ -334,10 +334,22 @@ class ApiInterfaceFireStoreImpl(
         }
 
         return try {
-            pushNotificationCollection.add(hashMapOf(
-                PushNotificationToken.UserId to currentUser.user.id,
-                PushNotificationToken.Token to token
-            )).await()
+            val existingPushNotificationTokenEntry = pushNotificationCollection.whereEqualTo(
+                PushNotificationToken.UserId,
+                currentUser.user.id
+            ).get().await().documents.firstOrNull()
+
+            if (existingPushNotificationTokenEntry != null) {
+                pushNotificationCollection.document(existingPushNotificationTokenEntry.id)
+                    .update(PushNotificationToken.Token, token).await()
+            } else {
+                pushNotificationCollection.add(
+                    hashMapOf(
+                        PushNotificationToken.UserId to currentUser.user.id,
+                        PushNotificationToken.Token to token
+                    )
+                ).await()
+            }
 
             Result.Success()
         } catch (ex: Exception) {
