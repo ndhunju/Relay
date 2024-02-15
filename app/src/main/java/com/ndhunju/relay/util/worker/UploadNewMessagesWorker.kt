@@ -1,26 +1,32 @@
 package com.ndhunju.relay.util.worker
 
 import android.content.Context
+import android.provider.Telephony.Sms
 import androidx.work.Constraints
 import androidx.work.CoroutineWorker
 import androidx.work.ForegroundInfo
 import androidx.work.NetworkType
 import androidx.work.OneTimeWorkRequestBuilder
+import androidx.work.WorkManager
 import androidx.work.WorkerParameters
 import com.ndhunju.relay.RelayApplication
 import com.ndhunju.relay.api.ApiInterface
 import com.ndhunju.relay.api.Result.Success
 import com.ndhunju.relay.data.SmsInfoRepository
 import com.ndhunju.relay.di.AppComponent
+import com.ndhunju.relay.service.AnalyticsManager
 import com.ndhunju.relay.service.AppStateBroadcastService
 import com.ndhunju.relay.service.DeviceSmsReaderService
 import com.ndhunju.relay.service.NotificationManager
 import com.ndhunju.relay.service.SimpleKeyValuePersistService
+import com.ndhunju.relay.service.analyticsprovider.d
 import com.ndhunju.relay.ui.messages.Message
 import com.ndhunju.relay.ui.toSmsInfo
 import com.ndhunju.relay.util.CurrentUser
 import com.ndhunju.relay.util.checkIfPermissionGranted
 import kotlinx.coroutines.flow.first
+import java.util.concurrent.TimeUnit
+import kotlin.String
 import kotlin.getValue
 import kotlin.lazy
 import com.ndhunju.relay.api.Result as RelayResult
@@ -107,7 +113,7 @@ class UploadNewMessagesWorker(
             result += processMessage(messageFromAndroidDb)
         }
 
-        return if (result is Success) {
+        val returnResult = if (result is Success) {
             // Save last upload start time
             keyValuePersistService.save(KEY_LAST_UPLOAD_TIME, uploadStartTime.toString())
             // Notify that new messages has been processed
@@ -116,6 +122,11 @@ class UploadNewMessagesWorker(
         } else {
             Result.failure()
         }
+
+        // Enqueue again to process new changes in Sms.Sms.CONTENT_URI
+        doEnqueueWorkerToUploadNewMessages(appComponent.workManager())
+
+        return returnResult
     }
 
     private suspend fun processMessage(messageFromAndroidDb: Message): RelayResult {
@@ -138,11 +149,22 @@ class UploadNewMessagesWorker(
 
     companion object {
 
-        fun doEnqueueWorkerToUploadNewMessages(appComponent: AppComponent) {
-            appComponent.workManager().enqueue(
-                OneTimeWorkRequestBuilder<UploadNewMessagesWorker>()
-                    .setConstraints(Constraints(requiredNetworkType = NetworkType.CONNECTED))
-                    .build()
+        val TAG: String = UploadNewMessagesWorker::javaClass.name
+
+        private val constraints: Constraints by lazy {
+            Constraints.Builder()
+                .addContentUriTrigger(Sms.CONTENT_URI, true)
+                .setRequiredNetworkType(NetworkType.CONNECTED)
+                .setTriggerContentMaxDelay(3, TimeUnit.SECONDS)
+                .setTriggerContentUpdateDelay(3, TimeUnit.SECONDS)
+                .build()
+        }
+
+        fun doEnqueueWorkerToUploadNewMessages(workManager: WorkManager) {
+            workManager.enqueue(OneTimeWorkRequestBuilder<UploadNewMessagesWorker>()
+                .addTag(TAG)
+                .setConstraints(constraints)
+                .build()
             )
         }
 

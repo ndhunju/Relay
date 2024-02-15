@@ -2,10 +2,7 @@ package com.ndhunju.relay.ui
 
 import android.Manifest.permission.READ_SMS
 import android.app.AlertDialog
-import android.content.IntentFilter
 import android.os.Bundle
-import android.provider.Telephony
-import android.util.Log
 import android.view.View
 import android.view.ViewTreeObserver
 import androidx.activity.compose.setContent
@@ -24,7 +21,6 @@ import com.ndhunju.relay.ui.pair.PairWithParentFragment
 import com.ndhunju.relay.ui.parent.ChildUserListFragment
 import com.ndhunju.relay.ui.theme.RelayTheme
 import com.ndhunju.relay.util.areNeededPermissionGranted
-import com.ndhunju.relay.util.broadcastreceiver.SmsBroadcastReceiver
 import com.ndhunju.relay.util.checkIfPermissionGranted
 import com.ndhunju.relay.util.requestPermission
 
@@ -39,7 +35,6 @@ class MainActivity : BaseActivity() {
         if (areNeededPermissionGranted(permissions)) {
             viewModel.onAllPermissionGranted()
             // Create and register the SMS broadcast receiver
-            createAndRegisterSmsBroadcastReceiver()
         } else {
             // Permissions denied
             viewModel.state.value.showErrorMessageForPermissionDenied = true
@@ -116,7 +111,6 @@ class MainActivity : BaseActivity() {
         // Check if needed permissions are granted
         if (checkIfPermissionGranted(this)) {
             viewModel.onAllPermissionGranted()
-            createAndRegisterSmsBroadcastReceiver()
         } else {
             if (shouldShowRequestPermissionRationale(this, READ_SMS)) {
                 // Show an explanation as to why the app needs read and send SMS permission
@@ -155,22 +149,6 @@ class MainActivity : BaseActivity() {
                 }
             }
         )
-    }
-
-    private var isSmsBroadcastRegistered = false
-
-    private fun createAndRegisterSmsBroadcastReceiver() {
-        try {
-            if (isSmsBroadcastRegistered.not()) {
-                val intent = registerReceiver(
-                    SmsBroadcastReceiver,
-                    IntentFilter(Telephony.Sms.Intents.SMS_RECEIVED_ACTION)
-                )
-                isSmsBroadcastRegistered = intent != null
-            }
-        } catch (ex: Exception) {
-            analyticsManager.logEvent("didFailToRegisterSmsBroadcastReceiver", ex.message)
-        }
     }
 
 }

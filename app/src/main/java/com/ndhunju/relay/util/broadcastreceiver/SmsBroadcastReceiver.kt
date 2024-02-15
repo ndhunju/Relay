@@ -22,7 +22,7 @@ object SmsBroadcastReceiver : BroadcastReceiver() {
 
     private fun doEnqueueWorkerToUploadNewMessages(context: Context) {
         val appComponent = (context.applicationContext as RelayApplication).appComponent
-        UploadNewMessagesWorker.doEnqueueWorkerToUploadNewMessages(appComponent)
+        UploadNewMessagesWorker.doEnqueueWorkerToUploadNewMessages(appComponent.workManager())
     }
 
     private fun processNewSmsMessages(intent: Intent) {

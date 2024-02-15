@@ -2,8 +2,7 @@ package com.ndhunju.relay.service
 
 import android.content.Context
 import android.database.Cursor
-import android.net.Uri
-import android.util.Log
+import android.provider.Telephony
 import com.ndhunju.relay.ui.messages.Message
 import com.ndhunju.relay.util.getLongForColumn
 import com.ndhunju.relay.util.getStringForColumn
@@ -21,7 +20,7 @@ class DeviceSmsReaderService @Inject constructor(
     private val analyticsManager: AnalyticsManager,
 ) {
 
-    private val smsUri = Uri.parse("content://sms")
+    private val smsUri = Telephony.Sms.CONTENT_URI
 
     /**
      * Returns a list of last [Message] for each unique thread_id
