@@ -8,6 +8,7 @@ This app uses best practices for Android and uses the following libraries:
 
 ✅ **Firestore Database**: For temporarily storing data in cloud </br>
 ✅ **Firesbase Analytics**: For logging key app events and logs for better debugging</br>
+✅ **Firesbase Messaging**: For sending push notification to the user</br>
 ✅ **Jetpack Compose**: For building modern and declarative UIs.</br>
 ✅ **WorkManager**: For syncing server data to local database periodically.</br>
 ✅ **DateStore**: For storing simple key value persistently on device.</br>

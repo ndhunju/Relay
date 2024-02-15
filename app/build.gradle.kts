@@ -98,7 +98,8 @@ dependencies {
     implementation("com.google.code.gson:gson:2.10.1")
     // Analytics library
     implementation("com.google.firebase:firebase-analytics")
-
+    // Firebase Cloud Messaging (Push Notification)
+    implementation("com.google.firebase:firebase-messaging:23.4.1")
 
     // Dagger
     implementation("com.google.dagger:dagger:2.50")
