@@ -12,6 +12,7 @@ import com.ndhunju.relay.service.AnalyticsManager
 import com.ndhunju.relay.ui.messages.Message
 import com.ndhunju.relay.ui.parent.Child
 import com.ndhunju.relay.util.CurrentUser
+import com.ndhunju.relayserver.RelayServer
 import kotlinx.coroutines.runBlocking
 import kotlinx.coroutines.tasks.await
 
@@ -321,6 +322,11 @@ class ApiInterfaceFireStoreImpl(
                 MessageFetcher.MessageId to messageIdInServer,
                 MessageFetcher.FetcherUserIds to gson.toJson(currentUser.user.parentUserIds)
             ))
+
+            RelayServer.sendPushNotification(
+                "token",
+                message.body
+            )
             Result.Success()
         } catch (ex: Exception) {
             analyticsManager.logEvent("didFailToPushMessage", ex.message)
