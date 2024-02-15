@@ -1,6 +1,5 @@
 package com.ndhunju.relay.api
 
-import android.util.Log
 import com.google.firebase.firestore.CollectionReference
 import com.google.firebase.firestore.FieldPath
 import com.google.firebase.firestore.Transaction
@@ -13,7 +12,6 @@ import com.ndhunju.relay.service.AnalyticsManager
 import com.ndhunju.relay.ui.messages.Message
 import com.ndhunju.relay.ui.parent.Child
 import com.ndhunju.relay.util.CurrentUser
-import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.runBlocking
 import kotlinx.coroutines.tasks.await
 
@@ -43,6 +41,7 @@ class ApiInterfaceFireStoreImpl(
     private val parentChildCollection = Firebase.firestore.collection(Collections.ParentChild)
     private val messageCollection = Firebase.firestore.collection(Collections.Message)
     private val messageFetcherCollection = Firebase.firestore.collection(Collections.MessageFetcher)
+    private val pushNotificationCollection = Firebase.firestore.collection(Collections.PushNotificationToken)
 
     // TypeToken used for parsing list
     private val listOfStringType = object : TypeToken<List<String>>(){}.type
@@ -124,7 +123,6 @@ class ApiInterfaceFireStoreImpl(
     }
 
     override suspend fun pairWithParent(childUserId: String, parentEmailAddress: String): Result {
-        val flow = MutableStateFlow<Result>(Result.Pending)
         // TODO: Nikesh - check if user has already paired with 3 parents
         // Check that such parent email address already exists
         return try {
@@ -330,6 +328,25 @@ class ApiInterfaceFireStoreImpl(
         }
     }
 
+    override suspend fun postUserPushNotificationToken(token: String): Result {
+        if (currentUser.isUserSignedIn().not()) {
+            return Result.Failure(UserSignedOutException("User is not signed in."))
+        }
+
+        return try {
+            pushNotificationCollection.add(hashMapOf(
+                PushNotificationToken.UserId to currentUser.user.id,
+                PushNotificationToken.Token to token
+            )).await()
+
+            Result.Success()
+        } catch (ex: Exception) {
+            analyticsManager.logEvent("didFailToPostPushNotificationToken", ex.message)
+            Result.Failure()
+        }
+
+    }
+
     /**
      * Represents all the [CollectionReference] we have
      */
@@ -338,6 +355,7 @@ class ApiInterfaceFireStoreImpl(
         const val ParentChild = "ParentChild"
         const val Message = "Message"
         const val MessageFetcher = "MessageFetcher"
+        const val PushNotificationToken = "PushNotificationToken"
     }
 
     /**
@@ -373,6 +391,14 @@ class ApiInterfaceFireStoreImpl(
     object MessageFetcher {
         const val MessageId = "MessageId"
         const val FetcherUserIds = "FetcherUserIds"
+    }
+
+    /**
+     * Represents fields of [Collections.PushNotificationToken] collection
+     */
+    object PushNotificationToken {
+        const val UserId = "UserId"
+        const val Token = "Token"
     }
 }
 

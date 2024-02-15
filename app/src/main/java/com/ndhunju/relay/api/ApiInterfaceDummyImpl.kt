@@ -34,11 +34,15 @@ object ApiInterfaceDummyImpl: ApiInterface {
         return returnFailure()
     }
 
-    override suspend fun notifyDidSaveFetchedMessages(messageIds: List<ChildSmsInfo>): Result {
+    override suspend fun notifyDidSaveFetchedMessages(childSmsInfoList: List<ChildSmsInfo>): Result {
         return returnFailure()
     }
 
     override suspend fun pushMessage(message: Message): Result {
+        return returnFailure()
+    }
+
+    override suspend fun postUserPushNotificationToken(token: String): Result {
         return returnFailure()
     }
 

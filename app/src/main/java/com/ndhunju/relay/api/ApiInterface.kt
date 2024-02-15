@@ -45,13 +45,18 @@ interface ApiInterface {
 
     /**
      * Makes API request to notify the back end that this client did save the messages
-     * with id in [messageIds]
+     * with id in [childSmsInfoList]
      */
-    suspend fun notifyDidSaveFetchedMessages(messageIds: List<ChildSmsInfo>): Result
+    suspend fun notifyDidSaveFetchedMessages(childSmsInfoList: List<ChildSmsInfo>): Result
 
     /**
      * Pushes [message] to the server.
      */
     suspend fun pushMessage(message: Message): Result
+
+    /**
+     * Posts [token] to the server
+     */
+    suspend fun postUserPushNotificationToken(token: String): Result
 
 }

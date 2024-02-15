@@ -6,6 +6,7 @@ import android.app.PendingIntent
 import android.content.Context
 import android.content.Intent
 import android.content.pm.PackageManager
+import android.media.RingtoneManager
 import androidx.core.app.ActivityCompat
 import androidx.core.app.NotificationCompat
 import androidx.core.app.NotificationManagerCompat
@@ -42,6 +43,8 @@ class NotificationManager @Inject constructor(
         )
     }
 
+    private val defaultSoundUri = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION)
+
     /**
      * [Notification.Builder] that sets default values
      */
@@ -49,6 +52,7 @@ class NotificationManager @Inject constructor(
         NotificationCompat.Builder(context, DEFAULT_CHANNEL_ID)
             .setSmallIcon(R.drawable.ic_launcher_foreground)
             .setContentIntent(defaultPendingIntent)
+            .setSound(defaultSoundUri)
     }
 
     /**

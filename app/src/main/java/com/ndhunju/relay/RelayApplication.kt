@@ -9,14 +9,14 @@ import com.ndhunju.relay.util.worker.SecondaryAppStartTasksWorker
 import com.ndhunju.relay.util.worker.SecondaryAppStartTasksWorker.Companion.DELAY_IN_MILLIS
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.SupervisorJob
-import kotlinx.coroutines.cancel
 
 class RelayApplication: Application() {
 
     // appComponent lives in the Application class to share its lifecycle
     // Reference to the application graph that is used across the whole app
     lateinit var appComponent: AppComponent
-    private val applicationScope = CoroutineScope(SupervisorJob())
+    var applicationScope = CoroutineScope(SupervisorJob())
+        private set
 
     override fun onCreate() {
         super.onCreate()
