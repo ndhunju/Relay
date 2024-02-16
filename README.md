@@ -16,6 +16,7 @@ This app uses best practices for Android and uses the following libraries:
 ✅ **Room**: To store persistent data offline</br>
 ✅ **Dagger**: For dependency injection.</br>
 ✅ **JUnit**: For unit testing.</br>
+✅ **Mockito**: To mock behavior during testing.</br>
 
 ### Icons
 

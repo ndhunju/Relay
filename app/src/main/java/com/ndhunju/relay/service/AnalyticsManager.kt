@@ -1,5 +1,6 @@
 package com.ndhunju.relay.service
 
+import androidx.annotation.OpenForTesting
 import com.ndhunju.relay.service.analyticsprovider.AnalyticsProvider
 import com.ndhunju.relay.service.analyticsprovider.FirebaseAnalyticsProvider
 import com.ndhunju.relay.service.analyticsprovider.Level
@@ -11,7 +12,8 @@ import javax.inject.Singleton
  * Manages all [AnalyticsProvider]
  */
 @Singleton
-class AnalyticsManager @Inject constructor(): AnalyticsProvider {
+@OpenForTesting // To be able to mock it, needs to be open
+open class AnalyticsManager @Inject constructor(): AnalyticsProvider {
 
     override var logLevel = Level.NONE
 

@@ -2,6 +2,7 @@ package com.ndhunju.relay.ui.account
 
 import android.util.Patterns
 import androidx.annotation.StringRes
+import androidx.annotation.VisibleForTesting
 import androidx.core.util.PatternsCompat
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
@@ -126,7 +127,8 @@ class AccountViewModel(
     /**
      * Creates new user in the server or cloud database
      */
-    private suspend fun createNewUserInServer() {
+    @VisibleForTesting(otherwise = VisibleForTesting.PRIVATE)
+    suspend fun createNewUserInServer() {
         showProgress.value = true
         val result = apiInterface.postUser(
             name = name.value,
