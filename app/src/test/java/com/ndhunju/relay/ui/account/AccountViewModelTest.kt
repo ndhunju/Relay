@@ -65,6 +65,37 @@ class AccountViewModelTest {
     fun tearDown() {}
 
     @Test
+    fun `when user enters valid phone numbers then no error message should be shown below phone field`() {
+        val validPhoneNumbers = arrayOf(
+            "0123456789",
+            "012 345 6789",
+            "(012) 345-6789",
+            "(012)345-6789",
+            "+971(012)345-6789",
+            "+971 (012) 345-6789",
+            "+971 012 345 6789"
+        )
+
+        for (validPhoneNumber in validPhoneNumbers) {
+            accountViewModel.onPhoneChange(validPhoneNumber)
+            Assert.assertNull(accountViewModel.state.value.errorStrIdForPhoneField)
+        }
+    }
+
+    @Test
+    fun `when user enters invalid phone numbers then error message should be shown below phone field`() {
+        val inValidPoneNumbers = arrayOf("", "123", "123 COMCAST", "++1 320 7232")
+
+        for (invalidPhoneNumber in inValidPoneNumbers) {
+            accountViewModel.onPhoneChange(invalidPhoneNumber)
+            Assert.assertEquals(
+                R.string.account_invalid_phone,
+                accountViewModel.state.value.errorStrIdForPhoneField
+            )
+        }
+    }
+
+    @Test
     fun `when Api returns EmailAlreadyExistException Then error message should match`() {
         runTest(timeout = Duration.parse("3s")) {
             // Mock the response

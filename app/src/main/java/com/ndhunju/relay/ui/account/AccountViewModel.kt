@@ -22,6 +22,7 @@ import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.launch
 import java.lang.RuntimeException
+import java.util.regex.Pattern
 
 class AccountViewModel(
     private val appStateBroadcastService: AppStateBroadcastService,
@@ -242,7 +243,20 @@ data class AccountScreenUiState(
 private fun isValidEmail(email: String?) =
     (email != null) && PatternsCompat.EMAIL_ADDRESS.matcher(email).matches()
 private fun isValidName(it: String?) = it != null && it.isEmpty().not()
-private fun isValidPhoneNumber(it: String?) = it != null && Patterns.PHONE.matcher(it).matches()
+
+/**
+ * Copied from [Patterns.PHONE].
+ * For some reason, [Patterns.PHONE] is null while running the test cases
+ */
+val phonePattern: Pattern by lazy {
+    Pattern.compile( // sdd = space, dot, or dash
+        ("(\\+[0-9]+[\\- \\.]*)?" // +<digits><sdd>*
+                + "(\\([0-9]+\\)[\\- \\.]*)?" // <digit><digit|sdd>+<digit>
+                + "([0-9][0-9\\- \\.]+[0-9])")) // <digit><digit|sdd>+<digit>
+}
+private fun isValidPhoneNumber(it: String?) = it != null
+        && it.length > 8 // Has to be at least 9 digits
+        && phonePattern.matcher(it).matches()
 
 /**
  * All possible modes that user could be using [AccountScreen] in.
