@@ -4,6 +4,9 @@ plugins {
     // Add the Google services Gradle plugin
     id("com.google.gms.google-services")
     id("com.google.devtools.ksp") version "1.9.0-1.0.12"
+    // Add the Crashlytics Gradle plugin
+    id("com.google.firebase.crashlytics")
+
 }
 
 android {
@@ -98,6 +101,8 @@ dependencies {
     implementation("com.google.code.gson:gson:2.10.1")
     // Analytics library
     implementation("com.google.firebase:firebase-analytics")
+    // Crashlytics
+    implementation("com.google.firebase:firebase-crashlytics")
     // Firebase Cloud Messaging (Push Notification)
     implementation("com.google.firebase:firebase-messaging:23.4.1")
 
