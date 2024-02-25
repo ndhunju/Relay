@@ -14,6 +14,7 @@ import com.ndhunju.relay.data.SmsInfo
 import com.ndhunju.relay.data.SmsInfoRepository
 import com.ndhunju.relay.service.AppStateBroadcastService
 import com.ndhunju.relay.ui.account.AccountFragment
+import com.ndhunju.relay.ui.debug.DebugFragment
 import com.ndhunju.relay.ui.messages.Message
 import com.ndhunju.relay.ui.messagesfrom.MessagesFromFragment
 import com.ndhunju.relay.ui.pair.PairWithParentFragment
@@ -81,6 +82,11 @@ class MainViewModel(
      * Invoked when [ChildUserListFragment] needs to be opened
      */
     var doOpenChildUserFragment: (() -> Unit)? = null
+
+    /**
+     * Invoked when [DebugFragment] needs to be opened
+     */
+    var doOpenDebugFragment: (() -> Unit)? = null
 
     /**
      * Invoked when app needs user permissions

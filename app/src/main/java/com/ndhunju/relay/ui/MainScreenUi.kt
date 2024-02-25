@@ -2,6 +2,7 @@ package com.ndhunju.relay.ui
 
 import androidx.compose.animation.core.tween
 import androidx.compose.foundation.ExperimentalFoundationApi
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -66,12 +67,26 @@ fun MainScreen(viewModel: MainViewModel) {
     val drawerState = rememberDrawerState(initialValue = DrawerValue.Closed)
     val coroutineScope = rememberCoroutineScope()
 
+    var onClickLauncherIconCount = remember { 0 }
+
     ModalNavigationDrawer(
         drawerState = drawerState,
-        drawerContent = { MainDrawerContent(navigationItems) {
-            viewModel.onClickNavItem(it)
-            coroutineScope.launch { drawerState.close() }
-        }}
+        drawerContent = {
+            MainDrawerContent(
+                navigationItems = navigationItems,
+                onClickNavItem = {
+                    viewModel.onClickNavItem(it)
+                    coroutineScope.launch { drawerState.close() }
+                },
+                onClickLauncherIcon = {
+                    onClickLauncherIconCount++
+                    if (onClickLauncherIconCount > 3) {
+                        viewModel.doOpenDebugFragment?.invoke()
+                    }
+                }
+            )
+
+        }
     ) {
         MainContent(viewModel = viewModel, onClickMenuOrUpIcon = {
             coroutineScope.launch { drawerState.open() }
@@ -82,7 +97,8 @@ fun MainScreen(viewModel: MainViewModel) {
 @Composable
 fun MainDrawerContent(
     navigationItems: List<NavItem>,
-    onClickNavItem: (NavItem) -> Unit
+    onClickNavItem: (NavItem) -> Unit,
+    onClickLauncherIcon: () -> Unit,
 ) {
     ModalDrawerSheet(modifier = Modifier
         .fillMaxWidth(0.7f)
@@ -91,6 +107,7 @@ fun MainDrawerContent(
         DynamicLauncherIconImage(modifier = Modifier
             .size(112.dp)
             .align(Alignment.CenterHorizontally)
+            .clickable { onClickLauncherIcon() }
         )
 
         Divider()

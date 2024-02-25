@@ -6,6 +6,7 @@ import androidx.lifecycle.ViewModelProvider.AndroidViewModelFactory.Companion.AP
 import androidx.lifecycle.viewmodel.CreationExtras
 import com.ndhunju.relay.ui.MainViewModel
 import com.ndhunju.relay.ui.account.AccountViewModel
+import com.ndhunju.relay.ui.debug.DebugViewModel
 import com.ndhunju.relay.ui.pair.PairWithParentViewModel
 import com.ndhunju.relay.ui.parent.ChildUserListViewModel
 import com.ndhunju.relay.ui.parent.messagesfromchild.MessagesFromChildViewModel
@@ -67,6 +68,9 @@ val RelayViewModelFactory: ViewModelProvider.Factory = object : ViewModelProvide
                 }
                 isAssignableFrom(MessagesInThreadFromChildVM::class.java) -> {
                     MessagesInThreadFromChildVM(childSmsInfoRepository) as T
+                }
+                isAssignableFrom(DebugViewModel::class.java) -> {
+                    DebugViewModel() as T
                 }
                 else -> throw IllegalArgumentException(
                     "Unknown ViewModel class: ${modelClass.name}"
