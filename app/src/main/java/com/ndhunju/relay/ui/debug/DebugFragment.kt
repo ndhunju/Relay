@@ -24,7 +24,9 @@ class DebugFragment: Fragment() {
         super.onCreateView(inflater, container, savedInstanceState)
         return ComposeView(requireContext()).apply {
             setContent {
-                DebugScreen(debugViewModel.onClickForceCrashItem)
+                DebugScreen(debugViewModel.onClickForceCrashItem) {
+                    parentFragmentManager.popBackStack()
+                }
             }
         }
     }

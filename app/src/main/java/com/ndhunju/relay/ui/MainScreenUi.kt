@@ -81,7 +81,9 @@ fun MainScreen(viewModel: MainViewModel) {
                 onClickLauncherIcon = {
                     onClickLauncherIconCount++
                     if (onClickLauncherIconCount > 3) {
+                        onClickLauncherIconCount = 0
                         viewModel.doOpenDebugFragment?.invoke()
+                        coroutineScope.launch { drawerState.close() }
                     }
                 }
             )
