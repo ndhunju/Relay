@@ -39,6 +39,7 @@ class AccountViewModel(
     private val email = MutableStateFlow(user.email)
     private val name = MutableStateFlow(user.name)
     private val phone = MutableStateFlow(user.phone)
+    private val encKey = MutableStateFlow(user.encryptionKey)
     private val errorStrIdForEmail = MutableStateFlow<Int?>(null)
     private val errorStrIdForName = MutableStateFlow<Int?>(null)
     private val errorStrIdForPhone = MutableStateFlow<Int?>(null)
@@ -47,7 +48,7 @@ class AccountViewModel(
 
     val onEmailChange: (String) -> Unit = {
         email.value = it
-        errorStrIdForEmail.value = if (isValidEmail(it)) {
+        errorStrIdForEmail.value = if (it.isValidEmail()) {
              null
         } else {
             R.string.account_invalid_email
@@ -66,6 +67,10 @@ class AccountViewModel(
         } else {
             R.string.account_invalid_phone
         }
+    }
+
+    val onEncKeyChange: (String) -> Unit = {
+        encKey.value = it
     }
 
     /**
@@ -92,19 +97,21 @@ class AccountViewModel(
                 email,
                 name,
                 phone,
+                encKey,
                 errorStrIdForEmail,
                 errorStrIdForName,
                 errorStrIdForPhone,
                 errorStrIdGeneric,
                 showProgress
             )
-            { email, name, phone, errorStrIdForEmail,
+            { email, name, phone, encKey, errorStrIdForEmail,
               errorStrIdForName, errorStrIdForPhone, errorStrIdGeneric, showProgress ->
                 AccountScreenUiState(
                     mode = if (user.isRegistered) Mode.Update else Mode.Create,
                     email = email,
                     name = name,
                     phone = phone,
+                    encKey = encKey,
                     // Disable email text field if user is already registered or network progress
                     isEmailTextFieldEnabled = user.isRegistered.not() && showProgress.not(),
                     errorStrIdForEmailField = errorStrIdForEmail,
@@ -206,7 +213,8 @@ class AccountViewModel(
         email = state.value.email,
         name = state.value.name,
         phone = state.value.phone,
-        isRegistered = isRegistered
+        isRegistered = isRegistered,
+        encryptionKey = state.value.encKey
     )
 }
 
@@ -218,6 +226,7 @@ data class AccountScreenUiState(
     val email: String? = null,
     val name: String? = null,
     val phone: String? = null,
+    val encKey: String? = null,
     @StringRes val errorStrIdForEmailField: Int? = null,
     @StringRes val errorStrIdForNameField: Int? = null,
     @StringRes val errorStrIdForPhoneField: Int? = null,
@@ -230,18 +239,21 @@ data class AccountScreenUiState(
     val isEmailTextFieldEnabled: Boolean = showProgress.not(),
     val isNameTextFieldEnabled: Boolean = showProgress.not(),
     val isPhoneTextFieldEnabled: Boolean = showProgress.not(),
+    val isEncKeyTextFieldEnabled: Boolean = showProgress.not(),
 ) {
     fun isCreateUpdateBtnEnabled(): Boolean {
         return showProgress.not() // Disable when showing progress
                 // Disable if there is an error in Email, Name or Phone
-                && isValidEmail(email)
+                && email?.isValidEmail() == true
                 && isValidName(name)
                 && isValidPhoneNumber(phone)
     }
 }
 
-private fun isValidEmail(email: String?) =
-    (email != null) && PatternsCompat.EMAIL_ADDRESS.matcher(email).matches()
+fun String.isValidEmail(): Boolean {
+    return PatternsCompat.EMAIL_ADDRESS.matcher(this).matches()
+}
+
 private fun isValidName(it: String?) = it != null && it.isEmpty().not()
 
 /**

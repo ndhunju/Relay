@@ -32,6 +32,7 @@ class AccountFragment: Fragment() {
                         onEmailChange = accountViewModel.onEmailChange,
                         onNameChange = accountViewModel.onNameChange,
                         onPhoneChange = accountViewModel.onPhoneChange,
+                        onEncKeyChange = accountViewModel.onEncKeyChange,
                         onClickCreateUpdate = accountViewModel.onClickCreateUpdateUser,
                         onUpPressed = { parentFragmentManager.popBackStack() },
                         onClickDialogBtnOk = accountViewModel.onClickDialogBtnOk

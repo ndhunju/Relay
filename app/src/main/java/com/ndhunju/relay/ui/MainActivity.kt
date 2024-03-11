@@ -86,7 +86,6 @@ class MainActivity : BaseActivity() {
 
         viewModel.doOpenEncryptionKeyScreen = {
             startActivity(Intent(this, BarcodeGeneratorActivity::class.java).apply {
-                // TODO: Nikesh - generate random key at app start up and store it
                 putExtra(BUNDLE_QR_CODE_CONTENT, UUID.randomUUID().toString())
             })
         }

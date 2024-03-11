@@ -65,6 +65,10 @@
     <string name="text_field_label_name">Name</string>
     <!-- Noun. Label for a text field where user can input their phone -->
     <string name="text_field_label_phone">Phone</string>
+    <!-- Noun. Label for a text field where user can enter an encryption key -->
+    <string name="text_field_label_enc_key">Encryption Key</string>
+    <!-- Supporting Text shown below text field. Can take multiple lines-->
+    <string name="enc_key_supporting_text">This key is used to encrypt messages before sending to server. This key is stored on device only.</string>
     <!-- Label for a button. Click on it creates an account for the user -->
     <string name="button_label_create_account">Create</string>
     <!-- Label for a button. Clicking on it updates account info of the user -->

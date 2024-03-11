@@ -39,6 +39,7 @@ fun AccountScreen(
     onEmailChange: (String) -> Unit = {},
     onNameChange: (String) -> Unit = {},
     onPhoneChange: (String) -> Unit = {},
+    onEncKeyChange: (String) -> Unit = {},
     onClickCreateUpdate: () -> Unit = {},
     onClickDialogBtnOk: () -> Unit = {},
 ) {
@@ -105,6 +106,13 @@ fun AccountScreen(
                     errorMessage = getString(accountScreenUiState.errorStrIdForPhoneField),
                     onValueChange = onPhoneChange,
                     keyboardType = KeyboardType.Phone
+                )
+                RelayOutlinedTextField(
+                    value = accountScreenUiState.encKey ?: "",
+                    labelRes = R.string.text_field_label_enc_key,
+                    enabled = accountScreenUiState.isEncKeyTextFieldEnabled,
+                    onValueChange = onEncKeyChange,
+                    supportingText = stringResource(R.string.enc_key_supporting_text),
                 )
 
                 if (accountScreenUiState.showDialog) {

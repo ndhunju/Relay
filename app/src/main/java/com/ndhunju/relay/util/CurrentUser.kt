@@ -46,6 +46,7 @@ data class User(
     val email: String? = null,
     val name: String? = null,
     val phone: String? = null,
+    val encryptionKey: String? = null,
     val isRegistered: Boolean = false,
     // TODO: Nikesh - Should we merge User and Child class?
     // Below fields are relevant when current user is functioning as a child user
