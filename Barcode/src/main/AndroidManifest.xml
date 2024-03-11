@@ -16,7 +16,7 @@
             android:screenOrientation="portrait">
         </activity>
         <activity android:name=".ui.generator.BarcodeGeneratorActivity"
-            android:exported="false"
+            android:exported="true"
             android:screenOrientation="portrait"/>
 
     </application>

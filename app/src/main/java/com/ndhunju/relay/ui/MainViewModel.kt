@@ -17,6 +17,7 @@ import com.ndhunju.relay.ui.account.AccountFragment
 import com.ndhunju.relay.ui.debug.DebugFragment
 import com.ndhunju.relay.ui.messages.Message
 import com.ndhunju.relay.ui.messagesfrom.MessagesFromFragment
+import com.ndhunju.relay.ui.pair.PairWithChildByScanningQrCodeActivity
 import com.ndhunju.relay.ui.pair.PairWithParentFragment
 import com.ndhunju.relay.ui.parent.ChildUserListFragment
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -61,6 +62,7 @@ class MainViewModel(
             NavItem.PairWithParentNavItem -> doOpenPairWithParentFragment?.invoke()
             NavItem.PairWithChildNavItem -> doOpenPairWithChild?.invoke()
             NavItem.ChildUsersNavItem -> doOpenChildUserFragment?.invoke()
+            NavItem.EncryptionKeyNavItem -> doOpenEncryptionKeyScreen?.invoke()
         }
     }
 
@@ -74,7 +76,15 @@ class MainViewModel(
      */
     var doOpenPairWithParentFragment: (() -> Unit)? = null
 
+    /**
+     * Invoked when [PairWithChildByScanningQrCodeActivity] needs to be opened
+     */
     var doOpenPairWithChild: (() -> Unit)? = null
+
+    /**
+     * Invoked when screen that shows encryption key needs to be opened
+     */
+    var doOpenEncryptionKeyScreen: (() -> Unit)? = null
 
     /**
      * Invoked when [AccountFragment] needs to be opened

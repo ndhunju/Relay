@@ -14,6 +14,8 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.ui.Modifier
 import androidx.core.app.ActivityCompat.shouldShowRequestPermissionRationale
+import com.ndhunju.barcode.ui.generator.BUNDLE_QR_CODE_CONTENT
+import com.ndhunju.barcode.ui.generator.BarcodeGeneratorActivity
 import com.ndhunju.relay.R
 import com.ndhunju.relay.RelayViewModelFactory
 import com.ndhunju.relay.ui.account.AccountFragment
@@ -26,6 +28,7 @@ import com.ndhunju.relay.ui.theme.RelayTheme
 import com.ndhunju.relay.util.areNeededPermissionGranted
 import com.ndhunju.relay.util.checkIfPermissionGranted
 import com.ndhunju.relay.util.requestPermission
+import java.util.UUID
 
 class MainActivity : BaseActivity() {
 
@@ -81,6 +84,12 @@ class MainActivity : BaseActivity() {
             startActivity(Intent(this, PairWithChildByScanningQrCodeActivity::class.java))
         }
 
+        viewModel.doOpenEncryptionKeyScreen = {
+            startActivity(Intent(this, BarcodeGeneratorActivity::class.java).apply {
+                // TODO: Nikesh - generate random key at app start up and store it
+                putExtra(BUNDLE_QR_CODE_CONTENT, UUID.randomUUID().toString())
+            })
+        }
 
 
         viewModel.doOpenMessageFromFragment = { message ->

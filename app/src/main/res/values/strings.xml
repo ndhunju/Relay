@@ -53,6 +53,8 @@
     <string name="nav_item_pair_child">Pair with Child</string>
     <!-- Shown in side navigation drawer -->
     <string name="nav_item_child_user">Child Users</string>
+    <!-- Shown in side navigation drawer -->
+    <string name="nav_item_enc_key">Encryption Key</string>
 
     <!-- AccountsScreen -->
     <!-- Title used for an screen -->

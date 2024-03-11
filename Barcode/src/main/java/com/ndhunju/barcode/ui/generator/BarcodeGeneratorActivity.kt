@@ -13,7 +13,12 @@ class BarcodeGeneratorActivity: FragmentActivity() {
         super.onCreate(savedInstanceState)
 
         barcodeGeneratorViewModel = viewModels<BarcodeGeneratorViewModel>().value
+        barcodeGeneratorViewModel.processIntent(intent)
 
-        setContent { BarcodeGeneratorScreen() }
+        setContent {
+            BarcodeGeneratorScreen(
+                bitmap = barcodeGeneratorViewModel.qrCodeBitmap
+            )
+        }
     }
 }

@@ -303,7 +303,8 @@ val navigationItems = listOf(
     NavItem.AccountNavItem,
     NavItem.PairWithParentNavItem,
     //NavItem.PairWithChildNavItem,
-    NavItem.ChildUsersNavItem
+    NavItem.ChildUsersNavItem,
+    NavItem.EncryptionKeyNavItem
 )
 
 /**
@@ -337,6 +338,12 @@ sealed class NavItem(
         R.drawable.baseline_child_users_24,
         R.string.nav_item_child_user,
         R.string.nav_item_child_user
+    )
+
+    data object EncryptionKeyNavItem: NavItem(
+        R.drawable.baseline_key_24,
+        R.string.nav_item_enc_key,
+        R.string.nav_item_enc_key
     )
 }
 
