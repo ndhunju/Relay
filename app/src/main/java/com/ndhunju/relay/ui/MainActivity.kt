@@ -14,8 +14,6 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.ui.Modifier
 import androidx.core.app.ActivityCompat.shouldShowRequestPermissionRationale
-import com.ndhunju.barcode.ui.generator.BUNDLE_QR_CODE_CONTENT
-import com.ndhunju.barcode.ui.generator.BarcodeGeneratorActivity
 import com.ndhunju.relay.R
 import com.ndhunju.relay.RelayViewModelFactory
 import com.ndhunju.relay.ui.account.AccountFragment
@@ -23,12 +21,12 @@ import com.ndhunju.relay.ui.debug.DebugFragment
 import com.ndhunju.relay.ui.messagesfrom.MessagesFromFragment
 import com.ndhunju.relay.ui.pair.PairWithParentFragment
 import com.ndhunju.relay.ui.pair.PairWithChildByScanningQrCodeActivity
+import com.ndhunju.relay.ui.pair.ShareEncryptionKeyWithQrCodeActivity
 import com.ndhunju.relay.ui.parent.ChildUserListFragment
 import com.ndhunju.relay.ui.theme.RelayTheme
 import com.ndhunju.relay.util.areNeededPermissionGranted
 import com.ndhunju.relay.util.checkIfPermissionGranted
 import com.ndhunju.relay.util.requestPermission
-import java.util.UUID
 
 class MainActivity : BaseActivity() {
 
@@ -85,9 +83,7 @@ class MainActivity : BaseActivity() {
         }
 
         viewModel.doOpenEncryptionKeyScreen = {
-            startActivity(Intent(this, BarcodeGeneratorActivity::class.java).apply {
-                putExtra(BUNDLE_QR_CODE_CONTENT, UUID.randomUUID().toString())
-            })
+            startActivity(Intent(this, ShareEncryptionKeyWithQrCodeActivity::class.java))
         }
 
 

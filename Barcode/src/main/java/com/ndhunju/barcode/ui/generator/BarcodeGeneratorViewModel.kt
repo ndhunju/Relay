@@ -16,7 +16,7 @@ const val BUNDLE_QR_CODE_CONTENT = "QR_CODE_CONTENT"
 class BarcodeGeneratorViewModel: ViewModel() {
 
     private val qrCodeWriter = QRCodeWriter()
-    private var qrCodeContent = DEFAULT_QR_CODE_CONTENT
+    var qrCodeContent = DEFAULT_QR_CODE_CONTENT
         set(value) {
             field = value
             qrCodeBitmap.value = generateQrCode(qrCodeWriter, value)

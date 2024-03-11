@@ -10,6 +10,7 @@ import com.ndhunju.relay.ui.debug.DebugViewModel
 import com.ndhunju.relay.ui.pair.AddChildEncryptionKeyFromQrCodeViewModel
 import com.ndhunju.relay.ui.pair.PairWithParentViewModel
 import com.ndhunju.relay.ui.pair.PairWithQrCodeViewModel
+import com.ndhunju.relay.ui.pair.ShareEncryptionKeyWithQrCodeViewModel
 import com.ndhunju.relay.ui.parent.ChildUserListViewModel
 import com.ndhunju.relay.ui.parent.messagesfromchild.MessagesFromChildViewModel
 import com.ndhunju.relay.ui.parent.messagesinthreadfromchild.MessagesInThreadFromChildVM
@@ -80,6 +81,9 @@ val RelayViewModelFactory: ViewModelProvider.Factory = object : ViewModelProvide
                 }
                 isAssignableFrom(AddChildEncryptionKeyFromQrCodeViewModel::class.java) -> {
                     AddChildEncryptionKeyFromQrCodeViewModel(currentUser, gson) as T
+                }
+                isAssignableFrom(ShareEncryptionKeyWithQrCodeViewModel::class.java) -> {
+                    ShareEncryptionKeyWithQrCodeViewModel(currentUser, gson) as T
                 }
                 else -> throw IllegalArgumentException(
                     "Unknown ViewModel class: ${modelClass.name}"

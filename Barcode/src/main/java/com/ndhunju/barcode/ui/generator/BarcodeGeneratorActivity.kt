@@ -5,7 +5,7 @@ import androidx.activity.compose.setContent
 import androidx.activity.viewModels
 import androidx.fragment.app.FragmentActivity
 
-class BarcodeGeneratorActivity: FragmentActivity() {
+open class BarcodeGeneratorActivity: FragmentActivity() {
 
     private lateinit var barcodeGeneratorViewModel: BarcodeGeneratorViewModel
 
@@ -20,5 +20,9 @@ class BarcodeGeneratorActivity: FragmentActivity() {
                 bitmap = barcodeGeneratorViewModel.qrCodeBitmap
             )
         }
+    }
+
+    fun setQrCodeContent(content: String) {
+        barcodeGeneratorViewModel.qrCodeContent = content
     }
 }
