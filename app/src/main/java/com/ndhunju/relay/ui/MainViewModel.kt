@@ -58,7 +58,8 @@ class MainViewModel(
     val onClickNavItem: (NavItem) -> Unit = { navItem ->
         when (navItem) {
             NavItem.AccountNavItem -> onClickAccountIcon()
-            NavItem.PairNavItem -> doOpenPairWithParentFragment?.invoke()
+            NavItem.PairWithParentNavItem -> doOpenPairWithParentFragment?.invoke()
+            NavItem.PairWithChildNavItem -> doOpenPairWithChild?.invoke()
             NavItem.ChildUsersNavItem -> doOpenChildUserFragment?.invoke()
         }
     }
@@ -72,6 +73,8 @@ class MainViewModel(
      * Invoked when [PairWithParentFragment] needs to be opened
      */
     var doOpenPairWithParentFragment: (() -> Unit)? = null
+
+    var doOpenPairWithChild: (() -> Unit)? = null
 
     /**
      * Invoked when [AccountFragment] needs to be opened

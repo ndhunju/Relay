@@ -1,6 +1,7 @@
 package com.ndhunju.relay.di
 
 import androidx.work.WorkManager
+import com.google.gson.Gson
 import com.ndhunju.relay.service.DeviceSmsReaderService
 import com.ndhunju.relay.data.SmsInfoRepository
 import com.ndhunju.relay.api.ApiInterface
@@ -45,6 +46,8 @@ interface AppComponent {
     fun notificationManager(): NotificationManager
 
     fun analyticsManager(): AnalyticsManager
+
+    fun gson(): Gson
 
     /**
      * This tells Dagger that [BaseActivity] requests injection so the graph needs to

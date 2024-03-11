@@ -33,6 +33,18 @@ interface ApiInterface {
     suspend fun postPairWithParent(childUserId: String, parentEmailAddress: String): Result
 
     /**
+     * Makes API request to pair with a Child with email [childEmailAddress]
+     * and pairing code [pairingCode]
+     */
+    @Deprecated("Pairing with child from parent client involves too many edge cases")
+    suspend fun postPairWithChild(childEmailAddress: String, pairingCode: String): Result
+
+    /**
+     * Makes API request to get parent users for passed [childUserId]
+     */
+    suspend fun getParentUsers(childUserId: String): Result
+
+    /**
      * Makes API request to fetch all the paired child users.
      * @param parentUserId : Id of the parent user for which child users needed to be fetched
      */

@@ -1,5 +1,6 @@
 package com.ndhunju.relay.ui.parent
 
+import android.content.Intent
 import android.os.Bundle
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
@@ -8,6 +9,7 @@ import android.view.ViewGroup
 import androidx.compose.ui.platform.ComposeView
 import androidx.fragment.app.viewModels
 import com.ndhunju.relay.RelayViewModelFactory
+import com.ndhunju.relay.ui.pair.AddChildEncryptionKeyFromQrCodeActivity
 import com.ndhunju.relay.ui.parent.messagesfromchild.MessagesFromChildFragment
 import com.ndhunju.relay.ui.theme.RelayTheme
 
@@ -31,9 +33,13 @@ class ChildUserListFragment : Fragment() {
                 )
                 .addToBackStack(MessagesFromChildFragment.TAG)
                 .commit()
+        }
 
+        viewModel.doOpenAddChildEncryptionKeyFromQrCodeFragment = { _: Child ->
+            startActivity(Intent(context, AddChildEncryptionKeyFromQrCodeActivity::class.java))
         }
     }
+
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?

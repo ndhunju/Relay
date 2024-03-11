@@ -301,7 +301,8 @@ fun MainScreenAppBar(
 
 val navigationItems = listOf(
     NavItem.AccountNavItem,
-    NavItem.PairNavItem,
+    NavItem.PairWithParentNavItem,
+    //NavItem.PairWithChildNavItem,
     NavItem.ChildUsersNavItem
 )
 
@@ -316,14 +317,20 @@ sealed class NavItem(
 ) {
     data object AccountNavItem: NavItem(
         R.drawable.baseline_account_circle_24,
-        R.string.nav_item_pair,
+        R.string.nav_item_pair_parent,
         R.string.image_description_account
     )
 
-    data object PairNavItem: NavItem(
+    data object PairWithParentNavItem: NavItem(
         R.drawable.baseline_pair_parent_24,
-        R.string.nav_item_pair,
-        R.string.image_description_pair
+        R.string.nav_item_pair_parent,
+        R.string.image_description_pair_parent
+    )
+
+    data object PairWithChildNavItem: NavItem(
+        R.drawable.baseline_pair_parent_24,
+        R.string.nav_item_pair_child,
+        R.string.image_description_pair_child
     )
 
     data object ChildUsersNavItem: NavItem(

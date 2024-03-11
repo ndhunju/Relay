@@ -2,6 +2,7 @@ package com.ndhunju.relay.ui
 
 import android.Manifest.permission.READ_SMS
 import android.app.AlertDialog
+import android.content.Intent
 import android.os.Bundle
 import android.view.View
 import android.view.ViewTreeObserver
@@ -19,6 +20,7 @@ import com.ndhunju.relay.ui.account.AccountFragment
 import com.ndhunju.relay.ui.debug.DebugFragment
 import com.ndhunju.relay.ui.messagesfrom.MessagesFromFragment
 import com.ndhunju.relay.ui.pair.PairWithParentFragment
+import com.ndhunju.relay.ui.pair.PairWithChildByScanningQrCodeActivity
 import com.ndhunju.relay.ui.parent.ChildUserListFragment
 import com.ndhunju.relay.ui.theme.RelayTheme
 import com.ndhunju.relay.util.areNeededPermissionGranted
@@ -74,6 +76,12 @@ class MainActivity : BaseActivity() {
                 .addToBackStack(PairWithParentFragment.TAG)
                 .commit()
         }
+
+        viewModel.doOpenPairWithChild = {
+            startActivity(Intent(this, PairWithChildByScanningQrCodeActivity::class.java))
+        }
+
+
 
         viewModel.doOpenMessageFromFragment = { message ->
             // Open MessagesFromFragment

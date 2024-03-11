@@ -32,7 +32,13 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name=".ui.MainActivity"
+        <activity
+            android:name=".ui.MainActivity"
+            android:exported="false"
+            android:theme="@style/Theme.Relay"
+            />
+        <activity
+            android:name=".ui.pair.AddChildEncryptionKeyFromQrCodeActivity"
             android:exported="false"
             android:theme="@style/Theme.Relay"
             />

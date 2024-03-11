@@ -14,6 +14,9 @@ buildscript {
     extra.apply {
         set("room_version", "2.6.1")
         set("work_version", "2.9.0")
+        set("compose_bom_version", "2023.08.00")
+        set("activity_compose_version", "1.8.2")
+        set("kotlin_compiler_ext_version", "1.5.1")
     }
 }
 
@@ -22,5 +25,6 @@ plugins {
     id("org.jetbrains.kotlin.android") version "1.9.0" apply false
     // Add the dependency for the Crashlytics Gradle plugin
     id("com.google.firebase.crashlytics") version "2.9.9" apply false
+    id("com.android.library") version "8.2.1" apply false
 
 }

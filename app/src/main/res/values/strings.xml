@@ -4,6 +4,11 @@
     <!-- General -->
     <!-- Alert shown to user when the device is offline -->
     <string name="alert_offline_body">You are offline.</string>
+    <!-- Dismiss action for Snack bar, Dialog etc -->
+    <string name="action_dismiss">Dismiss</string>
+    <!-- Default error message shown whenever the app catches FirebaseFirestoreException-->
+    <string name="default_firebase_ex_msg">There is an issue with Firebase</string>
+
 
     <!-- General Image Descriptions -->
     <!-- Image description for search icon -->
@@ -11,7 +16,9 @@
     <!-- Image description for account icon -->
     <string name="image_description_account">Account</string>
     <!-- Image description for pair icon -->
-    <string name="image_description_pair">Pair with Parent</string>
+    <string name="image_description_pair_parent">Pair with Parent</string>
+    <!-- Image description for pair icon -->
+    <string name="image_description_pair_child">Pair with Child</string>
     <!-- Image description for app logo -->
     <string name="image_description_app_logo">App Logo</string>
     <!-- Image description for an icon that indicates where the message has been synced or not  -->
@@ -41,7 +48,9 @@
     <!-- Noun. Show in side navigation drawer -->
     <string name="nav_item_account">Account</string>
     <!-- Shown in side navigation drawer -->
-    <string name="nav_item_pair">Pair with Parent</string>
+    <string name="nav_item_pair_parent">Pair with Parent</string>
+    <!-- Shown in side navigation drawer -->
+    <string name="nav_item_pair_child">Pair with Child</string>
     <!-- Shown in side navigation drawer -->
     <string name="nav_item_child_user">Child Users</string>
 
@@ -108,4 +117,20 @@
     <!-- Notification -->
     <!-- Title used for notification shown when uploading new messages -->
     <string name="notification_uploading_new_messages">Uploading new message</string>
+
+    <!-- AddChildEncryptionKeyByScanningQrCode Screen -->
+    <!-- Title of a screen that allows user to scan barcode -->
+    <string name="screen_add_child_enc_key_title">Scan QR code</string>
+    <!-- Description of a screen that allows user to scan barcode -->
+    <string name="screen_add_child_enc_key_scanning_description">Place QR code inside area, scanning will start automatically</string>
+    <!-- Shown in TextField to the user when the app is processing a given barcode -->
+    <string name="screen_add_child_enc_key_scanning_prompt_scanning">Scanning&#8230;</string>
+    <!-- Shown in TextField to the user when the app has finished processing a given barcode -->
+    <string name="screen_add_child_enc_key_scanning_prompt_scanning_complete">Scan complete</string>
+    <!-- Error message shown in a TextField -->
+    <string name="screen_add_child_enc_key_invalid_qr_code">Invalid QR code.</string>
+    <!-- Error message shown in a TextField when user scans a QR code of user who hasn't added current user as parent -->
+    <string name="screen_add_child_enc_key_not_added">%1$s has not added you as parent</string>
+    <!-- Content description for an icon that starts the process of adding encryption key -->
+    <string name="content_description_add_encryption_key">Add encryption key</string>
 </resources>

@@ -15,4 +15,12 @@ sealed class Result {
 
         return Failure()
     }
+
+    inline fun <reified T> getDataOrNull(): T? {
+        if (this is Success) {
+            return this.data as? T
+        }
+
+        return null
+    }
 }

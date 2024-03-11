@@ -4,7 +4,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.ndhunju.relay.R
 import com.ndhunju.relay.api.ApiInterface
-import com.ndhunju.relay.api.EmailNotFoundException
+import com.ndhunju.relay.api.UserNotFoundException
 import com.ndhunju.relay.api.Result
 import com.ndhunju.relay.service.UserSettingsPersistService
 import com.ndhunju.relay.util.CurrentUser
@@ -59,7 +59,7 @@ class PairWithParentViewModel(
                 is Result.Failure -> {
                     _showProgress.value = false
                     _isPaired.value = evaluateIsPaired()
-                    if (result.throwable is EmailNotFoundException) {
+                    if (result.throwable is UserNotFoundException) {
                         _errorMsgResId.value = R.string.pair_screen_user_email_not_found
                     }
                     else {

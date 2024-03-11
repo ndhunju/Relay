@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/static_overlay_container"
+    android:layout_height="match_parent"
+    android:layout_width="match_parent"
+    app:layout_constraintEnd_toEndOf="parent"
+    app:layout_constraintTop_toTopOf="parent"
+    android:background="@color/transparent">
+
+  <com.ndhunju.barcode.camera.GraphicOverlay
+      android:id="@+id/camera_preview_graphic_overlay"
+      android:layout_width="match_parent"
+      android:layout_height="match_parent"/>
+
+    <androidx.constraintlayout.widget.Guideline
+        android:id="@+id/prompt_guideline"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        app:layout_constraintGuide_percent=".70"
+        />
+
+    <TextView
+        android:id="@+id/bottom_prompt_text"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="@id/prompt_guideline"
+        android:layout_gravity="center_horizontal"
+        android:checkable="false"
+        android:clickable="false"
+        android:textColor="@color/white"
+        android:textSize="@dimen/bottom_prompt_text_size"
+        android:visibility="gone"
+        tools:visibility="visible"
+        tools:text="Scanning"
+        tools:textColor="@color/black"
+        />
+
+</androidx.constraintlayout.widget.ConstraintLayout>

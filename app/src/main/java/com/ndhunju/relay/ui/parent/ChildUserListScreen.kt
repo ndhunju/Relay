@@ -24,6 +24,7 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -64,16 +65,7 @@ fun ChildUserListScreen(
         val showProgress = viewModel.showProgress.collectAsState()
 
         if (showProgress.value) {
-            Box(modifier = Modifier
-                .fillMaxSize()
-            ) {
-                CircularProgressIndicator(
-                    modifier = Modifier
-                        .align(Alignment.Center)
-                        .size(32.dp),
-                    color = MaterialTheme.colorScheme.onBackground
-                )
-            }
+            LoadingIndicator()
         }
 
         AnimatedVisibility(visible = showProgress.value.not(), enter = fadeIn()) {
@@ -84,34 +76,71 @@ fun ChildUserListScreen(
                 content = {
                     itemsIndexed(childUsers.value, key = { _, item -> item.id })
                     { _: Int, childUser: Child ->
-                        Row(modifier = Modifier
-                            .padding(
-                                vertical = LocalDimens.current.itemPaddingVertical,
-                                horizontal = LocalDimens.current.contentPaddingHorizontal
-                            )
-                            .clickable { viewModel.onClickChildUser(childUser) }
-                        ) {
-                            Icon(
-                                imageVector = Icons.Default.AccountCircle,
-                                contentDescription = stringResource(
-                                    R.string.image_description_child_user_icon
-                                ),
-                                modifier = Modifier
-                                    .align(Alignment.CenterVertically)
-                                    .padding(end = 6.dp)
-                            )
-
-                            Text(
-                                text = childUser.email, modifier = Modifier
-                                    .fillMaxWidth()
-                                    .align(Alignment.CenterVertically)
-                            )
-                        }
+                        ChildUserColumnItem(
+                            viewModel::onClickChildUser,
+                            viewModel::onClickAddChildKey,
+                            childUser
+                        )
                         Divider()
                     }
                 }
             )
         }
+    }
+}
+
+@Composable
+private fun ChildUserColumnItem(
+    onClickChildUser: ((Child) -> Unit)? = null,
+    onClickAddChildKey: ((Child) -> Unit)? = null,
+    childUser: Child
+) {
+    Row(modifier = Modifier
+        .padding(
+            vertical = LocalDimens.current.itemPaddingVertical,
+            horizontal = LocalDimens.current.contentPaddingHorizontal
+        )
+        .clickable { onClickChildUser?.invoke(childUser) }
+    ) {
+        Icon(
+            imageVector = Icons.Default.AccountCircle,
+            contentDescription = stringResource(
+                R.string.image_description_child_user_icon
+            ),
+            modifier = Modifier
+                .align(Alignment.CenterVertically)
+                .padding(end = 6.dp)
+        )
+
+        Icon(
+            painter = painterResource(id = R.drawable.baseline_key_24),
+            contentDescription = stringResource(R.string.content_description_add_encryption_key),
+            modifier = Modifier
+                .align(Alignment.CenterVertically)
+                .padding(end = 6.dp)
+                .clickable { onClickAddChildKey?.invoke(childUser) }
+        )
+
+        Text(
+            text = childUser.email, modifier = Modifier
+                .fillMaxWidth()
+                .align(Alignment.CenterVertically)
+        )
+    }
+}
+
+@Composable
+private fun LoadingIndicator() {
+    Box(
+        modifier = Modifier
+            .fillMaxSize()
+    ) {
+        CircularProgressIndicator(
+            modifier = Modifier
+                .align(Alignment.Center)
+                .size(32.dp),
+            color = MaterialTheme.colorScheme.onBackground
+        )
     }
 }
 

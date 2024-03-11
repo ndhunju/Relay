@@ -26,6 +26,14 @@ object ApiInterfaceDummyImpl: ApiInterface {
         return returnFailure()
     }
 
+    override suspend fun postPairWithChild(childEmailAddress: String, pairingCode: String): Result {
+        return returnFailure()
+    }
+
+    override suspend fun getParentUsers(childUserId: String): Result {
+        return returnFailure()
+    }
+
     override suspend fun getChildUsers(parentUserId: String): Result {
         return returnFailure()
     }

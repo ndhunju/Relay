@@ -12,6 +12,7 @@ import com.ndhunju.relay.service.AnalyticsManager
 import com.ndhunju.relay.ui.messages.Message
 import com.ndhunju.relay.ui.parent.Child
 import com.ndhunju.relay.util.CurrentUser
+import com.ndhunju.relay.util.User
 import kotlinx.coroutines.runBlocking
 import kotlinx.coroutines.tasks.await
 
@@ -129,9 +130,15 @@ class ApiInterfaceFireStoreImpl(
             val queryByEmail = userCollection.whereEqualTo("Email", parentEmailAddress)
             val querySnapshot = queryByEmail.get().await()
             if (querySnapshot.isEmpty) {
-                return Result.Failure(EmailNotFoundException("Parent email id not found"))
+                return Result.Failure(UserNotFoundException("Parent email id not found"))
             }
             val parentUserId = querySnapshot.documents.first().id
+
+            // Check if childUserId exists as well
+            val queryById = userCollection.document(childUserId).get().await()
+            if (queryById.exists().not()) {
+                return Result.Failure(UserNotFoundException("Child user not found"))
+            }
 
             // Register this pairing in the database
             parentChildCollection.add(hashMapOf(
@@ -140,6 +147,31 @@ class ApiInterfaceFireStoreImpl(
             )).await()
 
             Result.Success(parentUserId)
+        } catch (ex: Exception) {
+            Result.Failure(ex)
+        }
+
+    }
+
+    override suspend fun postPairWithChild(childEmailAddress: String, pairingCode: String): Result {
+        // TODO: Nikesh - check if user has already paired with 3 parents
+        return try {
+            val queryByEmail = userCollection
+                .whereEqualTo("Email", childEmailAddress)
+                .whereEqualTo("Key", pairingCode)
+            val querySnapshot = queryByEmail.get().await()
+            if (querySnapshot.isEmpty) {
+                return Result.Failure(UserNotFoundException("Matching child user not found"))
+            }
+            val childUserId = querySnapshot.documents.first().id
+
+            // Register this pairing in the database
+            parentChildCollection.add(hashMapOf(
+                ParentChild.ChildUserId to childUserId,
+                ParentChild.ParentUserId to currentUser.user.id
+            )).await()
+
+            Result.Success(childUserId)
         } catch (ex: Exception) {
             Result.Failure(ex)
         }
@@ -169,6 +201,35 @@ class ApiInterfaceFireStoreImpl(
             }
 
             Result.Success(childList)
+        } catch (ex: Exception) {
+            return Result.Failure(ex)
+        }
+
+    }
+
+    override suspend fun getParentUsers(childUserId: String): Result {
+        return try {
+            // Fetch the list of child user ids for passed parent
+            val parentUserIds = parentChildCollection
+                .whereEqualTo(ParentChild.ChildUserId, childUserId)
+                .get()
+                .await()
+                .documents.map { it.get(ParentChild.ParentUserId) as String }
+                .distinct() // Filter out duplicates
+                .filter { it.isNotEmpty() } // Filter out empty strings
+
+            // Fetch the email of each parent user
+            val parentList = parentUserIds.map { parentUserId ->
+                val email = userCollection
+                    .whereEqualTo(FieldPath.documentId(), parentUserId)
+                    .get()
+                    .await()
+                    .documents.first()
+                    .get(User.Email) as String
+                User(parentUserId, email)
+            }
+
+            Result.Success(parentList)
         } catch (ex: Exception) {
             return Result.Failure(ex)
         }
@@ -415,9 +476,9 @@ class ApiInterfaceFireStoreImpl(
 }
 
 /**
- * Exception thrown when email address is not registered already
+ * Exception thrown when user is not registered already
  */
-class EmailNotFoundException(message: String): Exception(message)
+class UserNotFoundException(message: String): Exception(message)
 
 /**
  * Exception thrown when email address is already used

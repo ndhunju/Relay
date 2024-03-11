@@ -7,7 +7,9 @@ import androidx.lifecycle.viewmodel.CreationExtras
 import com.ndhunju.relay.ui.MainViewModel
 import com.ndhunju.relay.ui.account.AccountViewModel
 import com.ndhunju.relay.ui.debug.DebugViewModel
+import com.ndhunju.relay.ui.pair.AddChildEncryptionKeyFromQrCodeViewModel
 import com.ndhunju.relay.ui.pair.PairWithParentViewModel
+import com.ndhunju.relay.ui.pair.PairWithQrCodeViewModel
 import com.ndhunju.relay.ui.parent.ChildUserListViewModel
 import com.ndhunju.relay.ui.parent.messagesfromchild.MessagesFromChildViewModel
 import com.ndhunju.relay.ui.parent.messagesinthreadfromchild.MessagesInThreadFromChildVM
@@ -30,6 +32,7 @@ val RelayViewModelFactory: ViewModelProvider.Factory = object : ViewModelProvide
         val workManager = appComponent.workManager()
         val analyticsManager = appComponent.analyticsManager()
         val appStateBroadcasterService = appComponent.appStateBroadcastService()
+        val gson = appComponent.gson()
         with(modelClass) {
             return when {
                 isAssignableFrom(MainViewModel::class.java) -> {
@@ -71,6 +74,12 @@ val RelayViewModelFactory: ViewModelProvider.Factory = object : ViewModelProvide
                 }
                 isAssignableFrom(DebugViewModel::class.java) -> {
                     DebugViewModel() as T
+                }
+                isAssignableFrom(PairWithQrCodeViewModel::class.java) -> {
+                    PairWithQrCodeViewModel(apiInterface, gson) as T
+                }
+                isAssignableFrom(AddChildEncryptionKeyFromQrCodeViewModel::class.java) -> {
+                    AddChildEncryptionKeyFromQrCodeViewModel(currentUser, gson) as T
                 }
                 else -> throw IllegalArgumentException(
                     "Unknown ViewModel class: ${modelClass.name}"

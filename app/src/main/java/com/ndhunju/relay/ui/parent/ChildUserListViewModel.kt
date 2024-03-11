@@ -28,12 +28,17 @@ class ChildUserListViewModel(
     val showProgress = _showProgress.asStateFlow()
 
     var doOpenMessagesFromChildFragment: ((Child) -> Unit)? = null
+    var doOpenAddChildEncryptionKeyFromQrCodeFragment: ((Child) -> Unit)? = null
 
     /**
      * User clicked on [childUsers]
      */
     fun onClickChildUser(childUser: Child) {
         doOpenMessagesFromChildFragment?.invoke(childUser)
+    }
+
+    fun onClickAddChildKey(child: Child) {
+        doOpenAddChildEncryptionKeyFromQrCodeFragment?.invoke(child)
     }
 
     init {
