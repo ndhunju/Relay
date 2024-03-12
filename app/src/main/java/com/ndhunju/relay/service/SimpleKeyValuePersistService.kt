@@ -10,7 +10,8 @@ import androidx.datastore.preferences.preferencesDataStore
 import com.ndhunju.relay.util.getOrPut
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.catch
-import kotlinx.coroutines.flow.first
+import kotlinx.coroutines.flow.firstOrNull
+import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.map
 import java.io.IOException
 
@@ -55,13 +56,13 @@ class DataStoreKeyValuePersistService(
     }
 
     override suspend fun saveFirstTime(key: String, value: String) {
-        if (retrieve(key).first() == null) {
+        if (retrieve(key).firstOrNull() == null) {
             save(key, value)
         }
     }
 
-    override suspend fun retrieve(key: String): Flow<String?> {
-        return context.dataStore.data.catch { exception ->
+    override suspend fun retrieve(key: String) = flow<String?> {
+        context.dataStore.data.catch { exception ->
             if (exception is IOException) {
                 emit(emptyPreferences())
             } else {
@@ -71,4 +72,5 @@ class DataStoreKeyValuePersistService(
             pref[keyCache.getOrPut(key, stringPreferencesKey(key))]
         }
     }
+
 }
