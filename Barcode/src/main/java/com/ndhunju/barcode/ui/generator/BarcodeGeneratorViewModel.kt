@@ -4,11 +4,15 @@ import android.content.Intent
 import android.graphics.Bitmap
 import android.graphics.Bitmap.Config
 import android.graphics.Color
+import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
 import com.google.zxing.BarcodeFormat
 import com.google.zxing.EncodeHintType
 import com.google.zxing.qrcode.QRCodeWriter
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
 
 const val DEFAULT_QR_CODE_CONTENT = "https://github.com/ndhunju/Relay"
 const val BUNDLE_QR_CODE_CONTENT = "QR_CODE_CONTENT"
@@ -19,12 +23,14 @@ class BarcodeGeneratorViewModel: ViewModel() {
     var qrCodeContent = DEFAULT_QR_CODE_CONTENT
         set(value) {
             field = value
-            qrCodeBitmap.value = generateQrCode(qrCodeWriter, value)
+            viewModelScope.launch(Dispatchers.IO) {
+                qrCodeBitmap.value = generateQrCode(qrCodeWriter, value)
+            }
         }
 
 
     //region UI State
-    val qrCodeBitmap = mutableStateOf(generateQrCode(qrCodeWriter, DEFAULT_QR_CODE_CONTENT))
+    val qrCodeBitmap: MutableState<Bitmap?> = mutableStateOf(null)
 
     //endregion
 

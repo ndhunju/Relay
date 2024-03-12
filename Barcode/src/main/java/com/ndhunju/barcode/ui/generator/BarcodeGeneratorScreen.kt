@@ -1,6 +1,8 @@
 package com.ndhunju.barcode.ui.generator
 
 import android.graphics.Bitmap
+import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.scaleIn
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -10,6 +12,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Surface
@@ -44,14 +47,26 @@ fun BarcodeGeneratorScreen(
                     verticalArrangement = Arrangement.Center,
                     horizontalAlignment = Alignment.CenterHorizontally
                 ) {
-                    Image(
-                        modifier = Modifier
-                            .fillMaxWidth(0.5f)
-                            .fillMaxHeight(0.3f),
-                        //imageVector = Icons.Default.DateRange,
-                        bitmap = bitmap.value?.asImageBitmap() ?: ImageBitmap(0, 0),
-                        contentDescription = ""
-                    )
+                    // Show progress indicator until QR code is generated
+                    if (bitmap.value == null) {
+                        CircularProgressIndicator(
+                            modifier = Modifier
+                                .fillMaxWidth(0.5f)
+                                .fillMaxHeight(0.3f),
+                            )
+                    }
+
+                    AnimatedVisibility(visible = bitmap.value != null, enter = scaleIn()) {
+                        Image(
+                            modifier = Modifier
+                                .fillMaxWidth(0.5f)
+                                .fillMaxHeight(0.3f),
+                            //imageVector = Icons.Default.DateRange,
+                            bitmap = bitmap.value?.asImageBitmap() ?: ImageBitmap(0, 0),
+                            contentDescription = ""
+                        )
+                    }
+
                     Text(text = body.value, Modifier.padding(48.dp))
                 }
             }
