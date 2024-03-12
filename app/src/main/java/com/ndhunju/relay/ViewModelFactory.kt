@@ -28,7 +28,6 @@ val RelayViewModelFactory: ViewModelProvider.Factory = object : ViewModelProvide
         val apiInterface = appComponent.apiInterface()
         val smsInfoRepository = appComponent.smsInfoRepository()
         val childSmsInfoRepository = appComponent.childSmsInfoRepository()
-        val userSettingsPersistService = appComponent.userSettingsPersistService()
         val currentUser = appComponent.currentUser()
         val workManager = appComponent.workManager()
         val analyticsManager = appComponent.analyticsManager()

@@ -84,7 +84,7 @@ class SyncChildMessagesWorker(
         }
     }
 
-    private suspend fun returnFailure(throwable: Throwable? = null): Result {
+    private fun returnFailure(throwable: Throwable? = null): Result {
         analyticsManager.logEvent(
             "didFailToSyncChildMessage",
             throwable?.message

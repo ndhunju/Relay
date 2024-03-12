@@ -6,7 +6,6 @@ import com.ndhunju.relay.R
 import com.ndhunju.relay.api.ApiInterface
 import com.ndhunju.relay.api.UserNotFoundException
 import com.ndhunju.relay.api.Result
-import com.ndhunju.relay.service.UserSettingsPersistService
 import com.ndhunju.relay.util.CurrentUser
 import com.ndhunju.relay.util.User
 import kotlinx.coroutines.flow.MutableStateFlow
