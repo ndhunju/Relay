@@ -34,7 +34,7 @@ import com.ndhunju.relay.api.ApiInterfaceDummyImpl
 import com.ndhunju.relay.service.UserSettingsPersistServiceDummyImpl
 import com.ndhunju.relay.ui.custom.TopAppBarWithUpButton
 import com.ndhunju.relay.ui.theme.LocalDimens
-import com.ndhunju.relay.util.PersistableCurrentUserImpl
+import com.ndhunju.relay.util.InMemoryCurrentUser
 
 @Preview
 @Composable
@@ -42,15 +42,14 @@ fun ChildUserListScreenPreview() {
     ChildUserListScreen(ChildUserListViewModel(
         ApiInterfaceDummyImpl,
         WorkManager.getInstance(LocalContext.current),
-        PersistableCurrentUserImpl(),
-        UserSettingsPersistServiceDummyImpl
-    ), {})
+        InMemoryCurrentUser(),
+    ))
 }
 
 @Composable
 fun ChildUserListScreen(
     viewModel: ChildUserListViewModel,
-    onUpPressed: (() -> Unit)?
+    onUpPressed: (() -> Unit)? = null
 ) {
     val childUsers = viewModel.childUsers.collectAsState()
     Scaffold(

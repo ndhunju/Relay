@@ -93,7 +93,7 @@ class UploadNewMessagesWorker(
             return Result.success()
         }
 
-        if (currentUser.user.parentUserIds.isEmpty()) {
+        if (currentUser.user.getParentUsers().isEmpty()) {
             // No parents to forward the messages to
             analyticsManager.d(TAG, "Skipping since no parents found")
             return Result.success()

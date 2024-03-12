@@ -56,7 +56,6 @@ val RelayViewModelFactory: ViewModelProvider.Factory = object : ViewModelProvide
                     PairWithParentViewModel(
                         apiInterface,
                         currentUser,
-                        userSettingsPersistService
                     ) as T
                 }
                 isAssignableFrom(ChildUserListViewModel::class.java) -> {
@@ -64,7 +63,6 @@ val RelayViewModelFactory: ViewModelProvider.Factory = object : ViewModelProvide
                         apiInterface,
                         workManager,
                         currentUser,
-                        userSettingsPersistService
                     ) as T
                 }
                 isAssignableFrom(MessagesFromChildViewModel::class.java) -> {

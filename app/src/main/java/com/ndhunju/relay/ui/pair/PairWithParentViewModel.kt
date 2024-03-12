@@ -8,6 +8,7 @@ import com.ndhunju.relay.api.UserNotFoundException
 import com.ndhunju.relay.api.Result
 import com.ndhunju.relay.service.UserSettingsPersistService
 import com.ndhunju.relay.util.CurrentUser
+import com.ndhunju.relay.util.User
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
@@ -15,11 +16,10 @@ import kotlinx.coroutines.launch
 class PairWithParentViewModel(
     private val apiInterface: ApiInterface,
     private val currentChildUser: CurrentUser,
-    private val userSettingsPersistService: UserSettingsPersistService,
 ): ViewModel() {
 
     private val _parentEmailAddress = MutableStateFlow(
-        currentChildUser.user.parentUserEmails.firstOrNull() ?: ""
+        currentChildUser.user.getParentEmails().firstOrNull() ?: ""
     )
     val parentEmailAddress = _parentEmailAddress.asStateFlow()
 
@@ -32,7 +32,7 @@ class PairWithParentViewModel(
     private val _isPaired = MutableStateFlow(evaluateIsPaired())
     val isPaired = _isPaired.asStateFlow()
 
-    private val _pairedUserEmailList = MutableStateFlow(currentChildUser.user.parentUserEmails)
+    private val _pairedUserEmailList = MutableStateFlow(currentChildUser.user.getParentEmails())
     val pairedUserEmailList = _pairedUserEmailList.asStateFlow()
 
     fun onParentEmailAddressChanged(newValue: String) {
@@ -42,7 +42,7 @@ class PairWithParentViewModel(
 
     fun onClickPair() {
         // Check if user has already paired with 3 users
-        if (currentChildUser.user.parentUserEmails.size >= 3) {
+        if (currentChildUser.user.getParentUsers().size >= 3) {
             _errorMsgResId.value = R.string.pair_screen_max_limit_reached
             return
         }
@@ -67,23 +67,23 @@ class PairWithParentViewModel(
                     }
                 }
 
-                Result.Pending -> _showProgress.value = true
+                is Result.Pending -> _showProgress.value = true
                 is Result.Success -> {
                     // Persist the value
                     val parentUserId = result.data as String
-                    currentChildUser.user = currentChildUser.user.copy(
-                        parentUserIds = currentChildUser.user.parentUserIds
-                            .apply { add(parentUserId) },
-                        parentUserEmails = currentChildUser.user.parentUserEmails
-                            .apply { add(0, _parentEmailAddress.value) },
+
+                    currentChildUser.user.addParentUser(User(
+                        id = parentUserId,
+                        email = _parentEmailAddress.value)
                     )
-                    userSettingsPersistService.save(currentChildUser.user)
+
+                    //userSettingsPersistService.save(currentChildUser.user)
 
                     // Update the UI
                     _showProgress.value = false
                     _errorMsgResId.value = null
                     _isPaired.value = evaluateIsPaired()
-                    _pairedUserEmailList.value = currentChildUser.user.parentUserEmails
+                    _pairedUserEmailList.value = currentChildUser.user.getParentEmails()
                 }
             }
         }
@@ -95,7 +95,7 @@ class PairWithParentViewModel(
     private fun evaluateIsPaired(): Boolean {
         // Return true if _parentEmailAddress.value matches with
         // any item in currentChildUser.user.parentUserEmails
-        currentChildUser.user.parentUserEmails.forEach { parentUserEmail ->
+        currentChildUser.user.getParentEmails().forEach { parentUserEmail ->
             if (parentUserEmail == _parentEmailAddress.value) {
                 return true
             }

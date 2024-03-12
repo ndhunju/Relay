@@ -6,7 +6,6 @@ import androidx.work.OneTimeWorkRequestBuilder
 import androidx.work.WorkManager
 import com.ndhunju.relay.api.ApiInterface
 import com.ndhunju.relay.api.Result
-import com.ndhunju.relay.service.UserSettingsPersistService
 import com.ndhunju.relay.util.CurrentUser
 import com.ndhunju.relay.util.User
 import com.ndhunju.relay.util.worker.SyncChildMessagesWorker
@@ -19,8 +18,7 @@ import kotlinx.coroutines.withContext
 class ChildUserListViewModel(
     apiInterface: ApiInterface,
     private val workManager: WorkManager,
-    private val currentUser: CurrentUser,
-    userSettingsPersistService: UserSettingsPersistService,
+    private val currentUser: CurrentUser
 ): ViewModel() {
 
     private val _childUsers = MutableStateFlow<List<Child>>(emptyList())
@@ -46,13 +44,13 @@ class ChildUserListViewModel(
     init {
         viewModelScope.launch(Dispatchers.IO) {
             // Show pair child users that were saved previously
-            _childUsers.value = currentUser.user.childUsers.map { childUser ->
+            _childUsers.value = currentUser.user.getChildUsers().map { childUser ->
                 Child(childUser.id, childUser.email ?: "")
             }
 
             // If no child users are saved before,
             // show spinner until network call to get them finishes
-            _showProgress.value = currentUser.user.childUsers.isEmpty()
+            _showProgress.value = currentUser.user.getChildUsers().isEmpty()
 
             // Fetch child users in case there are new ones since last time
             val result = withContext(Dispatchers.IO) {
@@ -68,13 +66,9 @@ class ChildUserListViewModel(
                     _showProgress.value = false
                     _childUsers.value = result.data as List<Child>
 
-                    // Persist it locally // TODO: Fix this
-                    currentUser.user = currentUser.user.copy(
-                        childUsers = _childUsers.value.map {
-                            User(it.id, it.email)
-                        }.toMutableList()
-                    )
-                    userSettingsPersistService.save(currentUser.user)
+                    // Persist it locally
+                    val childUsers = childUsers.value.map { User(it.id, it.email) }
+                    currentUser.user.updateChildUsers(childUsers)
                     doSyncChildMessagesFromServer()
                 }
             }

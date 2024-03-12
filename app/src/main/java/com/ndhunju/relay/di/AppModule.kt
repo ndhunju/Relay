@@ -65,7 +65,10 @@ class AppModule(private val application: Application) {
      */
     @Provides
     @Singleton
-    fun providesCurrentUser(): CurrentUser = PersistableCurrentUserImpl(provideUserSettingsPersistService())
+    fun providesCurrentUser(): CurrentUser = PersistableCurrentUserImpl(
+        provideUserSettingsPersistService(),
+        analyticsManager
+    )
 
     @Provides
     @Singleton
