@@ -9,22 +9,35 @@ import javax.crypto.spec.SecretKeySpec
 
 object AesEncryption {
 
-    const val secretKey = "tK5UTui+DPh8lIlBxya5XVsmeDCoUl6vHhdIESMB6sQ="
-    const val salt = "custom_password" // base64 decode => AiF4sa12SAfvlhiWu
-    const val iv = "bVQzNFNhRkQ1Njc4UUFaWA==" // base64 decode => mT34SaFD5678QAZX
+    private const val password = "custom_password"
+    private const val salt = "QWlGNHNhMTJTQWZ2bGhpV3U=" // base64 decode => AiF4sa12SAfvlhiWu
+    private const val iv = "bVQzNFNhRkQ1Njc4UUFaWA==" // base64 decode => mT34SaFD5678QAZX
+
+    private val ivParameterSpec by lazy { IvParameterSpec(Base64.decode(iv, Base64.DEFAULT)) }
+    private val factory by lazy { SecretKeyFactory.getInstance("PBKDF2WithHmacSHA1") }
+
+    private val spec by lazy {
+        PBEKeySpec(
+            password.toCharArray(),
+            salt.toByteArray(),
+            10000,
+            256
+        )
+    }
+
+    private val secretKey by lazy { factory.generateSecret(spec) }
+    private val secretKeySpec by lazy { SecretKeySpec(secretKey.encoded, "AES") }
+    private val cipher by lazy { Cipher.getInstance("AES/CBC/PKCS7Padding") }
 
     fun encrypt(strToEncrypt: String) :  String?
     {
         try
         {
-            val ivParameterSpec = IvParameterSpec(Base64.decode(iv, Base64.DEFAULT))
-            val factory = SecretKeyFactory.getInstance("PBKDF2WithHmacSHA1")
-            val spec =  PBEKeySpec(secretKey.toCharArray(), Base64.decode(salt, Base64.DEFAULT), 10000, 256)
-            val tmp = factory.generateSecret(spec)
-            val secretKey =  SecretKeySpec(tmp.encoded, "AES")
-            val cipher = Cipher.getInstance("AES/CBC/PKCS7Padding")
-            cipher.init(Cipher.ENCRYPT_MODE, secretKey, ivParameterSpec)
-            return Base64.encodeToString(cipher.doFinal(strToEncrypt.toByteArray(Charsets.UTF_8)), Base64.DEFAULT)
+            cipher.init(Cipher.ENCRYPT_MODE, secretKeySpec, ivParameterSpec)
+            return Base64.encodeToString(
+                cipher.doFinal(strToEncrypt.toByteArray(Charsets.UTF_8)),
+                Base64.DEFAULT
+            )
         }
         catch (e: Exception)
         {
@@ -33,19 +46,12 @@ object AesEncryption {
         return null
     }
 
-    fun decrypt(strToDecrypt : String) : String? {
+    fun decrypt(strToDecrypt : String) : String?
+    {
         try
         {
-            val ivParameterSpec =  IvParameterSpec(Base64.decode(iv, Base64.DEFAULT))
-
-            val factory = SecretKeyFactory.getInstance("PBKDF2WithHmacSHA1")
-            val spec =  PBEKeySpec(secretKey.toCharArray(), Base64.decode(salt, Base64.DEFAULT), 10000, 256)
-            val tmp = factory.generateSecret(spec);
-            val secretKey =  SecretKeySpec(tmp.encoded, "AES")
-
-            val cipher = Cipher.getInstance("AES/CBC/PKCS7Padding");
-            cipher.init(Cipher.DECRYPT_MODE, secretKey, ivParameterSpec);
-            return  String(cipher.doFinal(Base64.decode(strToDecrypt, Base64.DEFAULT)))
+            cipher.init(Cipher.DECRYPT_MODE, secretKeySpec, ivParameterSpec);
+            return String(cipher.doFinal(Base64.decode(strToDecrypt, Base64.DEFAULT)))
         }
         catch (e : Exception) {
             println("Error while decrypting: $e");
