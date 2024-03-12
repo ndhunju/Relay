@@ -1,5 +1,6 @@
 package com.ndhunju.relay.service
 
+import com.ndhunju.relay.service.analyticsprovider.LocalAnalyticsProvider
 import org.junit.Assert
 import org.junit.Before
 import org.junit.Test
@@ -12,7 +13,7 @@ class AeSEncryptionServiceTest {
 
     @Before
     fun beforeTest() {
-        aesEncryptionService = AesEncryptionService()
+        aesEncryptionService = AesEncryptionService(LocalAnalyticsProvider())
     }
 
     @Test

@@ -45,6 +45,7 @@ interface AppComponent {
 
     fun notificationManager(): NotificationManager
 
+    // TODO: Nikesh - Change it to AnalyticsProvider
     fun analyticsManager(): AnalyticsManager
 
     fun gson(): Gson

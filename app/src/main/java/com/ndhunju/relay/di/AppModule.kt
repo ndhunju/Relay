@@ -47,6 +47,10 @@ import javax.inject.Singleton
 @Module
 class AppModule(private val application: Application) {
 
+    val analyticsManager by lazy {
+        (application as RelayApplication).appComponent.analyticsManager()
+    }
+
     @Provides
     @Singleton
     fun providesGson(): Gson = GsonBuilder()
@@ -70,7 +74,7 @@ class AppModule(private val application: Application) {
             providesGson(),
             providesCurrentUser(),
             provideEncryptionService(),
-            (application as RelayApplication).appComponent.analyticsManager()
+            analyticsManager
         )
     }
 
@@ -137,7 +141,7 @@ class AppModule(private val application: Application) {
     @Provides
     @Singleton
     fun provideEncryptionService(): EncryptionService {
-        return AesEncryptionService()
+        return AesEncryptionService(analyticsManager)
     }
 }
 
