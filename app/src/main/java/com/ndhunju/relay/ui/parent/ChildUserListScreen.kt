@@ -24,6 +24,7 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
@@ -31,7 +32,6 @@ import androidx.compose.ui.unit.dp
 import androidx.work.WorkManager
 import com.ndhunju.relay.R
 import com.ndhunju.relay.api.ApiInterfaceDummyImpl
-import com.ndhunju.relay.service.UserSettingsPersistServiceDummyImpl
 import com.ndhunju.relay.ui.custom.TopAppBarWithUpButton
 import com.ndhunju.relay.ui.theme.LocalDimens
 import com.ndhunju.relay.util.InMemoryCurrentUser
@@ -114,6 +114,7 @@ private fun ChildUserColumnItem(
         Icon(
             painter = painterResource(id = R.drawable.baseline_key_24),
             contentDescription = stringResource(R.string.content_description_add_encryption_key),
+            tint = colorResource(if (childUser.encKey == null) R.color.failure else R.color.success),
             modifier = Modifier
                 .align(Alignment.CenterVertically)
                 .padding(end = 6.dp)
@@ -143,4 +144,4 @@ private fun LoadingIndicator() {
     }
 }
 
-data class Child(val id: String, val email: String)
+data class Child(val id: String, val email: String, val encKey: String? = null)

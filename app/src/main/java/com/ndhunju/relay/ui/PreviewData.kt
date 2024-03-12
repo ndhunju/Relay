@@ -35,6 +35,6 @@ val mockMessages = listOf(
 )
 
 val mockChildUsers = mutableListOf<Child>().apply {
-    add(Child("0", "emailid1@gmail.com"))
+    add(Child("0", "emailid1@gmail.com", "key"))
     add(Child("1", "emailid2@gmail.com"))
 }

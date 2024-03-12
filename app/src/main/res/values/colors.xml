@@ -13,4 +13,7 @@
     <color name="splash_screen_bg">#C7B7A3</color>
     <color name="splash_screen_icon_bg">#f0f0f0</color>
     <color name="splash_screen_icon">#561C24</color>
+
+    <color name="success">#ccff33</color>
+    <color name="failure">#e26d5c</color>
 </resources>

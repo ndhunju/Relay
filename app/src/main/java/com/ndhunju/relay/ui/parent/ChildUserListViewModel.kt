@@ -45,7 +45,7 @@ class ChildUserListViewModel(
         viewModelScope.launch(Dispatchers.IO) {
             // Show pair child users that were saved previously
             _childUsers.value = currentUser.user.getChildUsers().map { childUser ->
-                Child(childUser.id, childUser.email ?: "")
+                Child(childUser.id, childUser.email ?: "", childUser.encryptionKey)
             }
 
             // If no child users are saved before,
@@ -63,12 +63,18 @@ class ChildUserListViewModel(
                 is Result.Failure -> _showProgress.value = false
                 is Result.Pending ->  _showProgress.value = true
                 is Result.Success -> {
-                    _showProgress.value = false
-                    _childUsers.value = result.data as List<Child>
+                    val newChildUserWithoutEncKey = result.data as List<Child>
 
                     // Persist it locally
-                    val childUsers = childUsers.value.map { User(it.id, it.email) }
-                    currentUser.user.updateChildUsers(childUsers)
+                    val childUsers = newChildUserWithoutEncKey.map { User(it.id, it.email) }
+                    currentUser.user.updateChildUsersWithoutLosingEncryptionKey(childUsers)
+
+                    // Update UI
+                    _showProgress.value = false
+                    _childUsers.value = currentUser.user.getChildUsers().map {
+                        Child(it.id, it.email ?: "", it.encryptionKey)
+                    }
+
                     doSyncChildMessagesFromServer()
                 }
             }

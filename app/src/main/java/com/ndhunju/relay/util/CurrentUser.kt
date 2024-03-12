@@ -129,10 +129,42 @@ data class User(
         onUserUpdated?.invoke(this)
     }
 
-    private fun findChildIndex(childEmail: String): Int? {
+    /**
+     * See corresponding unit tests for more details on behavior
+     */
+    fun updateChildUsersWithoutLosingEncryptionKey(newChildUsers: List<User>) {
+        val newChildUsersWithExistingEncKey = mutableListOf<User>()
+        // Loop through each child in newChildUser
+        newChildUsers.forEach { newChildUser ->
+            // Check if they exist in current childUsers list
+            val index = findChildIndex(newChildUser.email)
+            if (index != null && childUsers[index].encryptionKey != null) {
+                val exitingKey = childUsers[index].encryptionKey
+                newChildUsersWithExistingEncKey.add(newChildUser.copy(encryptionKey = exitingKey))
+            } else {
+                newChildUsersWithExistingEncKey.add(newChildUser)
+            }
+        }
+
+        childUsers.clear()
+        childUsers.addAll(newChildUsersWithExistingEncKey)
+        onUserUpdated?.invoke(this)
+    }
+
+    private fun findChildIndex(childEmail: String?): Int? {
         childUsers.forEachIndexed { i, childUser ->
             if (childUser.email == childEmail) {
                 return i
+            }
+        }
+
+        return null
+    }
+
+    fun findChildUserByEmail(childEmail: String?): User? {
+        childUsers.forEach { childUser ->
+            if (childUser.email == childEmail) {
+                return childUser
             }
         }
 
