@@ -1,13 +1,11 @@
-package com.ndhunju.relay.util
+package com.ndhunju.relay.service
 
-import com.ndhunju.relay.service.AesEncryptionService
-import com.ndhunju.relay.service.EncryptionService
 import org.junit.Assert
 import org.junit.Before
 import org.junit.Test
 
 
-class AESEncryptionTest {
+class AeSEncryptionServiceTest {
 
     private lateinit var aesEncryptionService: EncryptionService
     private val password = "test_password_123"
