@@ -27,7 +27,7 @@ object AesEncryption {
 
     private val secretKey by lazy { factory.generateSecret(spec) }
     private val secretKeySpec by lazy { SecretKeySpec(secretKey.encoded, "AES") }
-    private val cipher by lazy { Cipher.getInstance("AES/CBC/PKCS7Padding") }
+    private val cipher by lazy { Cipher.getInstance("AES/CBC/PKCS5Padding") }
 
     fun encrypt(strToEncrypt: String) :  String?
     {
