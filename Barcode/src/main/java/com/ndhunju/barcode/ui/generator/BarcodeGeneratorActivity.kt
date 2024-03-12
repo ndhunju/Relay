@@ -17,7 +17,8 @@ open class BarcodeGeneratorActivity: FragmentActivity() {
 
         setContent {
             BarcodeGeneratorScreen(
-                bitmap = barcodeGeneratorViewModel.qrCodeBitmap
+                bitmap = barcodeGeneratorViewModel.qrCodeBitmap,
+                onClickUpButton = { finish() }
             )
         }
     }

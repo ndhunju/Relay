@@ -4,6 +4,7 @@ import android.graphics.Bitmap
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.scaleIn
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxHeight
@@ -31,14 +32,15 @@ import androidx.compose.ui.unit.dp
 @Composable
 fun BarcodeGeneratorScreen(
     body: State<String> = mutableStateOf("Scan this QR code from another device"),
-    bitmap: State<Bitmap?> = mutableStateOf(null)
+    bitmap: State<Bitmap?> = mutableStateOf(null),
+    onClickUpButton: (() -> Unit)? = null
 ) {
     MaterialTheme {
         Surface(Modifier.fillMaxSize()) {
             Scaffold(topBar = { Image(
                 imageVector = Icons.Default.ArrowBack,
                 contentDescription = "Back",
-                modifier = Modifier.padding(16.dp)
+                modifier = Modifier.padding(16.dp).clickable { onClickUpButton?.invoke() }
             )}) { innerPadding ->
                 Column(
                     modifier = Modifier
