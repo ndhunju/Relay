@@ -8,11 +8,13 @@ import com.ndhunju.relay.api.ApiInterface
 import com.ndhunju.relay.api.Result
 import com.ndhunju.relay.service.UserSettingsPersistService
 import com.ndhunju.relay.util.CurrentUser
+import com.ndhunju.relay.util.User
 import com.ndhunju.relay.util.worker.SyncChildMessagesWorker
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 
 class ChildUserListViewModel(
     apiInterface: ApiInterface,
@@ -44,36 +46,34 @@ class ChildUserListViewModel(
     init {
         viewModelScope.launch(Dispatchers.IO) {
             // Show pair child users that were saved previously
-            _childUsers.value = currentUser.user.childUserEmails.mapIndexed{ i, email ->
-                Child(currentUser.user.childUserIds[i], email)
+            _childUsers.value = currentUser.user.childUsers.map { childUser ->
+                Child(childUser.id, childUser.email ?: "")
             }
 
             // If no child users are saved before,
             // show spinner until network call to get them finishes
-            _showProgress.value = currentUser.user.childUserEmails.isEmpty()
+            _showProgress.value = currentUser.user.childUsers.isEmpty()
 
             // Fetch child users in case there are new ones since last time
-            val result = apiInterface.getChildUsers(
-                currentUser.user.id
-            )
+            val result = withContext(Dispatchers.IO) {
+                apiInterface.getChildUsers(
+                    currentUser.user.id
+                )
+            }
 
             when (result) {
-                is Result.Failure -> {
-                    _showProgress.value = false
-                }
-                Result.Pending -> {
-                    _showProgress.value = true
-                }
+                is Result.Failure -> _showProgress.value = false
+                is Result.Pending ->  _showProgress.value = true
                 is Result.Success -> {
                     _showProgress.value = false
                     _childUsers.value = result.data as List<Child>
 
-                    // Persist it locally
+                    // Persist it locally // TODO: Fix this
                     currentUser.user = currentUser.user.copy(
-                        childUserIds = _childUsers.value.map { it.id },
-                        childUserEmails = _childUsers.value.map { it.email }
+                        childUsers = _childUsers.value.map {
+                            User(it.id, it.email)
+                        }.toMutableList()
                     )
-
                     userSettingsPersistService.save(currentUser.user)
                     doSyncChildMessagesFromServer()
                 }

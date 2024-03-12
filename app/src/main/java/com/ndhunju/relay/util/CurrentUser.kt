@@ -46,16 +46,14 @@ data class User(
     val email: String? = null,
     val name: String? = null,
     val phone: String? = null,
-    val encryptionKey: String? = null,
     val isRegistered: Boolean = false,
+    var encryptionKey: String? = null,
     // TODO: Nikesh - Should we merge User and Child class?
     // Below fields are relevant when current user is functioning as a child user
     val parentUserIds: MutableList<String> = mutableListOf(),
     val parentUserEmails: MutableList<String> = mutableListOf(),
     // Below fields are relevant when current user is functioning as a parent user
-    val childUserIds: List<String> = listOf(),
-    val childUserEmails: List<String> = listOf(),
-    val childUserEncryptionKeys: MutableList<String> = mutableListOf()
+    val childUsers: MutableList<User> = mutableListOf()
 ) {
     @Transient
     private var onUserUpdated: (() -> Unit)? = null
@@ -84,13 +82,24 @@ data class User(
      * in [childUserEmails] list. Otherwise, returns false
      */
     fun addEncryptionKeyOfChild(childUserEmail: String, encryptionKey: String): Boolean {
-        val i = childUserEmails.indexOf(childUserEmail)
-        return if (i >= 0) {
-            childUserEncryptionKeys.add(i, encryptionKey)
-            onUserUpdated?.invoke()
-            true
-        } else {
-            false
+        childUsers.forEach { childUser ->
+            if (childUser.email == childUserEmail) {
+                childUser.encryptionKey = encryptionKey
+                onUserUpdated?.invoke()
+                return true
+            }
+            
         }
+        return false
+    }
+
+    fun getEncryptionKey(childUserId: String): String? {
+        childUsers.forEach { childUser ->
+            if (childUser.id == childUserId) {
+                return childUser.encryptionKey
+            }
+        }
+
+        return null
     }
 }
