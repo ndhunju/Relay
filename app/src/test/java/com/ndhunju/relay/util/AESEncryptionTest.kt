@@ -12,7 +12,6 @@ class AESEncryptionTest {
         val encryptedMsg = AesEncryption.encrypt(originalMsg)
         val decryptedMsg = AesEncryption.decrypt(encryptedMsg!!)
 
-
         Assert.assertEquals(
             "Encrypted text is not decrypted to original text",
             originalMsg,
