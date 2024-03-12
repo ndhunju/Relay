@@ -250,7 +250,8 @@ data class AccountScreenUiState(
     }
 }
 
-fun String.isValidEmail(): Boolean {
+fun String?.isValidEmail(): Boolean {
+    if (this == null) return false
     return PatternsCompat.EMAIL_ADDRESS.matcher(this).matches()
 }
 

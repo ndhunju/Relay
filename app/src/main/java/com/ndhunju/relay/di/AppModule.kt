@@ -17,10 +17,12 @@ import com.ndhunju.relay.api.ApiInterfaceFireStoreImpl
 import com.ndhunju.relay.api.Result
 import com.ndhunju.relay.data.ChildSmsInfoRepository
 import com.ndhunju.relay.data.OfflineChildSmsInfoRepository
+import com.ndhunju.relay.service.AesEncryptionService
 import com.ndhunju.relay.service.AppStateBroadcastService
 import com.ndhunju.relay.service.AppStateBroadcastServiceImpl
 import com.ndhunju.relay.service.DataStoreKeyValuePersistService
 import com.ndhunju.relay.service.DeviceSmsReaderService
+import com.ndhunju.relay.service.EncryptionService
 import com.ndhunju.relay.service.SimpleKeyValuePersistService
 import com.ndhunju.relay.util.gson.ResultDeserializer
 import com.ndhunju.relay.util.gson.ResultSerializer
@@ -67,6 +69,7 @@ class AppModule(private val application: Application) {
         return ApiInterfaceFireStoreImpl(
             providesGson(),
             providesCurrentUser(),
+            provideEncryptionService(),
             (application as RelayApplication).appComponent.analyticsManager()
         )
     }
@@ -129,6 +132,12 @@ class AppModule(private val application: Application) {
     @Singleton
     fun provideSimpleKeyValuePersistService(): SimpleKeyValuePersistService {
         return DataStoreKeyValuePersistService(application)
+    }
+
+    @Provides
+    @Singleton
+    fun provideEncryptionService(): EncryptionService {
+        return AesEncryptionService()
     }
 }
 
