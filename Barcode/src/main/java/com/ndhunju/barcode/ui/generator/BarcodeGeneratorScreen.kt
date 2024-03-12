@@ -25,13 +25,15 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.ImageBitmap
 import androidx.compose.ui.graphics.asImageBitmap
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import com.ndhunju.barcode.R
 
 @Preview
 @Composable
 fun BarcodeGeneratorScreen(
-    body: State<String> = mutableStateOf("Scan this QR code from another device"),
+    body: State<String?> = mutableStateOf(stringResource(R.string.body_default)),
     bitmap: State<Bitmap?> = mutableStateOf(null),
     onClickUpButton: (() -> Unit)? = null
 ) {
@@ -39,8 +41,10 @@ fun BarcodeGeneratorScreen(
         Surface(Modifier.fillMaxSize()) {
             Scaffold(topBar = { Image(
                 imageVector = Icons.Default.ArrowBack,
-                contentDescription = "Back",
-                modifier = Modifier.padding(16.dp).clickable { onClickUpButton?.invoke() }
+                contentDescription = stringResource(R.string.content_description_action_back),
+                modifier = Modifier
+                    .padding(16.dp)
+                    .clickable { onClickUpButton?.invoke() }
             )}) { innerPadding ->
                 Column(
                     modifier = Modifier
@@ -69,7 +73,7 @@ fun BarcodeGeneratorScreen(
                         )
                     }
 
-                    Text(text = body.value, Modifier.padding(48.dp))
+                    Text(text = body.value ?: "", Modifier.padding(48.dp))
                 }
             }
         }

@@ -18,4 +18,8 @@ class ShareEncryptionKeyWithQrCodeViewModel(
         )
     }
 
+    fun getBodyText(): String {
+        return currentUser.user.email ?: ""
+    }
+
 }

@@ -5,6 +5,8 @@
   <string name="content_description_close_button">Close</string>
   <!-- Content description for an icon that toggles flash light -->
   <string name="content_description_flash_button">Toggle camera flash</string>
+  <!--  Content description for an icon that takes user to previous screen-->
+  <string name="content_description_action_back">Back</string>
   <!-- Shown in Text to the user when barcode is too far -->
   <string name="barcode_prompt_move_camera_closer">Move closer to search</string>
   <!-- Shown in Text that acts as an title  -->
@@ -13,5 +15,7 @@
   <string name="activity_barcode_scanning_description">Place Barcode inside area, scanning will start automatically</string>
   <!-- Shown in Text when barcode's scanning state is unknown -->
   <string name="activity_barcode_workflow_unknown_state">Unknown state</string>
+  <!--  Shown in a Text label that can have multiple lines-->
+  <string name="body_default">Scan this QR code from another device</string>
 
 </resources>

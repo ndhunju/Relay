@@ -12,6 +12,7 @@ class ShareEncryptionKeyWithQrCodeActivity : BarcodeGeneratorActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setQrCodeContent(viewModel.getEncryptionKeyInfo())
+        setBodyText(viewModel.getBodyText())
     }
 
 

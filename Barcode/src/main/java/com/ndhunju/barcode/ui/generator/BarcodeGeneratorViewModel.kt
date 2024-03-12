@@ -5,6 +5,7 @@ import android.graphics.Bitmap
 import android.graphics.Bitmap.Config
 import android.graphics.Color
 import androidx.compose.runtime.MutableState
+import androidx.compose.runtime.State
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
@@ -24,13 +25,21 @@ class BarcodeGeneratorViewModel: ViewModel() {
         set(value) {
             field = value
             viewModelScope.launch(Dispatchers.IO) {
-                qrCodeBitmap.value = generateQrCode(qrCodeWriter, value)
+                _qrCodeBitmap.value = generateQrCode(qrCodeWriter, value)
             }
         }
 
 
     //region UI State
-    val qrCodeBitmap: MutableState<Bitmap?> = mutableStateOf(null)
+
+    private val _qrCodeBitmap: MutableState<Bitmap?> = mutableStateOf(null)
+    val qrCodeBitmap: State<Bitmap?> = _qrCodeBitmap
+    private val _qrBodyText: MutableState<String?> = mutableStateOf(null)
+    val qrBodyText: State<String?> = _qrBodyText
+
+    fun setBodyText(text: String) {
+        _qrBodyText.value = text
+    }
 
     //endregion
 
