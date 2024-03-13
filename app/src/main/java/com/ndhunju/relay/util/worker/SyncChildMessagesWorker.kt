@@ -79,7 +79,7 @@ class SyncChildMessagesWorker(
                 val childSmsInfoList = messageCollectionList.map {
                     val decryptedPayLoad = encryptionService.decrypt(it.payLoad, password)
 
-                    if (decryptedPayLoad == null) {
+                    if (decryptedPayLoad == null || password == null) {
                         currentUser.user.invalidateEncryptionKeyOfChild(childUser.email)
                         notificationManager.notifyCriticalMessage(applicationContext.getString(
                             R.string.notification_invalid_encryption_key, childUser.email

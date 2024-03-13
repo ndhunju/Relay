@@ -252,9 +252,12 @@ class ApiInterfaceFireStoreImpl(
                 .await()
                 .documents
                 .mapNotNull { doc ->
-                    doc.toObject(MessageEntry::class.java)?.apply {
-                        idInServer = doc.id
-                    }
+                    MessageEntry(
+                        idInServer = doc.id,
+                        senderUserId = doc.get(MessageEntry.SenderUserId) as String,
+                        sentDate = doc.get(MessageEntry.SentDate) as String,
+                        payLoad = doc.get(MessageEntry.PayLoad) as String
+                    )
                 }
             Result.Success(messageEntries)
         } catch (ex: Exception) {
