@@ -6,7 +6,7 @@ import androidx.activity.viewModels
 import androidx.annotation.UiThread
 import androidx.lifecycle.lifecycleScope
 import com.google.firebase.firestore.FirebaseFirestoreException
-import com.ndhunju.barcode.ui.scanner.BarcodeScanningActivity
+import com.ndhunju.barcode.ui.scanner.BarcodeScannerActivity
 import com.ndhunju.barcode.camera.WorkflowModel.WorkflowState
 import com.ndhunju.relay.R
 import com.ndhunju.relay.RelayViewModelFactory
@@ -17,7 +17,7 @@ import kotlinx.coroutines.launch
 import java.security.InvalidParameterException
 
 @Deprecated("Allowing pairing from parent client involves lot of edge cases")
-class PairWithChildByScanningQrCodeActivity: BarcodeScanningActivity() {
+class PairWithChildByScanningQrCodeActivity: BarcodeScannerActivity() {
 
     private val viewModel: PairWithQrCodeViewModel by viewModels { RelayViewModelFactory }
 

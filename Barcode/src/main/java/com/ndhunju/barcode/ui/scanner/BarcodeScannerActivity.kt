@@ -27,9 +27,9 @@ import com.ndhunju.barcode.requestPermission
 import java.io.IOException
 
 /**
- * Screen for barcode scanning using camera preview.
+ * Activity that lays essential elements for scanning bar codes
  */
-abstract class BarcodeScanningActivity : FragmentActivity() {
+abstract class BarcodeScannerActivity : FragmentActivity() {
 
     // Variables
     var graphicOverlay: GraphicOverlay? = null
@@ -49,7 +49,7 @@ abstract class BarcodeScanningActivity : FragmentActivity() {
         workflowModel = viewModels<WorkflowModel>().value
 
         setContent {
-            BarcodeScanningScreen(
+            BarcodeScannerScreen(
                 uiState = workflowModel.uiStateFlow.collectAsStateWithLifecycle(),
                 onGraphicLayerInitialized = { view -> onGraphicLayerInitialized(view)},
                 onClickGraphicOverlay = { /* Do nothing for now*/ },
@@ -226,7 +226,7 @@ abstract class BarcodeScanningActivity : FragmentActivity() {
     }
 
     companion object {
-        private val TAG = BarcodeScanningActivity::class.simpleName
+        private val TAG = BarcodeScannerActivity::class.simpleName
         private const val REQUEST_CAMERA_PERMISSION = 1
     }
 }

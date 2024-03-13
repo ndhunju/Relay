@@ -5,7 +5,7 @@ import android.os.Bundle
 import androidx.activity.viewModels
 import androidx.annotation.UiThread
 import androidx.lifecycle.lifecycleScope
-import com.ndhunju.barcode.ui.scanner.BarcodeScanningActivity
+import com.ndhunju.barcode.ui.scanner.BarcodeScannerActivity
 import com.ndhunju.barcode.camera.WorkflowModel.WorkflowState
 import com.ndhunju.relay.R
 import com.ndhunju.relay.RelayViewModelFactory
@@ -15,7 +15,7 @@ import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import java.security.InvalidParameterException
 
-class AddChildEncryptionKeyFromQrCodeActivity: BarcodeScanningActivity() {
+class AddChildEncryptionKeyFromQrCodeActivity: BarcodeScannerActivity() {
 
     private val viewModel: AddChildEncryptionKeyFromQrCodeViewModel by viewModels {
         RelayViewModelFactory

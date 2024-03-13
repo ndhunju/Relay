@@ -49,7 +49,7 @@ import kotlinx.coroutines.launch
 
 @Preview
 @Composable
-fun BarcodeScanningScreen(
+fun BarcodeScannerScreen(
     uiState: State<UiState> = MutableStateFlow(UiState()).collectAsState(),
     onGraphicLayerInitialized: ((GraphicOverlay) -> Unit)? = null,
     onClickGraphicOverlay: (() -> Unit)? = null,
@@ -62,7 +62,7 @@ fun BarcodeScanningScreen(
     Scaffold(
         snackbarHost = { SnackbarHost(snackBarHostState) }
     ) { innerPadding ->
-        BarcodeScanningMainContent(
+        BarcodeScannerMainContent(
             Modifier.padding(innerPadding),
             uiState,
             onGraphicLayerInitialized,
@@ -83,7 +83,7 @@ fun BarcodeScanningScreen(
 }
 
 @Composable
-fun BarcodeScanningMainContent(
+fun BarcodeScannerMainContent(
     modifier: Modifier,
     uiState: State<UiState> = MutableStateFlow(UiState()).collectAsState(),
     onGraphicLayerInitialized: ((GraphicOverlay) -> Unit)? = null,
