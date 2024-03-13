@@ -1,11 +1,13 @@
 package com.ndhunju.relay.ui.parent
 
+import android.app.Activity
 import android.content.Intent
 import android.os.Bundle
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.ui.platform.ComposeView
 import androidx.fragment.app.viewModels
 import com.ndhunju.relay.RelayViewModelFactory
@@ -22,6 +24,15 @@ class ChildUserListFragment : Fragment() {
 
     private val viewModel: ChildUserListViewModel by viewModels { RelayViewModelFactory }
 
+    private val activityLauncher = registerForActivityResult(
+        ActivityResultContracts.StartActivityForResult()
+    ) { result ->
+        if (result.resultCode == Activity.RESULT_OK) {
+            viewModel.invalidateChildUsers()
+        }
+
+    }
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
@@ -36,7 +47,9 @@ class ChildUserListFragment : Fragment() {
         }
 
         viewModel.doOpenAddChildEncryptionKeyFromQrCodeFragment = { _: Child ->
-            startActivity(Intent(context, AddChildEncryptionKeyFromQrCodeActivity::class.java))
+            activityLauncher.launch(
+                Intent(context, AddChildEncryptionKeyFromQrCodeActivity::class.java)
+            )
         }
     }
 
@@ -59,6 +72,7 @@ class ChildUserListFragment : Fragment() {
     companion object {
 
         val TAG: String = ChildUserListFragment::class.java.name
+
         /**
          * Use this factory method to create a new instance of
          * this fragment using the provided parameters.

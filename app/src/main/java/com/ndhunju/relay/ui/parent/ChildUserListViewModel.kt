@@ -81,6 +81,13 @@ class ChildUserListViewModel(
         }
     }
 
+    fun invalidateChildUsers() {
+        // Update child users in UI
+        _childUsers.value = currentUser.user.getChildUsers().map { childUser ->
+            Child(childUser.id, childUser.email ?: "", childUser.encryptionKey)
+        }
+    }
+
     private fun doSyncChildMessagesFromServer() {
         workManager.enqueue(OneTimeWorkRequestBuilder<SyncChildMessagesWorker>().build())
     }
