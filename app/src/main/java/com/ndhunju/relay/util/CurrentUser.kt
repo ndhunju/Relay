@@ -152,6 +152,8 @@ data class User(
     }
 
     private fun findChildIndex(childEmail: String?): Int? {
+        if (childEmail == null) return null
+
         childUsers.forEachIndexed { i, childUser ->
             if (childUser.email == childEmail) {
                 return i
@@ -175,12 +177,16 @@ data class User(
      * Adds passed [encryptionKey] for child with email [childUserEmail] is present.
      * Otherwise, returns false
      */
-    fun addEncryptionKeyOfChild(childUserEmail: String, encryptionKey: String): Boolean {
+    fun addEncryptionKeyOfChild(childUserEmail: String?, encryptionKey: String?): Boolean {
         val i = findChildIndex(childUserEmail) ?: return false
         val updatedChildUser = childUsers[i].copy(encryptionKey = encryptionKey)
         childUsers[i] = updatedChildUser
         onUserUpdated?.invoke(this)
         return true
+    }
+
+    fun invalidateEncryptionKeyOfChild(childUserEmail: String?): Boolean {
+        return addEncryptionKeyOfChild(childUserEmail, null)
     }
 
     fun getEncryptionKey(childUserId: String): String? {

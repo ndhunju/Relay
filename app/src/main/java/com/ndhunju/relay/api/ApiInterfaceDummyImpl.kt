@@ -1,7 +1,6 @@
 package com.ndhunju.relay.api
 
 import com.ndhunju.relay.data.ChildSmsInfo
-import com.ndhunju.relay.ui.messages.Message
 import com.ndhunju.relay.ui.parent.Child
 import com.ndhunju.relay.util.User
 
@@ -31,6 +30,7 @@ object ApiInterfaceDummyImpl : ApiInterface {
         return returnFailure()
     }
 
+    @Deprecated("See parent method")
     override suspend fun postPairWithChild(
         childEmailAddress: String,
         pairingCode: String
@@ -54,7 +54,7 @@ object ApiInterfaceDummyImpl : ApiInterface {
         return returnFailure()
     }
 
-    override suspend fun postMessage(message: Message): Result<Void> {
+    override suspend fun postMessage(message: MessageEntry): Result<Void> {
         return returnFailure()
     }
 

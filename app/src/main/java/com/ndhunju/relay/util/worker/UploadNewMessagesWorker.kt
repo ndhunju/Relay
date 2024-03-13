@@ -10,16 +10,20 @@ import androidx.work.NetworkType
 import androidx.work.OneTimeWorkRequestBuilder
 import androidx.work.WorkManager
 import androidx.work.WorkerParameters
+import com.google.gson.Gson
 import com.ndhunju.relay.RelayApplication
 import com.ndhunju.relay.api.ApiInterface
+import com.ndhunju.relay.api.MessageEntry
 import com.ndhunju.relay.api.Result.Success
 import com.ndhunju.relay.data.SmsInfoRepository
 import com.ndhunju.relay.di.AppComponent
 import com.ndhunju.relay.service.AnalyticsManager
 import com.ndhunju.relay.service.AppStateBroadcastService
 import com.ndhunju.relay.service.DeviceSmsReaderService
+import com.ndhunju.relay.service.EncryptionService
 import com.ndhunju.relay.service.NotificationManager
 import com.ndhunju.relay.service.SimpleKeyValuePersistService
+import com.ndhunju.relay.service.analyticsprovider.Level
 import com.ndhunju.relay.service.analyticsprovider.d
 import com.ndhunju.relay.ui.messages.Message
 import com.ndhunju.relay.ui.toSmsInfo
@@ -77,6 +81,14 @@ class UploadNewMessagesWorker(
 
     private val analyticsManager: AnalyticsManager by lazy {
         appComponent.analyticsManager()
+    }
+
+    private val encryptionService: EncryptionService by lazy {
+        appComponent.encryptionService()
+    }
+
+    private val gson: Gson by lazy {
+        appComponent.gson()
     }
 
     override suspend fun getForegroundInfo(): ForegroundInfo {
@@ -137,8 +149,21 @@ class UploadNewMessagesWorker(
         val smsInfoToInsert = messageFromAndroidDb.toSmsInfo()
         val idOfInsertedSmsInfo = smsInfoRepository.insertSmsInfo(smsInfoToInsert)
 
+        val encryptedMessage = encryptionService.encrypt(
+            gson.toJson(messageFromAndroidDb),
+            currentUser.user.encryptionKey
+        ) ?: run {
+            analyticsManager.log(Level.ERROR, TAG, "Failed to encrypt message")
+            return RelayResult.Failure()
+        }
+
         // Push new message to the cloud database
-        val result = apiInterface.postMessage(messageFromAndroidDb)
+        val result = apiInterface.postMessage(MessageEntry(
+                "",
+                currentUser.user.id,
+                System.currentTimeMillis().toString(),
+                encryptedMessage,
+        ))
         // Update the sync status
         messageFromAndroidDb.syncStatus = result
         // Update the sync status in the local DB as well

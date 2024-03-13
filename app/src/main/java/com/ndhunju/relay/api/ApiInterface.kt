@@ -68,7 +68,7 @@ interface ApiInterface {
     /**
      * Pushes [message] to the server.
      */
-    suspend fun postMessage(message: Message): Result<Void>
+    suspend fun postMessage(message: MessageEntry): Result<Void>
 
     /**
      * Posts [token] to the server

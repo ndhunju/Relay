@@ -81,6 +81,19 @@ class NotificationManager @Inject constructor(
     }
 
     /**
+     * Returns [Notification] to a show a critical message
+     */
+    fun getNotificationForCriticalMessage(msg: String): Notification {
+        return defaultNotificationBuilder
+            .setAutoCancel(true)
+            .setContentTitle(msg)
+            .setStyle(NotificationCompat.BigTextStyle().bigText(msg))
+            .setPriority(NotificationCompat.PRIORITY_HIGH)
+            .setGroup(GROUP_ID_CRITICAL_MSG)
+            .build()
+    }
+
+    /**
      * Notifies user about [Notification]
      */
     fun notify(id: String?, notification: Notification) {
@@ -93,6 +106,10 @@ class NotificationManager @Inject constructor(
         }
     }
 
+    fun notifyCriticalMessage(msg: String) {
+        notify(System.currentTimeMillis().toString(), getNotificationForCriticalMessage(msg))
+    }
+
     companion object {
         // Must be unique per package
         private const val DEFAULT_CHANNEL_ID = BuildConfig.APPLICATION_ID + "DEFAULT_CHANNEL_ID"
@@ -100,6 +117,7 @@ class NotificationManager @Inject constructor(
 
         const val GROUP_ID_UPLOAD_NEW_MSG = "GROUP_ID_UPLOAD_NEW_MSG"
         const val GROUP_ID_NEW_MSG_FROM_CHILD = "GROUP_ID_NEW_MSG_FROM_CHILD"
+        const val GROUP_ID_CRITICAL_MSG = "GROUP_ID_CRITICAL_MSG"
     }
 
 

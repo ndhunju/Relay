@@ -9,7 +9,6 @@ import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
 import com.ndhunju.relay.data.ChildSmsInfo
 import com.ndhunju.relay.service.AnalyticsManager
-import com.ndhunju.relay.ui.messages.Message
 import com.ndhunju.relay.ui.parent.Child
 import com.ndhunju.relay.util.CurrentUser
 import com.ndhunju.relay.util.User
@@ -156,6 +155,7 @@ class ApiInterfaceFireStoreImpl(
 
     }
 
+    @Deprecated("See parent message")
     override suspend fun postPairWithChild(
         childEmailAddress: String,
         pairingCode: String
@@ -359,27 +359,22 @@ class ApiInterfaceFireStoreImpl(
     /**
      * Pushes [message] to the cloud database.
      */
-    override suspend fun postMessage(message: Message): Result<Void> {
+    override suspend fun postMessage(message: MessageEntry): Result<Void> {
 
         if (currentUser.isUserSignedIn().not()) {
             return Result.Failure(UserSignedOutException("User is not signed in."))
         }
 
-        val userId = currentUser.user.id
-        // Write a message to the database
-        // TODO: Nikesh - Also, encrypt the messages before sending it with a key from the user
-        val newMessage = hashMapOf(
-            MessageEntry.PayLoad to gson.toJson(message),
-            MessageEntry.SenderUserId to userId
-        )
-
         return try {
-            val messageIdInServer = messageCollection.add(newMessage).await().id
+            val messageIdInServer = messageCollection.add(message).await().id
+            message.idInServer = messageIdInServer
             // Store all the parent Ids as fetcherUserIds that needs to fetch this message
             // before it could be deleted from the database
             messageFetcherCollection.add(hashMapOf(
                 MessageFetcher.MessageId to messageIdInServer,
-                MessageFetcher.FetcherUserIds to gson.toJson(currentUser.user.parentUserIds)
+                MessageFetcher.FetcherUserIds to gson.toJson(
+                    currentUser.user.getParentUsers().map { it.id }
+                )
             ))
             Result.Success()
         } catch (ex: Exception) {

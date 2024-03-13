@@ -76,7 +76,6 @@ class AppModule(private val application: Application) {
         return ApiInterfaceFireStoreImpl(
             providesGson(),
             providesCurrentUser(),
-            provideEncryptionService(),
             analyticsManager
         )
     }

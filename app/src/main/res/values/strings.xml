@@ -123,6 +123,8 @@
     <!-- Notification -->
     <!-- Title used for notification shown when uploading new messages -->
     <string name="notification_uploading_new_messages">Uploading new message</string>
+    <!-- Title used for notification shown when a child user's key is wrong or obsolete -->
+    <string name="notification_invalid_encryption_key">Encryption key for child user %1$s is wrong or has expired. Please update it.</string>
 
     <!-- AddChildEncryptionKeyByScanningQrCode Screen -->
     <!-- Title of a screen that allows user to scan barcode -->
