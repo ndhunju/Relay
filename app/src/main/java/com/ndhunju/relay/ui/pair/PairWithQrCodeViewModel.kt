@@ -24,7 +24,7 @@ class PairWithQrCodeViewModel(
     }
 
     fun startPairingWithChildUser(barcode: String) = flow {
-        emit(Result.Pending)
+        emit(Result.Pending())
         try {
             val encryptionKeyInfo = getEncryptionInfo(barcode)
             if (encryptionKeyInfo.isValid()) {

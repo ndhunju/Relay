@@ -8,9 +8,9 @@ import com.ndhunju.relay.api.Result
 import com.ndhunju.relay.data.room.TypeConverters
 import java.lang.reflect.Type
 
-class ResultSerializer: JsonSerializer<Result> {
+class ResultSerializer: JsonSerializer<Result<Void>> {
     override fun serialize(
-        src: Result?,
+        src: Result<Void>?,
         typeOfSrc: Type?,
         context: JsonSerializationContext?
     ): JsonElement {

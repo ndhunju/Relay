@@ -16,5 +16,5 @@ data class SmsInfo(
     val idInAndroidOsTable: String,
     val threadId: String,
     val date: Long,
-    val syncStatus: Result?
+    val syncStatus: Result<Void>?
 )

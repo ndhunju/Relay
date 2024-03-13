@@ -7,12 +7,12 @@ import com.ndhunju.relay.api.Result
 import com.ndhunju.relay.data.room.TypeConverters
 import java.lang.reflect.Type
 
-class ResultDeserializer: JsonDeserializer<Result?> {
+class ResultDeserializer: JsonDeserializer<Result<Void>?> {
     override fun deserialize(
         json: JsonElement?,
         typeOfT: Type?,
         context: JsonDeserializationContext?
-    ): Result? {
+    ): Result<Void>? {
         return if (json == null || json.toString().isEmpty() || json.toString() == "null")
             null
         else

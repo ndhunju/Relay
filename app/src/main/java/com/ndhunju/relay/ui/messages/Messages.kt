@@ -20,7 +20,7 @@ import com.ndhunju.relay.util.dateFormat
 @Composable
 fun MessageListItemPreview() {
     MessageListItem(
-        message = mockMessages.first().copy(syncStatus = Result.Success("")),
+        message = mockMessages.first().copy(syncStatus = Result.Success()),
         onClick = {}
     )
 }
@@ -113,7 +113,7 @@ data class Message(
      * Null means this instance of the Message/Sms was sent before our app was installed.
      * So we never pushed is to the cloud database. In terms of UI, we should hide the sync icon.
      * **/
-    var syncStatus: Result? = null,
+    var syncStatus: Result<Void>? = null,
     val extra: String? = null
 ) {
     fun getFormattedTime(): String {

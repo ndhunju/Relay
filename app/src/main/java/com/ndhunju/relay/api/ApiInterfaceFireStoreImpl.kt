@@ -57,11 +57,11 @@ class ApiInterfaceFireStoreImpl(
         phone: String?,
         deviceId: String?,
         pushNotificationToken: String?,
-    ): Result {
+    ): Result<String> {
         val newUser = makeMapForUserCollection(name, email, phone, deviceId, pushNotificationToken)
 
         val userWithEmailExits = userCollection
-            .whereEqualTo(User.Email, email)
+            .whereEqualTo(UserEntry.Email, email)
             .get().await().documents.isNotEmpty()
 
         if (userWithEmailExits) {
@@ -85,7 +85,7 @@ class ApiInterfaceFireStoreImpl(
     override suspend fun putUser(
         name: String?,
         phone: String?,
-    ): Result {
+    ): Result<Void> {
         // If null is passed, use existing values
         val finalName = name ?: currentUser.user.name
         val finalPhone = phone ?: currentUser.user.phone
@@ -112,18 +112,21 @@ class ApiInterfaceFireStoreImpl(
         deviceId: String? = null,
         pushNotificationToken: String? = null
     ) = hashMapOf(
-        User.Name to name,
-        User.Email to email,
-        User.Phone to phone,
-        User.DeviceId to deviceId,
-        User.PushNotificationToken to pushNotificationToken
+        UserEntry.Name to name,
+        UserEntry.Email to email,
+        UserEntry.Phone to phone,
+        UserEntry.DeviceId to deviceId,
+        UserEntry.PushNotificationToken to pushNotificationToken
     ).filter {
         // Don't include in the map if the value is null as
         // Firebase overrides existing value with null
         it.value?.isNotEmpty() == true
     }
 
-    override suspend fun postPairWithParent(childUserId: String, parentEmailAddress: String): Result {
+    override suspend fun postPairWithParent(
+        childUserId: String,
+        parentEmailAddress: String
+    ): Result<String> {
         // TODO: Nikesh - check if user has already paired with 3 parents
         // Check that such parent email address already exists
         return try {
@@ -153,7 +156,10 @@ class ApiInterfaceFireStoreImpl(
 
     }
 
-    override suspend fun postPairWithChild(childEmailAddress: String, pairingCode: String): Result {
+    override suspend fun postPairWithChild(
+        childEmailAddress: String,
+        pairingCode: String
+    ): Result<String> {
         // TODO: Nikesh - check if user has already paired with 3 parents
         return try {
             val queryByEmail = userCollection
@@ -178,7 +184,7 @@ class ApiInterfaceFireStoreImpl(
 
     }
 
-    override suspend fun getChildUsers(parentUserId: String): Result {
+    override suspend fun getChildUsers(parentUserId: String): Result<List<Child>> {
         return try {
             // Fetch the list of child user ids for passed parent
             val childUserIds = parentChildCollection
@@ -196,7 +202,7 @@ class ApiInterfaceFireStoreImpl(
                     .get()
                     .await()
                     .documents.first()
-                    .get(User.Email) as String
+                    .get(UserEntry.Email) as String
                 Child(childUserId, email)
             }
 
@@ -207,7 +213,7 @@ class ApiInterfaceFireStoreImpl(
 
     }
 
-    override suspend fun getParentUsers(childUserId: String): Result {
+    override suspend fun getParentUsers(childUserId: String): Result<List<User>> {
         return try {
             // Fetch the list of child user ids for passed parent
             val parentUserIds = parentChildCollection
@@ -225,7 +231,7 @@ class ApiInterfaceFireStoreImpl(
                     .get()
                     .await()
                     .documents.first()
-                    .get(User.Email) as String
+                    .get(UserEntry.Email) as String
                 User(parentUserId, email)
             }
 
@@ -236,36 +242,29 @@ class ApiInterfaceFireStoreImpl(
 
     }
 
-    override suspend fun getMessagesFromChildUsers(childUserIds: List<String>): Result {
-        val childSmsInfoList = mutableListOf<ChildSmsInfo>()
-        try {
-            for (childUserId2 in childUserIds) {
-                val childSmsInfo = messageCollection
-                    .whereEqualTo(MessageCollection.SenderUserId, childUserId2)
-                    .get()
-                    .await()
-                    .documents
-                    .map { doc ->
-                        gson.fromJson(
-                            doc.get(MessageCollection.PayLoad) as String,
-                            ChildSmsInfo::class.java
-                        ).apply {
-                            childUserId = childUserId2
-                            idInServerDb = doc.id
-                        }
+    override suspend fun getMessagesFromChildUser(
+        childUserId: String
+    ): Result<List<MessageEntry>> {
+        return try {
+            val messageEntries = messageCollection
+                .whereEqualTo(MessageEntry.SenderUserId, childUserId)
+                .get()
+                .await()
+                .documents
+                .mapNotNull { doc ->
+                    doc.toObject(MessageEntry::class.java)?.apply {
+                        idInServer = doc.id
                     }
-
-                childSmsInfoList.addAll(childSmsInfo)
-            }
-            return Result.Success(childSmsInfoList)
+                }
+            Result.Success(messageEntries)
         } catch (ex: Exception) {
-            return Result.Failure(ex)
+            Result.Failure(ex)
         }
     }
 
     override suspend fun postDidSaveFetchedMessages(
         childSmsInfoList: List<ChildSmsInfo>
-    ): Result {
+    ): Result<Void> {
         return try {
             val failedMessageIds = arrayListOf<String>()
             childSmsInfoList.forEach{ childSmsInfo ->
@@ -360,7 +359,7 @@ class ApiInterfaceFireStoreImpl(
     /**
      * Pushes [message] to the cloud database.
      */
-    override suspend fun postMessage(message: Message): Result {
+    override suspend fun postMessage(message: Message): Result<Void> {
 
         if (currentUser.isUserSignedIn().not()) {
             return Result.Failure(UserSignedOutException("User is not signed in."))
@@ -370,8 +369,8 @@ class ApiInterfaceFireStoreImpl(
         // Write a message to the database
         // TODO: Nikesh - Also, encrypt the messages before sending it with a key from the user
         val newMessage = hashMapOf(
-            MessageCollection.PayLoad to gson.toJson(message),
-            MessageCollection.SenderUserId to userId
+            MessageEntry.PayLoad to gson.toJson(message),
+            MessageEntry.SenderUserId to userId
         )
 
         return try {
@@ -389,7 +388,7 @@ class ApiInterfaceFireStoreImpl(
         }
     }
 
-    override suspend fun postUserPushNotificationToken(token: String): Result {
+    override suspend fun postUserPushNotificationToken(token: String): Result<Void> {
         if (currentUser.isUserSignedIn().not()) {
             return Result.Failure(UserSignedOutException("User is not signed in."))
         }
@@ -432,17 +431,9 @@ class ApiInterfaceFireStoreImpl(
     }
 
     /**
-     * Represent fields of Message collection
-     */
-    object MessageCollection {
-        const val SenderUserId = "SenderUserId"
-        const val PayLoad = "PayLoad"
-    }
-
-    /**
      * Represent fields of User collection
      */
-    object User {
+    object UserEntry {
         const val Name = "Name"
         const val Phone = "Phone"
         const val DeviceId = "DeviceId"

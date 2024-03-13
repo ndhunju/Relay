@@ -25,7 +25,7 @@ import com.ndhunju.relay.ui.messages.Message
 import com.ndhunju.relay.ui.toSmsInfo
 import com.ndhunju.relay.util.CurrentUser
 import com.ndhunju.relay.util.checkIfPermissionGranted
-import kotlinx.coroutines.flow.first
+import kotlinx.coroutines.flow.firstOrNull
 import java.util.concurrent.TimeUnit
 import kotlin.String
 import kotlin.getValue
@@ -99,12 +99,12 @@ class UploadNewMessagesWorker(
             return Result.success()
         }
 
-        var result: RelayResult = Success()
+        var result: RelayResult<Void> = Success()
         val uploadStartTime = System.currentTimeMillis()
         // Retrieve previously saved uploadStartTime
         val lastUploadStartTime = keyValuePersistService.retrieve(
             KEY_LAST_UPLOAD_TIME
-        ).first()?.toLong() ?: uploadStartTime
+        ).firstOrNull()?.toLong() ?: uploadStartTime
 
         val processedMessages = mutableListOf<Message>()
 
@@ -132,7 +132,7 @@ class UploadNewMessagesWorker(
 
     }
 
-    private suspend fun processMessage(messageFromAndroidDb: Message): RelayResult {
+    private suspend fun processMessage(messageFromAndroidDb: Message): RelayResult<Void> {
         // Store the message on local database in case uploading fails
         val smsInfoToInsert = messageFromAndroidDb.toSmsInfo()
         val idOfInsertedSmsInfo = smsInfoRepository.insertSmsInfo(smsInfoToInsert)

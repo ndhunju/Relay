@@ -61,8 +61,8 @@ class DataStoreKeyValuePersistService(
         }
     }
 
-    override suspend fun retrieve(key: String) = flow<String?> {
-        context.dataStore.data.catch { exception ->
+    override suspend fun retrieve(key: String): Flow<String?> {
+        return context.dataStore.data.catch { exception ->
             if (exception is IOException) {
                 emit(emptyPreferences())
             } else {

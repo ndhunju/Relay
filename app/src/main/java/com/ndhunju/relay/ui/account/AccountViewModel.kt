@@ -144,9 +144,9 @@ class AccountViewModel(
             phone = phone.value
         )
         when (result) {
-            Result.Pending -> {}
+            is Result.Pending -> {}
             is Result.Success -> {
-                val userId = (result.data as? String)
+                val userId = result.data
                     ?: throw RuntimeException("User id not provided.")
                 // Update local copy of user
                 user = createUserFromCurrentState(userId)
@@ -185,7 +185,7 @@ class AccountViewModel(
         )
 
         when (result) {
-            Result.Pending -> showProgress.value = true
+            is Result.Pending -> showProgress.value = true
             is Result.Success -> {
                 // Update local copy of user
                 user = createUserFromCurrentState()

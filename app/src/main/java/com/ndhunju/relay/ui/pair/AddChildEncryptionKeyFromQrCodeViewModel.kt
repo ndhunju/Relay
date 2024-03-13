@@ -23,7 +23,7 @@ class AddChildEncryptionKeyFromQrCodeViewModel(
     }
 
     fun addChildEncryptionKey(barcode: String) = flow {
-        emit(Result.Pending)
+        emit(Result.Pending<Void>())
         try {
             val info = tryGettingPairingInfo(barcode)
             if (info.isValid(info.childEmail, info.encryptionKey)) {

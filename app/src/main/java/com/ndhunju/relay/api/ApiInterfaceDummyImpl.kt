@@ -2,11 +2,13 @@ package com.ndhunju.relay.api
 
 import com.ndhunju.relay.data.ChildSmsInfo
 import com.ndhunju.relay.ui.messages.Message
+import com.ndhunju.relay.ui.parent.Child
+import com.ndhunju.relay.util.User
 
 /**
  * Class with dummy implementation of [ApiInterface]
  */
-object ApiInterfaceDummyImpl: ApiInterface {
+object ApiInterfaceDummyImpl : ApiInterface {
 
     override suspend fun postUser(
         name: String?,
@@ -14,47 +16,53 @@ object ApiInterfaceDummyImpl: ApiInterface {
         phone: String?,
         deviceId: String?,
         pushNotificationToken: String?
-    ): Result {
+    ): Result<String> {
         return returnFailure()
     }
 
-    override suspend fun putUser(name: String?, phone: String?): Result {
+    override suspend fun putUser(name: String?, phone: String?): Result<Void> {
         return returnFailure()
     }
 
-    override suspend fun postPairWithParent(childUserId: String, parentEmailAddress: String): Result {
+    override suspend fun postPairWithParent(
+        childUserId: String,
+        parentEmailAddress: String
+    ): Result<String> {
         return returnFailure()
     }
 
-    override suspend fun postPairWithChild(childEmailAddress: String, pairingCode: String): Result {
+    override suspend fun postPairWithChild(
+        childEmailAddress: String,
+        pairingCode: String
+    ): Result<String> {
         return returnFailure()
     }
 
-    override suspend fun getParentUsers(childUserId: String): Result {
+    override suspend fun getParentUsers(childUserId: String): Result<List<User>> {
         return returnFailure()
     }
 
-    override suspend fun getChildUsers(parentUserId: String): Result {
+    override suspend fun getChildUsers(parentUserId: String): Result<List<Child>> {
         return returnFailure()
     }
 
-    override suspend fun getMessagesFromChildUsers(childUserIds: List<String>): Result {
+    override suspend fun getMessagesFromChildUser(childUserId: String): Result<List<MessageEntry>> {
         return returnFailure()
     }
 
-    override suspend fun postDidSaveFetchedMessages(childSmsInfoList: List<ChildSmsInfo>): Result {
+    override suspend fun postDidSaveFetchedMessages(childSmsInfoList: List<ChildSmsInfo>): Result<Void> {
         return returnFailure()
     }
 
-    override suspend fun postMessage(message: Message): Result {
+    override suspend fun postMessage(message: Message): Result<Void> {
         return returnFailure()
     }
 
-    override suspend fun postUserPushNotificationToken(token: String): Result {
+    override suspend fun postUserPushNotificationToken(token: String): Result<Void> {
         return returnFailure()
     }
 
-    private fun returnFailure(): Result {
+    private fun <T> returnFailure(): Result<T> {
         return Result.Failure(Throwable("This is a dummy implementation"))
     }
 }

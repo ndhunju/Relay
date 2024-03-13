@@ -41,7 +41,7 @@ fun SearchTextField(onSearchTextChanged: (String) -> Unit) {
 }
 
 @Composable
-fun SyncStatusIcon(syncStatus: Result?, modifier: Modifier = Modifier) {
+fun SyncStatusIcon(syncStatus: Result<Void>?, modifier: Modifier = Modifier) {
     Icon(
         painter = painterResource(R.drawable.baseline_sync_status_24),
         contentDescription = stringResource(R.string.image_description_sync_status_logo),
