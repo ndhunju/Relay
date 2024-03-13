@@ -124,7 +124,13 @@
     <!-- Title used for notification shown when uploading new messages -->
     <string name="notification_uploading_new_messages">Uploading new message</string>
     <!-- Title used for notification shown when a child user's key is wrong or obsolete -->
-    <string name="notification_invalid_encryption_key">Encryption key for child user %1$s is wrong or has expired. Please update it.</string>
+    <string name="notification_invalid_encryption_key">Encryption key for child user %1$s is missing, wrong or has expired. Please update it.</string>
+    <!-- Channel name show in a text field from the OS. Most likely one line long only -->
+    <string name="channel_name_critical_notification">Critical Notification</string>
+    <!-- Channel name show in a text field from the OS. Most likely one line long only -->
+    <string name="channel_name_message_upload_status">Message Upload Status</string>
+    <!-- Channel name show in a text field from the OS. Most likely one line long only -->
+    <string name="channel_name_new_message_notification">New Message Notification</string>
 
     <!-- AddChildEncryptionKeyByScanningQrCode Screen -->
     <!-- Title of a screen that allows user to scan barcode -->
