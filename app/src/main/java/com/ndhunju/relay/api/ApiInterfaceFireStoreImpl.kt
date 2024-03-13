@@ -365,8 +365,14 @@ class ApiInterfaceFireStoreImpl(
             return Result.Failure(UserSignedOutException("User is not signed in."))
         }
 
+        val mapOfMessageField = mapOf(
+            MessageEntry.SenderUserId to message.senderUserId,
+            MessageEntry.SentDate to message.sentDate,
+            MessageEntry.PayLoad to message.payLoad
+        )
+
         return try {
-            val messageIdInServer = messageCollection.add(message).await().id
+            val messageIdInServer = messageCollection.add(mapOfMessageField).await().id
             message.idInServer = messageIdInServer
             // Store all the parent Ids as fetcherUserIds that needs to fetch this message
             // before it could be deleted from the database
