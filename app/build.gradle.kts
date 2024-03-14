@@ -100,7 +100,7 @@ dependencies {
     implementation("androidx.fragment:fragment-ktx:1.6.2")
 
     // Import the BoM for the Firebase platform
-    implementation(platform("com.google.firebase:firebase-bom:32.7.0"))
+    implementation(platform("com.google.firebase:firebase-bom:32.7.4"))
     // Declare the dependency for the Cloud Firestore library
     // When using the BoM, you don't specify versions in Firebase library dependencies
     implementation("com.google.firebase:firebase-firestore")
@@ -113,8 +113,8 @@ dependencies {
     implementation("com.google.firebase:firebase-messaging:23.4.1")
 
     // Dagger
-    implementation("com.google.dagger:dagger:2.50")
-    ksp("com.google.dagger:dagger-compiler:2.50")
+    implementation("com.google.dagger:dagger:2.51")
+    ksp("com.google.dagger:dagger-compiler:2.51")
 
     //Room
     implementation("androidx.room:room-runtime:${rootProject.extra["room_version"]}")
@@ -143,7 +143,7 @@ dependencies {
     androidTestImplementation("androidx.compose.ui:ui-test-junit4")
     debugImplementation("androidx.compose.ui:ui-tooling")
     debugImplementation("androidx.compose.ui:ui-test-manifest")
-    testImplementation("org.mockito:mockito-core:2.28.2")
+    testImplementation("org.mockito:mockito-core:5.11.0")
     testImplementation("org.jetbrains.kotlinx:kotlinx-coroutines-test")
 
 }
