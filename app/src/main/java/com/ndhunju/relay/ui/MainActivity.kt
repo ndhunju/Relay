@@ -41,7 +41,7 @@ class MainActivity : BaseActivity() {
             // Create and register the SMS broadcast receiver
         } else {
             // Permissions denied
-            viewModel.state.value.showErrorMessageForPermissionDenied = true
+            viewModel.state.value.showErrorMessageForPermissionDenied.value = true
         }
     }
 

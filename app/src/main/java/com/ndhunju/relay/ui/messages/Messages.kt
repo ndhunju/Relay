@@ -29,10 +29,10 @@ fun MessageListItemPreview() {
 fun MessageListItem(
     modifier: Modifier = Modifier,
     message: Message,
-    onClick: (Message) -> Unit
+    onClick: ((Message) -> Unit)? = null
 ) {
     ConstraintLayout(modifier = modifier
-        .clickable { onClick(message) }
+        .clickable { onClick?.invoke(message) }
     ) {
         val (divider, from, body, date, status) = createRefs()
         val itemVerticalPadding = LocalDimens.current.itemPaddingVertical

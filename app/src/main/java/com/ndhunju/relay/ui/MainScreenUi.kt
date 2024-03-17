@@ -35,8 +35,10 @@ import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.rememberDrawerState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.State
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
@@ -53,17 +55,17 @@ import com.ndhunju.relay.ui.messages.Message
 import com.ndhunju.relay.ui.messages.MessageListItem
 import com.ndhunju.relay.ui.theme.LocalDimens
 import com.ndhunju.relay.util.composibles.DynamicLauncherIconImage
+import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.launch
 
 @Preview
 @Composable
-fun MainScreenPreview() {
-    // Fixme: Preview
-    //MainScreen(viewModel = MainViewModel())
+fun MainContentPreview() {
+    MainContent(viewState = MutableStateFlow(MainScreenUiState(mockMessages)).collectAsState())
 }
 
 @Composable
-fun MainScreen(viewModel: MainViewModel) {
+fun MainScreen(viewModel: MainViewModel?) {
     val drawerState = rememberDrawerState(initialValue = DrawerValue.Closed)
     val coroutineScope = rememberCoroutineScope()
 
@@ -75,14 +77,14 @@ fun MainScreen(viewModel: MainViewModel) {
             MainDrawerContent(
                 navigationItems = navigationItems,
                 onClickNavItem = {
-                    viewModel.onClickNavItem(it)
+                    viewModel?.onClickNavItem?.invoke(it)
                     coroutineScope.launch { drawerState.close() }
                 },
                 onClickLauncherIcon = {
                     onClickLauncherIconCount++
                     if (onClickLauncherIconCount > 3) {
                         onClickLauncherIconCount = 0
-                        viewModel.doOpenDebugFragment?.invoke()
+                        viewModel?.doOpenDebugFragment?.invoke()
                         coroutineScope.launch { drawerState.close() }
                     }
                 }
@@ -90,9 +92,11 @@ fun MainScreen(viewModel: MainViewModel) {
 
         }
     ) {
-        MainContent(viewModel = viewModel, onClickMenuOrUpIcon = {
-            coroutineScope.launch { drawerState.open() }
-        })
+        MainContent(
+            viewModel = viewModel,
+            uiState = viewModel?.state?.collectAsStateWithLifecycle(),
+            onClickMenuOrUpIcon = { coroutineScope.launch { drawerState.open() } }
+        )
     }
 }
 
@@ -141,15 +145,16 @@ fun MainDrawerContent(
 
 @Composable
 fun MainContent(
-    viewModel: MainViewModel,
+    viewModel: MainViewModel? = null,
+    uiState: State<MainScreenUiState>?,
     onClickMenuOrUpIcon: () -> Unit
 ) {
     MainContent(
-        viewState = viewModel.state.collectAsStateWithLifecycle().value,
-        viewModel.onClickSearchIcon,
-        viewModel.onSearchTextChanged,
-        viewModel.onClickGrantPermission,
-        viewModel.onClickMessage,
+        viewState = uiState,
+        viewModel?.onClickSearchIcon,
+        viewModel?.onSearchTextChanged,
+        viewModel?.onClickGrantPermission,
+        viewModel?.onClickMessage,
         onClickMenuOrUpIcon
     )
 }
@@ -157,12 +162,12 @@ fun MainContent(
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
 fun MainContent(
-    viewState: MainScreenUiState,
-    onClickSearchIcon: () -> Unit,
-    onSearchTextChanged: (String) -> Unit,
-    onClickGrantPermission: () -> Unit,
-    onClickMessage: (Message) -> Unit,
-    onClickMenuOrUpIcon: () -> Unit
+    viewState: State<MainScreenUiState>?,
+    onClickSearchIcon: (() -> Unit)? = null,
+    onSearchTextChanged: ((String) -> Unit)? = null,
+    onClickGrantPermission: (() -> Unit)? = null,
+    onClickMessage: ((Message) -> Unit)? = null,
+    onClickMenuOrUpIcon: (() -> Unit)? = null
 ) {
     val composeCoroutineScope = rememberCoroutineScope()
     val state = rememberLazyListState()
@@ -173,13 +178,13 @@ fun MainContent(
     Scaffold(
         topBar = {
             MainScreenAppBar(
-                title = viewState.title,
-                viewState.showSearchTextField,
-                viewState.showUpIcon,
+                title = viewState?.value?.title,
+                viewState?.value?.showSearchTextField,
+                viewState?.value?.showUpIcon,
                 // Put all callbacks inside lambda so that recomposition
                 // is not triggered when reference to those callback changes?
-                { onClickSearchIcon() },
-                { onSearchTextChanged(it) },
+                { onClickSearchIcon?.invoke() },
+                { onSearchTextChanged?.invoke(it) },
                 onClickMenuOrUpIcon
             )
         },
@@ -201,7 +206,7 @@ fun MainContent(
         }
 
     ) { innerPadding ->
-        if (viewState.showErrorMessageForPermissionDenied) {
+        if (viewState?.value?.showErrorMessageForPermissionDenied?.value == true) {
             Column(
                 modifier = Modifier
                     .padding(innerPadding)
@@ -215,7 +220,7 @@ fun MainContent(
                     textAlign = TextAlign.Center
                 )
                 Button(
-                    onClick = { onClickGrantPermission() },
+                    onClick = { onClickGrantPermission?.invoke() },
                     modifier = Modifier.padding(16.dp)
                     ) {
                     Text(text = stringResource(R.string.grant_permissions))
@@ -230,7 +235,7 @@ fun MainContent(
                 state = state,
                 content = {
                     itemsIndexed(
-                        viewState.lastMessageList,
+                        viewState?.value?.lastMessageList ?: emptyList(),
                         // Pass key for better performance like setHasStableIds
                         key = { _, item -> item.threadId },
                     ) { _: Int, message: Message ->
@@ -240,36 +245,36 @@ fun MainContent(
                             onClickMessage
                         )
                     }
-                })
+                }
+            )
         }
-
     }
 }
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun MainScreenAppBar(
-    title: State<String>,
-    showSearchTextField: Boolean = false,
-    showUpIcon: Boolean = false,
-    onClickSearchIcon: () -> Unit = {},
-    onSearchTextChanged: (String) -> Unit = {},
-    onClickMenuOrUpIcon: () -> Unit = {}
+    title: State<String>? = mutableStateOf(""),
+    showSearchTextField: State<Boolean>? = mutableStateOf(false),
+    showUpIcon: State<Boolean>? = mutableStateOf(false),
+    onClickSearchIcon: (() -> Unit)? = {},
+    onSearchTextChanged: ((String) -> Unit)? = {},
+    onClickMenuOrUpIcon: (() -> Unit)? = {}
 ) {
     TopAppBar(
         modifier = Modifier
             .fillMaxWidth()
             .wrapContentHeight(align = Alignment.Top),
         navigationIcon = {
-            if (showUpIcon) {
-                IconButton(onClick = onClickMenuOrUpIcon) {
+            if (showUpIcon?.value == true) {
+                IconButton(onClick = onClickMenuOrUpIcon ?: {}) {
                     Icon(
                         imageVector = Icons.Default.ArrowBack,
                         contentDescription = stringResource(id = R.string.image_description_go_back)
                     )
                 }
             } else {
-                IconButton(onClick = onClickMenuOrUpIcon) {
+                IconButton(onClick = onClickMenuOrUpIcon ?: {}) {
                     Icon(
                         imageVector = Icons.Default.Menu,
                         contentDescription = stringResource(
@@ -281,15 +286,15 @@ fun MainScreenAppBar(
         },
         title = {
             Row (verticalAlignment = Alignment.CenterVertically) {
-                if (showSearchTextField) {
+                if (showSearchTextField?.value == true) {
                     SearchTextField(onSearchTextChanged = onSearchTextChanged)
                 } else {
-                    Text(text = title.value)
+                    Text(text = title?.value ?: "")
                 }
             }
         },
         actions = {
-            IconButton(onClick = onClickSearchIcon ) {
+            IconButton(onClick = onClickSearchIcon ?: {} ) {
                 Icon(
                     imageVector = Icons.Rounded.Search,
                     contentDescription = stringResource(id = R.string.image_description_search)

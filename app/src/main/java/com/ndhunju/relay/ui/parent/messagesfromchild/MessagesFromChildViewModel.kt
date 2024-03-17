@@ -1,5 +1,6 @@
 package com.ndhunju.relay.ui.parent.messagesfromchild
 
+import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.ndhunju.relay.api.ApiInterface
@@ -16,13 +17,13 @@ class MessagesFromChildViewModel(
     private val childSmsInfoRepository: ChildSmsInfoRepository
 ): ViewModel() {
 
-    private var _state = MutableStateFlow(MainScreenUiState(showUpIcon = true))
+    private var _state = MutableStateFlow(MainScreenUiState(showUpIcon = mutableStateOf(true)))
     val state: StateFlow<MainScreenUiState>
         get() { return _state }
 
     // UI Events
     val onClickSearchIcon = {
-        _state.value.showSearchTextField = !_state.value.showSearchTextField
+        _state.value.showSearchTextField.value = !_state.value.showSearchTextField.value
     }
 
     val onSearchTextChanged: (String) -> Unit = {}

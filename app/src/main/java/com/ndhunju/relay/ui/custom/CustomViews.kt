@@ -27,12 +27,12 @@ import com.ndhunju.relay.R
 import com.ndhunju.relay.api.Result
 
 @Composable
-fun SearchTextField(onSearchTextChanged: (String) -> Unit) {
+fun SearchTextField(onSearchTextChanged: ((String) -> Unit)? = null) {
     Row(
         modifier = Modifier.padding(0.dp, 8.dp),
         verticalAlignment = Alignment.CenterVertically
     ) {
-        TextField(value = "", onValueChange = onSearchTextChanged)
+        TextField(value = "", onValueChange = onSearchTextChanged ?: {})
         Icon(
             Icons.Rounded.Search,
             contentDescription = stringResource(id = R.string.image_description_search)

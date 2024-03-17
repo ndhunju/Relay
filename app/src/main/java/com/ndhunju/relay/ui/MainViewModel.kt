@@ -1,10 +1,9 @@
 package com.ndhunju.relay.ui
 
 import androidx.compose.runtime.MutableState
-import androidx.compose.runtime.getValue
+import androidx.compose.runtime.State
 import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.setValue
 import androidx.compose.runtime.snapshots.SnapshotStateList
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModel
@@ -48,7 +47,7 @@ class MainViewModel(
 
     // UI Events
     val onClickSearchIcon = {
-        _state.value.showSearchTextField = !_state.value.showSearchTextField
+        _state.value.showSearchTextField.value = !_state.value.showSearchTextField.value
     }
 
     val onSearchTextChanged: (String) -> Unit = {}
@@ -110,7 +109,7 @@ class MainViewModel(
         // All permissions granted
         viewModelScope.launch { updateLastMessagesWithCorrectSyncStatus() }
         // Reset this value in case it was set to true earlier
-        state.value.showErrorMessageForPermissionDenied = false
+        state.value.showErrorMessageForPermissionDenied.value = false
     }
 
     private val newMessageObserver = Observer<List<Message>> { newMessages ->
@@ -218,12 +217,14 @@ class MainViewModel(
  */
 data class MainScreenUiState(
     private var lastMessageForEachThread: List<Message> = emptyList(),
-    val showUpIcon: Boolean = false
+    val showUpIcon: State<Boolean> = mutableStateOf(false)
 ) {
     var lastMessageList = mutableStateListOf<Message>()
     // Note: Compose doesn't track inner fields for change unless we use mutableStateOf
-    var showErrorMessageForPermissionDenied: Boolean by mutableStateOf(false)
-    var showSearchTextField: Boolean by mutableStateOf(false)
+    var showErrorMessageForPermissionDenied = mutableStateOf(false)
+    // var showSearchTextField: Boolean by mutableStateOf(false)
+    var showSearchTextField = mutableStateOf(false)
+
     var title = mutableStateOf("")
 
     init {
