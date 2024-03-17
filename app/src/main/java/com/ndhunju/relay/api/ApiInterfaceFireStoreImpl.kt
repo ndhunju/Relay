@@ -8,7 +8,7 @@ import com.google.firebase.ktx.Firebase
 import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
 import com.ndhunju.relay.data.ChildSmsInfo
-import com.ndhunju.relay.service.AnalyticsManager
+import com.ndhunju.relay.service.analyticsprovider.AnalyticsProvider
 import com.ndhunju.relay.ui.parent.Child
 import com.ndhunju.relay.util.CurrentUser
 import com.ndhunju.relay.util.User
@@ -23,7 +23,7 @@ private val TAG = ApiInterfaceFireStoreImpl::class.simpleName
 class ApiInterfaceFireStoreImpl(
     private val gson: Gson,
     private val currentUser: CurrentUser,
-    private val analyticsManager: AnalyticsManager
+    private val analyticsProvider: AnalyticsProvider
 ) : ApiInterface {
 
     private var userId: String
@@ -73,7 +73,7 @@ class ApiInterfaceFireStoreImpl(
             userId = userCollection.add(newUser).await().id
             Result.Success(userId)
         } catch (ex: Exception) {
-            analyticsManager.logEvent("didFailToCreateUser", ex.message)
+            analyticsProvider.logEvent("didFailToCreateUser", ex.message)
             Result.Failure(ex)
         }
     }
@@ -95,7 +95,7 @@ class ApiInterfaceFireStoreImpl(
             ).await()
             Result.Success()
         } catch (ex: Exception) {
-            analyticsManager.logEvent("didFailToUpdateUser", ex.message)
+            analyticsProvider.logEvent("didFailToUpdateUser", ex.message)
             Result.Failure(ex)
         }
     }
@@ -282,7 +282,7 @@ class ApiInterfaceFireStoreImpl(
 
             if (failedMessageIds.isNotEmpty()) {
                 // Log all the failed transactions
-                analyticsManager.logEvent(
+                analyticsProvider.logEvent(
                     "didFailToNotifyFetchedMessageForSome",
                     "${failedMessageIds.size}/${childSmsInfoList.size}"
                 )
@@ -387,7 +387,7 @@ class ApiInterfaceFireStoreImpl(
             ))
             Result.Success()
         } catch (ex: Exception) {
-            analyticsManager.logEvent("didFailToPushMessage", ex.message)
+            analyticsProvider.logEvent("didFailToPushMessage", ex.message)
             Result.Failure(ex)
         }
     }
@@ -417,7 +417,7 @@ class ApiInterfaceFireStoreImpl(
 
             Result.Success()
         } catch (ex: Exception) {
-            analyticsManager.logEvent("didFailToPostPushNotificationToken", ex.message)
+            analyticsProvider.logEvent("didFailToPostPushNotificationToken", ex.message)
             Result.Failure()
         }
 

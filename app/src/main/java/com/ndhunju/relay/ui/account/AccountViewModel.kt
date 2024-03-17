@@ -10,8 +10,8 @@ import com.ndhunju.relay.R
 import com.ndhunju.relay.api.ApiInterface
 import com.ndhunju.relay.api.EmailAlreadyExistException
 import com.ndhunju.relay.api.Result
-import com.ndhunju.relay.service.AnalyticsManager
 import com.ndhunju.relay.service.AppStateBroadcastService
+import com.ndhunju.relay.service.analyticsprovider.AnalyticsProvider
 import com.ndhunju.relay.util.CurrentUser
 import com.ndhunju.relay.util.User
 import com.ndhunju.relay.util.combine
@@ -26,7 +26,7 @@ import java.util.regex.Pattern
 
 class AccountViewModel(
     private val appStateBroadcastService: AppStateBroadcastService,
-    private var analyticsManager: AnalyticsManager,
+    private var analyticsProvider: AnalyticsProvider,
     private val apiInterface: ApiInterface,
     private var currentUser: CurrentUser,
     private var user: User
@@ -121,7 +121,7 @@ class AccountViewModel(
                     showProgress = showProgress
                 )
             }.catch { throwable ->
-                analyticsManager.logEvent(
+                analyticsProvider.logEvent(
                     "didCatchErrorCreatingAccountScreenUiState",
                     throwable.message
                 )

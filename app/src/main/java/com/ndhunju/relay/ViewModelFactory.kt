@@ -30,7 +30,7 @@ val RelayViewModelFactory: ViewModelProvider.Factory = object : ViewModelProvide
         val childSmsInfoRepository = appComponent.childSmsInfoRepository()
         val currentUser = appComponent.currentUser()
         val workManager = appComponent.workManager()
-        val analyticsManager = appComponent.analyticsManager()
+        val analyticsManager = appComponent.analyticsProvider()
         val appStateBroadcasterService = appComponent.appStateBroadcastService()
         val gson = appComponent.gson()
         with(modelClass) {

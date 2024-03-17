@@ -4,8 +4,8 @@ import com.ndhunju.relay.R
 import com.ndhunju.relay.api.ApiInterface
 import com.ndhunju.relay.api.EmailAlreadyExistException
 import com.ndhunju.relay.api.Result
-import com.ndhunju.relay.service.AnalyticsManager
 import com.ndhunju.relay.service.AppStateBroadcastService
+import com.ndhunju.relay.service.analyticsprovider.AnalyticsProvider
 import com.ndhunju.relay.util.CurrentUser
 import com.ndhunju.relay.util.MainDispatcherRule
 import com.ndhunju.relay.util.User
@@ -38,8 +38,8 @@ class AccountViewModelTest {
         mock(AppStateBroadcastService::class.java)
     }
 
-    private val analyticsManagerMock by lazy {
-        mock(AnalyticsManager::class.java)
+    private val analyticsProviderMock by lazy {
+        mock(AnalyticsProvider::class.java)
     }
 
     private val currentUserMock by lazy {
@@ -54,7 +54,7 @@ class AccountViewModelTest {
     fun setUp() {
         accountViewModel = AccountViewModel(
             appStateBroadcastServiceMock,
-            analyticsManagerMock,
+            analyticsProviderMock,
             apiInterfaceMock,
             currentUserMock,
             userMock

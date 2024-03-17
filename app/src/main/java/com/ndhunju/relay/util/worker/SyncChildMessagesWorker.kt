@@ -10,9 +10,9 @@ import com.ndhunju.relay.api.ApiInterface
 import com.ndhunju.relay.api.Result.*
 import com.ndhunju.relay.data.ChildSmsInfo
 import com.ndhunju.relay.di.AppComponent
-import com.ndhunju.relay.service.AnalyticsManager
 import com.ndhunju.relay.service.EncryptionService
 import com.ndhunju.relay.service.NotificationManager
+import com.ndhunju.relay.service.analyticsprovider.AnalyticsProvider
 import com.ndhunju.relay.util.CurrentUser
 import com.ndhunju.relay.util.User
 import kotlinx.coroutines.Dispatchers
@@ -36,8 +36,8 @@ class SyncChildMessagesWorker(
         appComponent.apiInterface()
     }
 
-    private val analyticsManager: AnalyticsManager by lazy {
-        appComponent.analyticsManager()
+    private val analyticsProvider: AnalyticsProvider by lazy {
+        appComponent.analyticsProvider()
     }
 
     private val currentUser: CurrentUser by lazy {
@@ -125,13 +125,13 @@ class SyncChildMessagesWorker(
 
             return true
         } catch (ex: Exception) {
-            analyticsManager.logEvent("didFailToInsertIntoLocalRepo", ex.message)
+            analyticsProvider.logEvent("didFailToInsertIntoLocalRepo", ex.message)
             return false
         }
     }
 
     private fun returnFailure(throwable: Throwable? = null): Result {
-        analyticsManager.logEvent(
+        analyticsProvider.logEvent(
             "didFailToSyncChildMessage",
             throwable?.message
         )

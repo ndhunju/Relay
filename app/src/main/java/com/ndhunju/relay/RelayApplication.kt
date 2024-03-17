@@ -46,6 +46,6 @@ class RelayApplication: Application() {
     }
 
     private fun setUpAnalyticsManager() {
-        appComponent.analyticsManager().setUserId(appComponent.currentUser().user.id)
+        appComponent.analyticsProvider().setUserId(appComponent.currentUser().user.id)
     }
 }

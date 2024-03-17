@@ -3,6 +3,7 @@ package com.ndhunju.relay.service
 import android.content.Context
 import android.database.Cursor
 import android.provider.Telephony
+import com.ndhunju.relay.service.analyticsprovider.AnalyticsProvider
 import com.ndhunju.relay.ui.messages.Message
 import com.ndhunju.relay.util.getLongForColumn
 import com.ndhunju.relay.util.getStringForColumn
@@ -17,7 +18,7 @@ private val TAG = DeviceSmsReaderService::class.simpleName
 @Singleton
 class DeviceSmsReaderService @Inject constructor(
     private val context: Context,
-    private val analyticsManager: AnalyticsManager,
+    private val analyticsProvider: AnalyticsProvider,
 ) {
 
     private val smsUri = Telephony.Sms.CONTENT_URI
@@ -37,7 +38,7 @@ class DeviceSmsReaderService @Inject constructor(
 
             return fromCursorToMapOfThreadToLastMessage(cursor).map { entry -> entry.value }
         } catch (ex: Exception) {
-            analyticsManager.logEvent("didFailToGetLastMessage", ex.message)
+            analyticsProvider.logEvent("didFailToGetLastMessage", ex.message)
         }
 
         return emptyList()
@@ -76,7 +77,7 @@ class DeviceSmsReaderService @Inject constructor(
         val messages = fromCursorToMessageList(cursor)
 
         if (messages.size > 1) {
-            analyticsManager.logEvent("didFindManyMessageForAddressAndBody", )
+            analyticsProvider.logEvent("didFindManyMessageForAddressAndBody", )
         }
 
         return messages.first()

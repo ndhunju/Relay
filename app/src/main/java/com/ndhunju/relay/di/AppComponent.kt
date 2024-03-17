@@ -6,12 +6,12 @@ import com.ndhunju.relay.service.DeviceSmsReaderService
 import com.ndhunju.relay.data.SmsInfoRepository
 import com.ndhunju.relay.api.ApiInterface
 import com.ndhunju.relay.data.ChildSmsInfoRepository
-import com.ndhunju.relay.service.AnalyticsManager
 import com.ndhunju.relay.service.AppStateBroadcastService
 import com.ndhunju.relay.service.EncryptionService
 import com.ndhunju.relay.service.NotificationManager
 import com.ndhunju.relay.service.SimpleKeyValuePersistService
 import com.ndhunju.relay.service.UserSettingsPersistService
+import com.ndhunju.relay.service.analyticsprovider.AnalyticsProvider
 import com.ndhunju.relay.ui.BaseActivity
 import com.ndhunju.relay.util.CurrentUser
 import dagger.Component
@@ -48,8 +48,7 @@ interface AppComponent {
 
     fun notificationManager(): NotificationManager
 
-    // TODO: Nikesh - Change it to AnalyticsProvider
-    fun analyticsManager(): AnalyticsManager
+    fun analyticsProvider(): AnalyticsProvider
 
     fun gson(): Gson
 

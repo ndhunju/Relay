@@ -17,12 +17,12 @@ import com.ndhunju.relay.api.MessageEntry
 import com.ndhunju.relay.api.Result.Success
 import com.ndhunju.relay.data.SmsInfoRepository
 import com.ndhunju.relay.di.AppComponent
-import com.ndhunju.relay.service.AnalyticsManager
 import com.ndhunju.relay.service.AppStateBroadcastService
 import com.ndhunju.relay.service.DeviceSmsReaderService
 import com.ndhunju.relay.service.EncryptionService
 import com.ndhunju.relay.service.NotificationManager
 import com.ndhunju.relay.service.SimpleKeyValuePersistService
+import com.ndhunju.relay.service.analyticsprovider.AnalyticsProvider
 import com.ndhunju.relay.service.analyticsprovider.Level
 import com.ndhunju.relay.service.analyticsprovider.d
 import com.ndhunju.relay.ui.messages.Message
@@ -79,8 +79,8 @@ class UploadNewMessagesWorker(
         appComponent.currentUser()
     }
 
-    private val analyticsManager: AnalyticsManager by lazy {
-        appComponent.analyticsManager()
+    private val analyticsProvider: AnalyticsProvider by lazy {
+        appComponent.analyticsProvider()
     }
 
     private val encryptionService: EncryptionService by lazy {
@@ -99,7 +99,7 @@ class UploadNewMessagesWorker(
     }
 
     override suspend fun doWork(): Result {
-        analyticsManager.d(TAG, "doWork() start")
+        analyticsProvider.d(TAG, "doWork() start")
         if (checkIfPermissionGranted(applicationContext).not()) {
             // No work we can do for now
             return Result.success()
@@ -107,7 +107,7 @@ class UploadNewMessagesWorker(
 
         if (currentUser.user.getParentUsers().isEmpty()) {
             // No parents to forward the messages to
-            analyticsManager.d(TAG, "Skipping since no parents found")
+            analyticsProvider.d(TAG, "Skipping since no parents found")
             return Result.success()
         }
 
@@ -135,10 +135,10 @@ class UploadNewMessagesWorker(
             keyValuePersistService.save(KEY_LAST_UPLOAD_TIME, uploadStartTime.toString())
             // Notify that new messages has been processed
             appStateBroadcastService.updateNewProcessedMessages(processedMessages)
-            analyticsManager.d(TAG, "doWork: Success")
+            analyticsProvider.d(TAG, "doWork: Success")
             Result.success()
         } else {
-            analyticsManager.d(TAG, "doWork: Failure")
+            analyticsProvider.d(TAG, "doWork: Failure")
             Result.failure()
         }
 
@@ -153,7 +153,7 @@ class UploadNewMessagesWorker(
             gson.toJson(messageFromAndroidDb),
             currentUser.user.encryptionKey
         ) ?: run {
-            analyticsManager.log(Level.ERROR, TAG, "Failed to encrypt message")
+            analyticsProvider.log(Level.ERROR, TAG, "Failed to encrypt message")
             return RelayResult.Failure()
         }
 

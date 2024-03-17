@@ -18,6 +18,7 @@ import com.ndhunju.relay.api.Result
 import com.ndhunju.relay.data.ChildSmsInfoRepository
 import com.ndhunju.relay.data.OfflineChildSmsInfoRepository
 import com.ndhunju.relay.service.AesEncryptionService
+import com.ndhunju.relay.service.AnalyticsManager
 import com.ndhunju.relay.service.AppStateBroadcastService
 import com.ndhunju.relay.service.AppStateBroadcastServiceImpl
 import com.ndhunju.relay.service.DataStoreKeyValuePersistService
@@ -28,6 +29,7 @@ import com.ndhunju.relay.util.gson.ResultDeserializer
 import com.ndhunju.relay.util.gson.ResultSerializer
 import com.ndhunju.relay.service.UserSettingsPersistService
 import com.ndhunju.relay.service.UserSettingsPersistServiceSharedPreferenceImpl
+import com.ndhunju.relay.service.analyticsprovider.AnalyticsProvider
 import com.ndhunju.relay.util.CurrentUser
 import com.ndhunju.relay.util.PersistableCurrentUserImpl
 import com.ndhunju.relay.util.connectivity.LollipopNetworkConnectionChecker
@@ -47,9 +49,12 @@ import javax.inject.Singleton
 @Module
 class AppModule(private val application: Application) {
 
-    val analyticsManager by lazy {
-        (application as RelayApplication).appComponent.analyticsManager()
+    @Provides
+    @Singleton
+    fun providesAnalyticsProvider(): AnalyticsProvider {
+        return AnalyticsManager()
     }
+
 
     @Provides
     @Singleton
@@ -67,7 +72,7 @@ class AppModule(private val application: Application) {
     @Singleton
     fun providesCurrentUser(): CurrentUser = PersistableCurrentUserImpl(
         provideUserSettingsPersistService(),
-        analyticsManager
+        providesAnalyticsProvider()
     )
 
     @Provides
@@ -76,7 +81,7 @@ class AppModule(private val application: Application) {
         return ApiInterfaceFireStoreImpl(
             providesGson(),
             providesCurrentUser(),
-            analyticsManager
+            providesAnalyticsProvider()
         )
     }
 
@@ -143,7 +148,7 @@ class AppModule(private val application: Application) {
     @Provides
     @Singleton
     fun provideEncryptionService(): EncryptionService {
-        return AesEncryptionService(analyticsManager)
+        return AesEncryptionService(providesAnalyticsProvider())
     }
 }
 

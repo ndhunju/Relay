@@ -9,7 +9,7 @@ import androidx.work.WorkManager
 import androidx.work.WorkerParameters
 import com.ndhunju.relay.RelayApplication
 import com.ndhunju.relay.di.AppComponent
-import com.ndhunju.relay.service.AnalyticsManager
+import com.ndhunju.relay.service.analyticsprovider.AnalyticsProvider
 import com.ndhunju.relay.service.analyticsprovider.d
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -29,16 +29,16 @@ class SecondaryAppStartTasksWorker(
         (applicationContext as RelayApplication).appComponent
     }
 
-    private val analyticsManager: AnalyticsManager by lazy {
-        appComponent.analyticsManager()
+    private val analyticsProvider: AnalyticsProvider by lazy {
+        appComponent.analyticsProvider()
     }
 
     override suspend fun doWork(): Result {
-        analyticsManager.d(TAG, "doWork() start")
+        analyticsProvider.d(TAG, "doWork() start")
         saveAppInstallTime()
         // UriTriggerWorker.enqueue(this)
         UploadNewMessagesWorker.doEnqueueWorkerToUploadNewMessages(appComponent.workManager())
-        analyticsManager.d(TAG, "doWork() finish")
+        analyticsProvider.d(TAG, "doWork() finish")
         return Result.success()
     }
 
@@ -46,7 +46,7 @@ class SecondaryAppStartTasksWorker(
      * Save the time when the app was first installed
      */
     private suspend fun saveAppInstallTime() {
-        analyticsManager.d(TAG, "saveAppInstallTime()")
+        analyticsProvider.d(TAG, "saveAppInstallTime()")
         appComponent.simpleKeyValuePersistService().saveFirstTime(
             "appInstallTime",
             System.currentTimeMillis().toString()

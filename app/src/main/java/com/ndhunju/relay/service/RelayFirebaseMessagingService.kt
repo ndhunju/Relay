@@ -21,8 +21,8 @@ class RelayFirebaseMessagingService: FirebaseMessagingService() {
         appComponent.apiInterface()
     }
 
-    private val analyticsManager by lazy {
-        appComponent.analyticsManager()
+    private val analyticsProvider by lazy {
+        appComponent.analyticsProvider()
     }
 
     override fun onNewToken(token: String) {
@@ -38,7 +38,7 @@ class RelayFirebaseMessagingService: FirebaseMessagingService() {
 
         // Check if message contains a data payload.
         if (remoteMessage.data.isNotEmpty()) {
-            analyticsManager.d(TAG, "Message data payload is not empty")
+            analyticsProvider.d(TAG, "Message data payload is not empty")
 
             // Check if data needs to be processed by long running job
             if (needsToBeScheduled()) {
@@ -48,7 +48,7 @@ class RelayFirebaseMessagingService: FirebaseMessagingService() {
                 // Handle message within 10 seconds
                 // Check if message contains a notification payload.
                 remoteMessage.notification?.body?.let { body ->
-                    analyticsManager.d(TAG, "Message Notification Body is not null")
+                    analyticsProvider.d(TAG, "Message Notification Body is not null")
                     notificationManager.notify(
                         remoteMessage.messageId,
                         notificationManager.getNotificationForNewMessageFromChild(body)
