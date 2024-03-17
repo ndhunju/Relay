@@ -2,7 +2,7 @@ package com.ndhunju.relay.ui.pair
 
 import android.os.Bundle
 import androidx.activity.viewModels
-import com.ndhunju.barcode.ui.generator.BarcodeGeneratorActivity
+import com.ndhunju.barcodegeneratorlibrary.BarcodeGeneratorActivity
 import com.ndhunju.relay.RelayViewModelFactory
 
 class ShareEncryptionKeyWithQrCodeActivity : BarcodeGeneratorActivity() {
@@ -14,6 +14,5 @@ class ShareEncryptionKeyWithQrCodeActivity : BarcodeGeneratorActivity() {
         setQrCodeContent(viewModel.getEncryptionKeyInfo())
         setBodyText(viewModel.getBodyText())
     }
-
 
 }

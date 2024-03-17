@@ -5,8 +5,7 @@ import android.os.Bundle
 import androidx.activity.viewModels
 import androidx.annotation.UiThread
 import androidx.lifecycle.lifecycleScope
-import com.ndhunju.barcode.ui.scanner.BarcodeScannerActivity
-import com.ndhunju.barcode.camera.WorkflowModel.WorkflowState
+import com.ndhunju.barcodescanner.ui.scanner.BarcodeScannerActivity
 import com.ndhunju.relay.R
 import com.ndhunju.relay.RelayViewModelFactory
 import com.ndhunju.relay.api.Result
@@ -71,7 +70,7 @@ class AddChildEncryptionKeyFromQrCodeActivity: BarcodeScannerActivity() {
     }
 
     override fun onBarcodeRawValue(rawValue: String) {
-        super.onBarcodeRawValue(rawValue)
+        //super.onBarcodeRawValue(rawValue)
         addChildEncryptionKey(rawValue)
     }
 
@@ -104,16 +103,13 @@ class AddChildEncryptionKeyFromQrCodeActivity: BarcodeScannerActivity() {
                 // Delay for 3 secs before updating the UI so that
                 // user has enough time to see the error message
                 delay(3000)
-                // Set state back to DETECTING where user can continue with new barcode
-                workflowModel.setWorkflowState(WorkflowState.DETECTING)
+                resumeScanner()
             }
 
             is Result.Pending -> {
-                workflowModel.setWorkflowState(WorkflowState.DETECTED)
                 setUiForScanning()
             }
             is Result.Success -> {
-                workflowModel.setWorkflowState(WorkflowState.DETECTED)
                 setUiForScanComplete()
                 delay(3000)
                 setResult(Activity.RESULT_OK)
