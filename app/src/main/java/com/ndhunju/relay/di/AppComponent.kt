@@ -14,6 +14,7 @@ import com.ndhunju.relay.service.UserSettingsPersistService
 import com.ndhunju.relay.service.analyticsprovider.AnalyticsProvider
 import com.ndhunju.relay.ui.BaseActivity
 import com.ndhunju.relay.util.CurrentUser
+import com.ndhunju.relay.util.connectivity.NetworkConnectionChecker
 import dagger.Component
 import javax.inject.Singleton
 
@@ -43,6 +44,8 @@ interface AppComponent {
     fun appStateBroadcastService(): AppStateBroadcastService
 
     fun simpleKeyValuePersistService(): SimpleKeyValuePersistService
+
+    fun networkConnectionChecker(): NetworkConnectionChecker
 
     fun encryptionService(): EncryptionService
 

@@ -49,6 +49,15 @@ import javax.inject.Singleton
 @Module
 class AppModule(private val application: Application) {
 
+    /**
+     * NOTE: Don't directly call provides fun here as that will create multiple instances
+     * even if it is annotated with @Singleton. Instead use [appComponent] variable to
+     * get the instance of the object you need
+     */
+    private val appComponent by lazy {
+        (application as RelayApplication).appComponent
+    }
+
     @Provides
     @Singleton
     fun providesAnalyticsProvider(): AnalyticsProvider {
@@ -71,17 +80,17 @@ class AppModule(private val application: Application) {
     @Provides
     @Singleton
     fun providesCurrentUser(): CurrentUser = PersistableCurrentUserImpl(
-        provideUserSettingsPersistService(),
-        providesAnalyticsProvider()
+        appComponent.userSettingsPersistService(),
+        appComponent.analyticsProvider()
     )
 
     @Provides
     @Singleton
     fun providesApiInterface(): ApiInterface {
         return ApiInterfaceFireStoreImpl(
-            providesGson(),
-            providesCurrentUser(),
-            providesAnalyticsProvider()
+            appComponent.gson(),
+            appComponent.currentUser(),
+            appComponent.analyticsProvider()
         )
     }
 
@@ -109,7 +118,7 @@ class AppModule(private val application: Application) {
                 EncryptedSharedPreferences.PrefKeyEncryptionScheme.AES256_SIV,
                 EncryptedSharedPreferences.PrefValueEncryptionScheme.AES256_GCM
             ),
-            providesGson()
+            appComponent.gson()
         )
     }
 
@@ -122,8 +131,8 @@ class AppModule(private val application: Application) {
     @Singleton
     fun provideAppStateBroadcasterService(): AppStateBroadcastService {
         return AppStateBroadcastServiceImpl(
-            provideNetworkConnectionChecker(),
-            providesCurrentUser()
+            appComponent.networkConnectionChecker(),
+            appComponent.currentUser()
         )
     }
 
@@ -148,7 +157,7 @@ class AppModule(private val application: Application) {
     @Provides
     @Singleton
     fun provideEncryptionService(): EncryptionService {
-        return AesEncryptionService(providesAnalyticsProvider())
+        return AesEncryptionService(appComponent.analyticsProvider())
     }
 }
 
@@ -173,6 +182,6 @@ class AndroidAppModule(private val application: Application) {
 
     @Provides
     @Singleton
-    fun providesWorkManager(): WorkManager = WorkManager.getInstance(providesContext())
+    fun providesWorkManager(): WorkManager = WorkManager.getInstance(application)
 
 }
