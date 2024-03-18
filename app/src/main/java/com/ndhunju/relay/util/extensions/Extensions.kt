@@ -1,4 +1,4 @@
-package com.ndhunju.relay.util
+package com.ndhunju.relay.util.extensions
 
 import android.database.Cursor
 import kotlinx.coroutines.flow.Flow

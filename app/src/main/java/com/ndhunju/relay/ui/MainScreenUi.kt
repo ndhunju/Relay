@@ -198,7 +198,7 @@ fun MainContent(
                     Icon(
                         imageVector = Icons.Default.KeyboardArrowUp,
                         contentDescription = stringResource(
-                            R.string.content_description_scroll_to_top
+                            R.string.image_description_scroll_to_top
                         )
                     )
                 }

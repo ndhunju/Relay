@@ -1,20 +1,29 @@
 package com.ndhunju.relay.ui.messages
 
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.AccountCircle
 import androidx.compose.material3.Divider
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.ColorFilter
+import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.constraintlayout.compose.ConstraintLayout
 import androidx.constraintlayout.compose.Dimension
+import com.ndhunju.relay.R
 import com.ndhunju.relay.api.Result
 import com.ndhunju.relay.ui.custom.SyncStatusIcon
 import com.ndhunju.relay.ui.mockMessages
 import com.ndhunju.relay.ui.theme.LocalDimens
 import com.ndhunju.relay.util.dateFormat
+import com.ndhunju.relay.util.extensions.getColorForId
 
 @Preview(showBackground = true)
 @Composable
@@ -34,7 +43,7 @@ fun MessageListItem(
     ConstraintLayout(modifier = modifier
         .clickable { onClick?.invoke(message) }
     ) {
-        val (divider, from, body, date, status) = createRefs()
+        val (divider, profilePic, from, body, date, status) = createRefs()
         val itemVerticalPadding = LocalDimens.current.itemPaddingVertical
         val contentHorizontalPadding = LocalDimens.current.contentPaddingHorizontal
 
@@ -45,11 +54,27 @@ fun MessageListItem(
             width = Dimension.fillToConstraints
         })
 
+        Image(
+            modifier = Modifier.constrainAs(profilePic) {
+                top.linkTo(parent.top, itemVerticalPadding)
+                bottom.linkTo(parent.bottom, itemVerticalPadding)
+                start.linkTo(parent.start, contentHorizontalPadding.div(2))
+                width = Dimension.value(50.dp)
+                height = Dimension.value(50.dp)
+            },
+            imageVector = Icons.Default.AccountCircle,
+            contentDescription = stringResource(id = R.string.image_description_user),
+            colorFilter = ColorFilter.tint(
+                LocalContext.current.getColorForId(message.from.hashCode())
+            ),
+        )
+
         Text(text = message.from, Modifier.constrainAs(from) {
             top.linkTo(parent.top, itemVerticalPadding)
-            start.linkTo(parent.start, contentHorizontalPadding)
+            start.linkTo(profilePic.end, contentHorizontalPadding.div(2))
             width = Dimension.fillToConstraints
         },
+            style = MaterialTheme.typography.titleMedium,
             maxLines = 1,
             overflow = TextOverflow.Ellipsis,
         )
@@ -66,7 +91,9 @@ fun MessageListItem(
                     bias = 1f,
                 )
                 top.linkTo(parent.top, itemVerticalPadding)
-            })
+            },
+            style = MaterialTheme.typography.labelMedium
+        )
 
         SyncStatusIcon(
             syncStatus = message.syncStatus,
@@ -84,15 +111,16 @@ fun MessageListItem(
                 .constrainAs(body) {
                     top.linkTo(from.bottom)
                     linkTo(
-                        start = parent.start,
+                        start = profilePic.end,
                         end = status.start,
-                        startMargin = contentHorizontalPadding,
+                        startMargin = contentHorizontalPadding.div(2),
                         endMargin = 8.dp,
                         bias = 0f,
                     )
                     bottom.linkTo(parent.bottom, itemVerticalPadding)
                     width = Dimension.fillToConstraints
                 },
+            style = MaterialTheme.typography.bodyMedium,
             maxLines = 1,
             overflow = TextOverflow.Ellipsis
         )

@@ -20,6 +20,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
@@ -47,8 +48,8 @@ fun SyncStatusIcon(syncStatus: Result<Void>?, modifier: Modifier = Modifier) {
         contentDescription = stringResource(R.string.image_description_sync_status_logo),
         tint = when (syncStatus) {
             is Result.Pending -> Color.LightGray
-            is Result.Success -> Color.Green
-            is Result.Failure -> MaterialTheme.colorScheme.error
+            is Result.Success -> colorResource(id = R.color.success)
+            is Result.Failure -> colorResource(id = R.color.failure)
             // Hide the icon by making it have same color as the background
             else -> MaterialTheme.colorScheme.background
         },

@@ -5,8 +5,8 @@ import android.database.Cursor
 import android.provider.Telephony
 import com.ndhunju.relay.service.analyticsprovider.AnalyticsProvider
 import com.ndhunju.relay.ui.messages.Message
-import com.ndhunju.relay.util.getLongForColumn
-import com.ndhunju.relay.util.getStringForColumn
+import com.ndhunju.relay.util.extensions.getLongForColumn
+import com.ndhunju.relay.util.extensions.getStringForColumn
 import javax.inject.Inject
 import javax.inject.Singleton
 
