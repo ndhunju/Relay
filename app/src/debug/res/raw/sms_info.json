@@ -1,0 +1,59 @@
+[
+  {
+    "date": 1710757340310,
+    "id": 68,
+    "idInAndroidOsTable": "3430",
+    "syncStatus": "Success",
+    "threadId": "205"
+  },
+  {
+    "date": 1710710969672,
+    "id": 58,
+    "idInAndroidOsTable": "3427",
+    "syncStatus": "Success",
+    "threadId": "165"
+  },
+  {
+    "date": 1710356126626,
+    "id": 56,
+    "idInAndroidOsTable": "3419",
+    "syncStatus": "Success",
+    "threadId": "313"
+  },
+  {
+    "date": 1710290059503,
+    "id": 50,
+    "idInAndroidOsTable": "3412",
+    "syncStatus": "Success",
+    "threadId": "430"
+  },
+  null,
+  {
+    "date": 1709070834902,
+    "id": 45,
+    "idInAndroidOsTable": "3393",
+    "syncStatus": "Success",
+    "threadId": "104"
+  },
+  {
+    "date": 1708961366701,
+    "id": 46,
+    "idInAndroidOsTable": "3392",
+    "syncStatus": "Success",
+    "threadId": "432"
+  },
+  {
+    "date": 1708730262489,
+    "id": 41,
+    "idInAndroidOsTable": "3389",
+    "syncStatus": "Success",
+    "threadId": "425"
+  },
+  {
+    "date": 1708439599591,
+    "id": 33,
+    "idInAndroidOsTable": "3381",
+    "syncStatus": "Success",
+    "threadId": "188"
+  }
+]
