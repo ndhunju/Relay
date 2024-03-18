@@ -13,7 +13,7 @@ data class Dimensions(
     val dividerHeight: Dp = 1.dp,
 
     // Welcome Screen
-    val welcomeLauncherIconSize: Dp = 128.dp,
+    val welcomeLauncherIconSize: Dp = 200.dp,
     val welcomeHeaderTextSize: TextUnit = 32.sp,
     val welcomeBodyTextSize: TextUnit = 18.sp
 )
@@ -33,7 +33,7 @@ val Sw840Dimensions = Dimensions(
     dividerHeight = 2.dp,
 
     // Welcome Screen
-    welcomeLauncherIconSize = 128.dp,
+    welcomeLauncherIconSize = 300.dp,
     welcomeHeaderTextSize = 64.sp,
     welcomeBodyTextSize = 36.sp
 )

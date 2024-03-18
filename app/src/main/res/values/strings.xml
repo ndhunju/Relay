@@ -118,7 +118,7 @@
     <!-- Header of the welcome screen. Shown in a Text/Label -->
     <string name="welcome_screen_header">Welcome to %1$s!</string>
     <!-- Body of the welcome screen.-->
-    <string name="welcome_screen_body">First things first - to get started with %1$s, create your account.\n\nIt\'s a breeze - just provide your email, name and phone.\n\nWe\'ll send a one-time password to your inbox. Click \'verify\' in your email or enter the code here, and you\'re good to go!</string>
+    <string name="welcome_screen_body">To get started with %1$s, create your account - just provide your email, name and phone.\n\nWe\'ll send a one-time password to your inbox. Click \'verify\' in your email or enter the code here, and you\'re good to go!</string>
     <!-- Text shown inside a button -->
     <string name="welcome_screen_create_account_btn">Create Account</string>
 

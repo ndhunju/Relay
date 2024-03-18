@@ -32,7 +32,6 @@ import androidx.compose.ui.graphics.drawscope.rotate
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
-import androidx.core.graphics.toColorInt
 import com.ndhunju.relay.ui.theme.LocalDimens
 import com.ndhunju.relay.ui.theme.RelayTheme
 
@@ -68,9 +67,13 @@ fun AnimatedTextButton(
     modifier = modifier
         .animateBorder(
             borderColors = listOf(
-                Color("#ff7534".toColorInt()), // Orange
+                Color.Red,
+                Color.Magenta,
+                Color.Blue,
+                Color.Cyan,
                 Color.Green,
-                Color("#369bf7".toColorInt()) // Sky blue
+                Color.Yellow,
+                Color.Red
             ),
             backgroundColor = MaterialTheme.colorScheme.background,
             shape = RoundedCornerShape(24.dp),
@@ -86,7 +89,7 @@ fun Modifier.animateBorder(
     animationDurationInMillis: Int = 1000,
     easing: Easing = LinearEasing
 ): Modifier = composed {
-    val brush = Brush.linearGradient(borderColors)
+    val brush = Brush.sweepGradient(borderColors)
     val infiniteTransition = rememberInfiniteTransition(label = "animateBorder")
     val angle by infiniteTransition.animateFloat(
         initialValue = 0f,
