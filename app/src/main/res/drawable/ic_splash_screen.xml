@@ -45,14 +45,14 @@
             <set>
                 <objectAnimator
                     android:propertyName="fillColor"
-                    android:duration="600"
+                    android:duration="1100"
                     android:valueFrom="#f0f0f0"
                     android:valueTo="#a0c4ff"
                     android:valueType="colorType"
                     android:interpolator="@android:interpolator/fast_out_slow_in"/>
                 <objectAnimator
                     android:propertyName="fillAlpha"
-                    android:duration="600"
+                    android:duration="1100"
                     android:valueFrom="0.3"
                     android:valueTo="1"
                     android:valueType="floatType"
@@ -65,7 +65,7 @@
             <set>
                 <objectAnimator
                     android:propertyName="pathData"
-                    android:duration="600"
+                    android:duration="1100"
                     android:valueFrom="M 158.9 243.5 L 261.8 243.5 L 210.4 192.1 L 194.4 208.1 L 206.9 220.7 L 158.9 220.7 Z"
                     android:valueTo="M 204.9 243.5 L 307.8 243.5 L 256.4 192.1 L 240.4 208.1 L 252.9 220.7 L 204.9 220.7 Z"
                     android:valueType="pathType"
@@ -92,21 +92,21 @@
             <set>
                 <objectAnimator
                     android:propertyName="fillColor"
-                    android:duration="600"
+                    android:duration="1100"
                     android:valueFrom="#f0f0f0"
                     android:valueTo="#caffbf"
                     android:valueType="colorType"
                     android:interpolator="@android:interpolator/fast_out_slow_in"/>
                 <objectAnimator
                     android:propertyName="fillAlpha"
-                    android:duration="600"
+                    android:duration="1100"
                     android:valueFrom="0.3"
                     android:valueTo="1"
                     android:valueType="floatType"
                     android:interpolator="@android:interpolator/fast_out_slow_in"/>
                 <objectAnimator
                     android:propertyName="pathData"
-                    android:duration="600"
+                    android:duration="1100"
                     android:valueFrom="M 302.4 317.9 L 318.4 301.9 L 305.8 289.3 L 353.8 289.3 L 353.8 266.4 L 250.9 266.4 Z"
                     android:valueTo="M 256.4 317.9 L 272.4 301.9 L 259.8 289.3 L 307.8 289.3 L 307.8 266.4 L 204.9 266.4 Z"
                     android:valueType="pathType"
