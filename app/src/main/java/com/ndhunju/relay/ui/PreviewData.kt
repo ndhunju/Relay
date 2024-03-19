@@ -18,7 +18,16 @@ val mockMessages = listOf(
         "1",
         "ThreadId2",
         "Nabil Bank",
-        "2,300.00 added to your account. Your new balance is 50,000",
+        "Your new balance is 50,000",
+        System.currentTimeMillis(),
+        "2",
+        Result.Success()
+    ),
+    Message(
+        "1",
+        "ThreadId2",
+        "Nabil Bank",
+        "2,300.00 added to your account.",
         System.currentTimeMillis(),
         "2",
         Result.Success()
@@ -28,6 +37,15 @@ val mockMessages = listOf(
         "ThreadId3",
         "Bikesh",
         "This is a sample long messages that should overflow to the next line at the minimum",
+        System.currentTimeMillis(),
+        "1",
+        Result.Success()
+    ),
+    Message(
+        "2",
+        "ThreadId3",
+        "Bikesh",
+        "Hi there!",
         System.currentTimeMillis(),
         "1",
         Result.Success()

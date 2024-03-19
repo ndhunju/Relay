@@ -96,13 +96,13 @@ fun MessageListItem(
         )
 
         SyncStatusIcon(
-            syncStatus = message.syncStatus,
             modifier = Modifier
                 .constrainAs(status) {
                     end.linkTo(parent.end, contentHorizontalPadding)
                     top.linkTo(date.bottom, 4.dp)
                     bottom.linkTo(parent.bottom, itemVerticalPadding)
-                }
+                },
+            syncStatus = message.syncStatus
         )
 
         Text(

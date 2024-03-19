@@ -23,6 +23,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.ndhunju.relay.R
 import com.ndhunju.relay.api.Result
@@ -40,9 +41,9 @@ fun SearchTextField(onSearchTextChanged: ((String) -> Unit)? = null) {
         )
     }
 }
-
+@Preview
 @Composable
-fun SyncStatusIcon(syncStatus: Result<Void>?, modifier: Modifier = Modifier) {
+fun SyncStatusIcon(modifier: Modifier = Modifier, syncStatus: Result<Void>? = Result.Success()) {
     Icon(
         painter = painterResource(R.drawable.baseline_sync_status_24),
         contentDescription = stringResource(R.string.image_description_sync_status_logo),
@@ -54,7 +55,7 @@ fun SyncStatusIcon(syncStatus: Result<Void>?, modifier: Modifier = Modifier) {
             else -> MaterialTheme.colorScheme.background
         },
         modifier = modifier
-            .padding(start = 8.dp)
+            .padding(start = 4.dp)
             .size(16.dp)
             .alpha(if (syncStatus == null) 0f else 1f)
     )

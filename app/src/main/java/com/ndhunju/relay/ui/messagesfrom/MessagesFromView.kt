@@ -75,18 +75,26 @@ fun MessagesFromView(
                 LazyColumn(
                     contentPadding = internalPadding,
                     reverseLayout = true,
-                    verticalArrangement = Arrangement.spacedBy(8.dp),
+                    verticalArrangement = Arrangement.spacedBy(1.dp),
                     modifier = Modifier.fillMaxSize(),
                     content = {
                         // Show list of messages for the given thread
-                        itemsIndexed(messageList) { _: Int, message: Message ->
+                        itemsIndexed(messageList) { i: Int, message: Message ->
                             Box(modifier = Modifier
                                 .fillMaxWidth()
                                 .padding(
                                     horizontal = LocalDimens.current.contentPaddingHorizontal
                                 )
                             ) {
-                                ChatBubbleView(message = message)
+                                ChatBubbleView(
+                                    message = message,
+                                    previous = if (i > 0) messageList[i-1] else null,
+                                    nextMessage = if (i < messageList.lastIndex) {
+                                        messageList[i + 1]
+                                    } else {
+                                        null
+                                    }
+                                )
                             }
                         }
                     })
@@ -97,8 +105,24 @@ fun MessagesFromView(
 }
 
 @Composable
-fun ChatBubbleView(message: Message) {
-    Row {
+fun ChatBubbleView(
+    message: Message,
+    previous: Message? = null,
+    nextMessage: Message? = null
+) {
+    // Determine what corner radius and padding values to use for current message
+    val isSameUserAsBefore = previous?.isSentByUser() == message.isSentByUser()
+    val isSameUserAsNext = nextMessage?.isSentByUser() == message.isSentByUser()
+    val topStartCorner = if (isSameUserAsBefore) 3.dp else 11.dp
+    val topEndCorner = if (isSameUserAsBefore) 3.dp else 11.dp
+    val bottomStartCorner = if (isSameUserAsNext) 3.dp else 11.dp
+    val bottomEndCorner = if (isSameUserAsNext) 3.dp else 11.dp
+    val topPadding = if (isSameUserAsBefore) 0.5.dp else 7.dp
+    val bottomPadding = if (isSameUserAsNext) 0.5.dp else 7.dp
+
+    Row(
+        modifier = Modifier.padding(top = bottomPadding, bottom = topPadding)
+    ) {
         // If the message is sent by the user, show the message on the right/end side.
         // Otherwise, show it on the left/start side.
         if (message.isSentByUser()) {
@@ -114,16 +138,22 @@ fun ChatBubbleView(message: Message) {
                         Alignment.TopStart
                     }
                 )
-                .weight(0.8f)
+                .weight(0.8f),
+            horizontalArrangement = Arrangement.spacedBy(0.5.dp)
         ) {
             Box(
                 modifier = Modifier
                     .background(
                         color = MaterialTheme.colorScheme.primary,
-                        shape = RoundedCornerShape(size = 11.dp)
+                        shape = RoundedCornerShape(
+                            topStart = bottomStartCorner,
+                            topEnd = bottomEndCorner,
+                            bottomStart = topStartCorner,
+                            bottomEnd = topEndCorner
+                        )
                     )
                     .padding( // Inner Padding
-                        vertical = LocalDimens.current.itemPaddingVertical,
+                        vertical = LocalDimens.current.itemPaddingVertical.div(2),
                         horizontal = 8.dp
                     )
                     // Setting fill=false prevents second item
@@ -137,14 +167,15 @@ fun ChatBubbleView(message: Message) {
                         TextAlign.End
                     } else {
                         TextAlign.Start
-                    }
+                    },
+                    style = MaterialTheme.typography.bodyMedium
                 )
             }
 
             if (message.isSentByUser().not()) {
                 SyncStatusIcon(
-                    syncStatus = message.syncStatus,
-                    modifier = Modifier.align(Alignment.Bottom)
+                    modifier = Modifier.align(Alignment.CenterVertically),
+                    syncStatus = message.syncStatus
                 )
             }
         }
