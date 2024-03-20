@@ -1,5 +1,6 @@
 package com.ndhunju.relay.ui.messagesfrom
 
+import android.content.res.Configuration
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -29,11 +30,15 @@ import com.ndhunju.relay.ui.custom.TopAppBarWithUpButton
 import com.ndhunju.relay.ui.messages.Message
 import com.ndhunju.relay.ui.mockMessages
 import com.ndhunju.relay.ui.theme.LocalDimens
+import com.ndhunju.relay.ui.theme.RelayTheme
 
 @Preview
+@Preview(uiMode = Configuration.UI_MODE_NIGHT_YES)
 @Composable
 fun MessagesFromPreview() {
-    return MessagesFromView(mockMessages.first().from, messageList = mockMessages)
+    RelayTheme {
+        MessagesFromView(mockMessages.first().from, messageList = mockMessages)
+    }
 }
 
 @Composable
@@ -144,7 +149,11 @@ fun ChatBubbleView(
             Box(
                 modifier = Modifier
                     .background(
-                        color = MaterialTheme.colorScheme.primary,
+                        color = if (message.isSentByUser()) {
+                            MaterialTheme.colorScheme.primary
+                        } else {
+                            MaterialTheme.colorScheme.tertiary
+                        },
                         shape = RoundedCornerShape(
                             topStart = bottomStartCorner,
                             topEnd = bottomEndCorner,
@@ -162,7 +171,13 @@ fun ChatBubbleView(
             ) {
                 Text(
                     text = message.body, //+ "\n" + message.toString(), for debugging
-                    color = MaterialTheme.colorScheme.onPrimary,
+                    // Since the backgrounds are primary and tertiary, setting
+                    // text colors to onPrimary and onTertiary for contrast
+                    color = if (message.isSentByUser()) {
+                        MaterialTheme.colorScheme.onPrimary
+                    } else {
+                        MaterialTheme.colorScheme.onTertiary
+                    },
                     textAlign = if (message.isSentByUser()) {
                         TextAlign.End
                     } else {

@@ -1,5 +1,6 @@
 package com.ndhunju.relay.ui.custom
 
+import android.content.res.Configuration
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.padding
@@ -20,13 +21,14 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.ndhunju.relay.R
 import com.ndhunju.relay.api.Result
+import com.ndhunju.relay.ui.theme.LocalColors
+import com.ndhunju.relay.ui.theme.RelayTheme
 
 @Composable
 fun SearchTextField(onSearchTextChanged: ((String) -> Unit)? = null) {
@@ -41,7 +43,17 @@ fun SearchTextField(onSearchTextChanged: ((String) -> Unit)? = null) {
         )
     }
 }
+
 @Preview
+@Preview(uiMode = Configuration.UI_MODE_NIGHT_YES)
+@Composable
+fun SyncStatusIconPreview() {
+    RelayTheme {
+        SyncStatusIcon()
+    }
+}
+
+
 @Composable
 fun SyncStatusIcon(modifier: Modifier = Modifier, syncStatus: Result<Void>? = Result.Success()) {
     Icon(
@@ -49,8 +61,8 @@ fun SyncStatusIcon(modifier: Modifier = Modifier, syncStatus: Result<Void>? = Re
         contentDescription = stringResource(R.string.image_description_sync_status_logo),
         tint = when (syncStatus) {
             is Result.Pending -> Color.LightGray
-            is Result.Success -> colorResource(id = R.color.success)
-            is Result.Failure -> colorResource(id = R.color.failure)
+            is Result.Success -> LocalColors.current.success
+            is Result.Failure -> LocalColors.current.failure
             // Hide the icon by making it have same color as the background
             else -> MaterialTheme.colorScheme.background
         },
@@ -68,7 +80,9 @@ fun TopAppBarWithUpButton(
     onUpPressed: (() -> Unit)?,
     showUpButton: Boolean = true) {
     TopAppBar(
-        modifier = Modifier.background(MaterialTheme.colorScheme.background).shadow(6.dp),
+        modifier = Modifier
+            .background(MaterialTheme.colorScheme.background)
+            .shadow(6.dp),
         title = {
             Text(
                 text = title ?: "",

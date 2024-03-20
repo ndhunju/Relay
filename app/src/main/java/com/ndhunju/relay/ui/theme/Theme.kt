@@ -3,7 +3,6 @@ package com.ndhunju.relay.ui.theme
 import android.app.Activity
 import android.os.Build
 import androidx.compose.foundation.isSystemInDarkTheme
-import androidx.compose.material3.ColorScheme
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.darkColorScheme
 import androidx.compose.material3.dynamicDarkColorScheme
@@ -62,33 +61,37 @@ fun RelayTheme(
 
 
     // Provide correct dimens based on smallest width size
-    setUpLocalDimensProvider(colorScheme, content)
-}
+    val dimensions = getLocalDimensProvider()
+    // Provide correct colors based on current theme
+    val colors = getLocalColorProvider(isSystemInDarkTheme())
 
-@Composable
-private fun setUpLocalDimensProvider(
-    colorScheme: ColorScheme,
-    content: @Composable () -> Unit
-): Boolean {
-    val configuration = LocalConfiguration.current
-    val dimensions = if (configuration.smallestScreenWidthDp < 600) {
-        CompactDimensions
-    } else if (configuration.smallestScreenWidthDp < 840) {
-        Sw600Dimensions
-    } else {
-        Sw840Dimensions
-    }
-
-
-    CompositionLocalProvider(LocalDimens provides dimensions) {
+    CompositionLocalProvider(
+        LocalDimens provides dimensions,
+        LocalColors provides colors
+    ) {
         MaterialTheme(
             colorScheme = colorScheme,
             typography = Typography,
             content = content
         )
     }
+}
 
-    return true
+@Composable
+private fun getLocalDimensProvider(): Dimensions {
+    val configuration = LocalConfiguration.current
+    return if (configuration.smallestScreenWidthDp < 600) {
+        CompactDimensions
+    } else if (configuration.smallestScreenWidthDp < 840) {
+        Sw600Dimensions
+    } else {
+        Sw840Dimensions
+    }
+}
+
+@Composable
+private fun getLocalColorProvider(isDarkTheme: Boolean): Colors {
+    return if (isDarkTheme) ColorsForDarkTheme else ColorsForLightTheme
 }
 
 @Composable
