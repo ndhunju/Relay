@@ -178,11 +178,6 @@ fun ChatBubbleView(
                     } else {
                         MaterialTheme.colorScheme.onTertiary
                     },
-                    textAlign = if (message.isSentByUser()) {
-                        TextAlign.End
-                    } else {
-                        TextAlign.Start
-                    },
                     style = MaterialTheme.typography.bodyMedium
                 )
             }

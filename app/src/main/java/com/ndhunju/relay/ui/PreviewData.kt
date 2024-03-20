@@ -16,6 +16,15 @@ val mockMessages = listOf(
     ),
     Message(
         "1",
+        "ThreadId22",
+        "Nabil Bank",
+        "This is a sample long messages that should overflow to the next line at the minimum and be start aligned",
+        System.currentTimeMillis(),
+        "2",
+        Result.Success()
+    ),
+    Message(
+        "1",
         "ThreadId2",
         "Nabil Bank",
         "Your new balance is 50,000",
