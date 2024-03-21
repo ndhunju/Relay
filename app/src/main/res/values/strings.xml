@@ -25,6 +25,8 @@
     <string name="image_description_sync_status_logo">Message sync status</string>
     <!-- Image description for back icon. Clicking on this takes user to previous screen -->
     <string name="image_description_go_back">Back</string>
+    <!-- Image description for close icon. Clicking on this closes current screen, search field etc -->
+    <string name="image_description_close">Close</string>
     <!-- Image description for user profile pic or an icon -->
     <string name="image_description_user">User</string>
     <!-- Image description for up button icon. Clicking on this scrolls to top of the list -->
@@ -42,7 +44,7 @@
     <!-- Text shown in a button. When user clicks on it, app requests OS to grant permissions -->
     <string name="grant_permissions">Grant Permissions</string>
     <!-- Message shown on the screen when no sender address is found -->
-    <string name="msg_no_sender_found">Oops! No sender address found. Please go back</string>
+    <string name="msg_no_sender">Oops! No sender address found. Please go back</string>
     <!-- Generic error message shown when we don't know the reason -->
     <string name="general_error_message">Oops! Something went wrong. Please contact admin.</string>
 

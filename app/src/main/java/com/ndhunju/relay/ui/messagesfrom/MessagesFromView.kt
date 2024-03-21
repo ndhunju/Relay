@@ -7,7 +7,6 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.foundation.lazy.LazyColumn
@@ -15,16 +14,15 @@ import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
-import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.ndhunju.relay.R
+import com.ndhunju.relay.ui.custom.CenteredText
 import com.ndhunju.relay.ui.custom.SyncStatusIcon
 import com.ndhunju.relay.ui.custom.TopAppBarWithUpButton
 import com.ndhunju.relay.ui.messages.Message
@@ -47,73 +45,46 @@ fun MessagesFromView(
     messageList: List<Message>,
     onBackPressed: (() -> Unit)? = null
 ) {
-    Surface(
-        modifier = Modifier.fillMaxSize()
-    ) {
-        // If for some reason no sender is passed, show error message
-        if (senderAddress?.isEmpty() == true && messageList.isEmpty()) {
-            Scaffold(
-                topBar = { TopAppBarWithUpButton(senderAddress, onBackPressed) }
-            ) { innerPadding ->
-                Box(
-                    modifier = Modifier
-                        .background(MaterialTheme.colorScheme.background)
-                        .padding(innerPadding)
-                        .fillMaxSize()
-                        .padding(horizontal = LocalDimens.current.contentPaddingHorizontal),
-                ) {
-                    Text(
-                        text = stringResource(R.string.msg_no_sender_found),
-                        textAlign = TextAlign.Center,
-                        modifier = Modifier.align(Alignment.Center)
-                    )
-                }
-            }
-        } else {
-            // Using a separate Scaffold so that the error message
-            // could be centered on the screen
-            Scaffold(
-                topBar = {
-                    TopAppBarWithUpButton(senderAddress, onBackPressed)
-                }
-            ) { internalPadding ->
-                LazyColumn(
-                    contentPadding = internalPadding,
-                    reverseLayout = true,
-                    verticalArrangement = Arrangement.spacedBy(1.dp),
-                    modifier = Modifier.fillMaxSize(),
-                    content = {
-                        // Show list of messages for the given thread
-                        itemsIndexed(messageList) { i: Int, message: Message ->
-                            Box(modifier = Modifier
-                                .fillMaxWidth()
-                                .padding(
-                                    horizontal = LocalDimens.current.contentPaddingHorizontal
-                                )
-                            ) {
-                                ChatBubbleView(
-                                    message = message,
-                                    previous = if (i > 0) messageList[i-1] else null,
-                                    nextMessage = if (i < messageList.lastIndex) {
-                                        messageList[i + 1]
-                                    } else {
-                                        null
-                                    }
-                                )
-                            }
-                        }
-                    })
-            }
+    // If for some reason no sender is passed, show error message
+    if (senderAddress?.isEmpty() == true && messageList.isEmpty()) {
+        Scaffold(
+            modifier = Modifier.fillMaxSize(),
+            topBar = { TopAppBarWithUpButton(senderAddress, onBackPressed) }
+        ) { innerPadding ->
+            CenteredText(Modifier.padding(innerPadding), stringResource(R.string.msg_no_sender))
         }
-
+    } else {
+        // Using a separate Scaffold so that the error message could be centered on the screen
+        Scaffold(
+            modifier = Modifier.fillMaxSize(),
+            topBar = { TopAppBarWithUpButton(senderAddress, onBackPressed) }
+        ) { internalPadding ->
+            LazyColumn(
+                contentPadding = internalPadding,
+                reverseLayout = true,
+                verticalArrangement = Arrangement.spacedBy(1.dp),
+                modifier = Modifier.fillMaxSize(),
+                content = {
+                    // Show list of messages for the given thread
+                    itemsIndexed(messageList) { i: Int, message: Message ->
+                        ChatBubbleView(
+                            message = message,
+                            previous = messageList.getOrNull(i - 1),
+                            nextMessage = messageList.getOrNull(i + 1)
+                        )
+                    }
+                }
+            )
+        }
     }
 }
 
 @Composable
 fun ChatBubbleView(
+    modifier: Modifier = Modifier,
     message: Message,
     previous: Message? = null,
-    nextMessage: Message? = null
+    nextMessage: Message? = null,
 ) {
     // Determine what corner radius and padding values to use for current message
     val isSameUserAsBefore = previous?.isSentByUser() == message.isSentByUser()
@@ -126,7 +97,10 @@ fun ChatBubbleView(
     val bottomPadding = if (isSameUserAsNext) 0.5.dp else 7.dp
 
     Row(
-        modifier = Modifier.padding(top = bottomPadding, bottom = topPadding)
+        modifier = modifier
+            .padding(horizontal = LocalDimens.current.contentPaddingHorizontal)
+            .padding(top = bottomPadding, bottom = topPadding)
+            .background(MaterialTheme.colorScheme.background)
     ) {
         // If the message is sent by the user, show the message on the right/end side.
         // Otherwise, show it on the left/start side.
