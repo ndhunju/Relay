@@ -20,13 +20,17 @@ import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.draw.shadow
+import androidx.compose.ui.focus.FocusRequester
+import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.layout.onGloballyPositioned
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
@@ -50,12 +54,21 @@ fun SearchTextFieldPreview() {
 fun SearchTextField(onSearchTextChanged: ((String) -> Unit)? = null) {
 
     var text by rememberSaveable { mutableStateOf("") }
+    var isPositioned by remember { mutableStateOf(false) }
+    val focusRequester = remember { FocusRequester() }
 
     BasicTextField(
         modifier = Modifier
             .fillMaxWidth()
             .background(MaterialTheme.colorScheme.onBackground, shape = RoundedCornerShape(16.dp))
-            .padding(8.dp),
+            .padding(8.dp)
+            .focusRequester(focusRequester)
+            .onGloballyPositioned {
+                if (isPositioned.not()) {
+                    isPositioned = true
+                    focusRequester.requestFocus()
+                }
+            },
         value = text,
         onValueChange = {
             onSearchTextChanged?.invoke(it)
