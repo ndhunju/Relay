@@ -1,5 +1,6 @@
 package com.ndhunju.relay.ui
 
+import android.Manifest.permission.READ_SMS
 import android.content.Intent
 import android.os.Bundle
 import android.view.View
@@ -11,6 +12,7 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.ui.Modifier
+import androidx.core.app.ActivityCompat.shouldShowRequestPermissionRationale
 import com.ndhunju.relay.R
 import com.ndhunju.relay.RelayViewModelFactory
 import com.ndhunju.relay.ui.account.AccountFragment

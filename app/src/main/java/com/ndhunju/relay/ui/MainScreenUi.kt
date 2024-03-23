@@ -1,6 +1,9 @@
 package com.ndhunju.relay.ui
 
+import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.core.tween
+import androidx.compose.animation.fadeIn
+import androidx.compose.animation.fadeOut
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Row
@@ -9,6 +12,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.material.icons.Icons
@@ -172,11 +176,11 @@ fun MainContent(
     onClickMenuOrUpIcon: (() -> Unit)? = null
 ) {
     val composeCoroutineScope = rememberCoroutineScope()
-    val state = rememberLazyListState()
+    val listState = rememberLazyListState()
     // Use derivedStateOf to avoid recomposition everytime state changes.
     // That is everytime [state.firstVisibleItemIndex] changes instead
     // of the specific condition we are interested in.
-    val showScrollToTopButton by remember { derivedStateOf { state.firstVisibleItemIndex > 0 } }
+    val showScrollToTopButton by remember { derivedStateOf { listState.firstVisibleItemIndex > 0 } }
     Scaffold(
         topBar = {
             MainScreenAppBar(
@@ -194,7 +198,7 @@ fun MainContent(
             if (showScrollToTopButton) {
                 FloatingActionButton(onClick = {
                     composeCoroutineScope.launch {
-                        state.animateScrollToItem(0, 0)
+                        listState.animateScrollToItem(0, 0)
                     }
                 }) {
                     Icon(
@@ -208,37 +212,59 @@ fun MainContent(
         }
 
     ) { innerPadding ->
-        if (showErrorMessageForPermissionDenied?.value == true) {
+        AnimatedVisibility(
+            visible = showErrorMessageForPermissionDenied?.value == true,
+            exit = fadeOut()
+        ) {
             CenteredMessageWithButton(
                 modifier = Modifier.padding(innerPadding),
                 message = stringResource(id = R.string.permission_rationale_sms_read_send),
                 buttonText = stringResource(R.string.grant_permissions),
                 onClickButton = onClickGrantPermission
             )
+        }
 
-
-        } else {
-            LazyColumn(
-                modifier = Modifier
-                    .padding(innerPadding)
-                    .fillMaxWidth(),
-                state = state,
-                content = {
-                    itemsIndexed(
-                        lastMessageList?.toList() ?: emptyList(),
-                        // Pass key for better performance like setHasStableIds
-                        key = { _, item -> item.threadId },
-                    ) { _: Int, message: Message ->
-                        MessageListItem(
-                            Modifier.animateItemPlacement(tween(durationMillis = 250)),
-                            message,
-                            onClickMessage
-                        )
-                    }
-                }
+        AnimatedVisibility(
+            visible = showErrorMessageForPermissionDenied?.value == false,
+            enter = fadeIn(),
+            exit = fadeOut()
+        ) {
+            MessageList(
+                Modifier.padding(innerPadding),
+                listState,
+                lastMessageList,
+                onClickMessage
             )
         }
     }
+}
+
+@Composable
+@OptIn(ExperimentalFoundationApi::class)
+private fun MessageList(
+    modifier: Modifier,
+    lazyListState: LazyListState,
+    lastMessageList: SnapshotStateList<Message>?,
+    onClickMessage: ((Message) -> Unit)?
+) {
+    LazyColumn(
+        modifier = modifier
+            .fillMaxWidth(),
+        state = lazyListState,
+        content = {
+            itemsIndexed(
+                lastMessageList?.toList() ?: emptyList(),
+                // Pass key for better performance like setHasStableIds
+                key = { _, item -> item.threadId },
+            ) { _: Int, message: Message ->
+                MessageListItem(
+                    Modifier.animateItemPlacement(tween(durationMillis = 250)),
+                    message,
+                    onClickMessage
+                )
+            }
+        }
+    )
 }
 
 @OptIn(ExperimentalMaterial3Api::class)
