@@ -11,18 +11,7 @@ import androidx.core.app.ActivityCompat
  * Checks if all the permissions needed by the app is granted
  */
 fun checkIfPermissionGranted(context: Context): Boolean {
-    var areGranted =  ActivityCompat.checkSelfPermission(
-        context,
-        Manifest.permission.RECEIVE_SMS
-    ) == PackageManager.PERMISSION_GRANTED
-            && ActivityCompat.checkSelfPermission(
-        context,
-        Manifest.permission.READ_SMS
-    ) == PackageManager.PERMISSION_GRANTED
-            && ActivityCompat.checkSelfPermission(
-        context,
-        Manifest.permission.SEND_SMS
-    ) == PackageManager.PERMISSION_GRANTED
+    var areGranted = checkIfSmsPermissionsGranted(context)
 
     if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
        areGranted = areGranted && ActivityCompat.checkSelfPermission(
@@ -33,6 +22,21 @@ fun checkIfPermissionGranted(context: Context): Boolean {
 
     return areGranted
 
+}
+
+fun checkIfSmsPermissionsGranted(context: Context): Boolean {
+    return (ActivityCompat.checkSelfPermission(
+        context,
+        Manifest.permission.RECEIVE_SMS
+    ) == PackageManager.PERMISSION_GRANTED
+            && ActivityCompat.checkSelfPermission(
+        context,
+        Manifest.permission.READ_SMS
+    ) == PackageManager.PERMISSION_GRANTED
+            && ActivityCompat.checkSelfPermission(
+        context,
+        Manifest.permission.SEND_SMS
+    ) == PackageManager.PERMISSION_GRANTED)
 }
 
 /**
@@ -56,13 +60,17 @@ fun requestPermission(requestPermissionLauncher: ActivityResultLauncher<Array<St
  * Returns true if the needed permissions for the app to work are granted in [permissions]
  */
 fun areNeededPermissionGranted(permissions: Map<String, Boolean>): Boolean {
-    var areGranted = permissions[Manifest.permission.RECEIVE_SMS] == true
-            && permissions[Manifest.permission.READ_SMS] == true
-            && permissions[Manifest.permission.SEND_SMS] == true
+    var areGranted = areSmsPermissionGranted(permissions)
 
     if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
         areGranted = areGranted && permissions[Manifest.permission.POST_NOTIFICATIONS] == true
     }
 
     return areGranted
+}
+
+fun areSmsPermissionGranted(permissions: Map<String, Boolean>): Boolean {
+    return (permissions[Manifest.permission.RECEIVE_SMS] == true
+            && permissions[Manifest.permission.READ_SMS] == true
+            && permissions[Manifest.permission.SEND_SMS] == true)
 }

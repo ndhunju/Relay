@@ -125,14 +125,14 @@ class MainViewModel(
 
     //endregion
 
-    val onAllPermissionGranted = {
+    val onSmsPermissionGranted = {
         // All permissions granted
         viewModelScope.launch { updateLastMessagesWithCorrectSyncStatus() }
         // Reset this value in case it was set to true earlier
         _showErrorMessageForPermissionDenied.value = false
     }
 
-    val onPermissionDenied = {
+    val onSmsPermissionDenied = {
         updateLastMessages(null)
         _showErrorMessageForPermissionDenied.value = true
         // Hide Splash Screen so that the error message can be shown

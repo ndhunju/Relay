@@ -1,7 +1,5 @@
 package com.ndhunju.relay.ui
 
-import android.Manifest.permission.READ_SMS
-import android.app.AlertDialog
 import android.content.Intent
 import android.os.Bundle
 import android.view.View
@@ -13,19 +11,17 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.ui.Modifier
-import androidx.core.app.ActivityCompat.shouldShowRequestPermissionRationale
 import com.ndhunju.relay.R
 import com.ndhunju.relay.RelayViewModelFactory
 import com.ndhunju.relay.ui.account.AccountFragment
 import com.ndhunju.relay.ui.debug.DebugFragment
 import com.ndhunju.relay.ui.messagesfrom.MessagesFromFragment
 import com.ndhunju.relay.ui.pair.PairWithParentFragment
-import com.ndhunju.relay.ui.pair.PairWithChildByScanningQrCodeActivity
 import com.ndhunju.relay.ui.pair.ShareEncryptionKeyWithQrCodeActivity
 import com.ndhunju.relay.ui.parent.ChildUserListFragment
 import com.ndhunju.relay.ui.theme.RelayTheme
-import com.ndhunju.relay.util.areNeededPermissionGranted
-import com.ndhunju.relay.util.checkIfPermissionGranted
+import com.ndhunju.relay.util.areSmsPermissionGranted
+import com.ndhunju.relay.util.checkIfSmsPermissionsGranted
 import com.ndhunju.relay.util.requestPermission
 
 class MainActivity : BaseActivity() {
@@ -36,12 +32,11 @@ class MainActivity : BaseActivity() {
     private val requestPermissionLauncher = registerForActivityResult(
         ActivityResultContracts.RequestMultiplePermissions()
     ) { permissions ->
-        if (areNeededPermissionGranted(permissions)) {
-            viewModel.onAllPermissionGranted()
-            // Create and register the SMS broadcast receiver
+        if (areSmsPermissionGranted(permissions)) {
+            viewModel.onSmsPermissionGranted()
         } else {
             // Permissions denied
-            viewModel.onPermissionDenied()
+            viewModel.onSmsPermissionDenied()
         }
     }
 
@@ -135,22 +130,13 @@ class MainActivity : BaseActivity() {
                 .commit()
         }
 
-        // Check if needed permissions are granted
-        if (checkIfPermissionGranted(this)) {
-            viewModel.onAllPermissionGranted()
+        // Check if SMS read and send permissions are granted
+        if (checkIfSmsPermissionsGranted(this)) {
+            viewModel.onSmsPermissionGranted()
         } else {
-            if (shouldShowRequestPermissionRationale(this, READ_SMS)) {
-                // Show an explanation as to why the app needs read and send SMS permission
-                AlertDialog.Builder(this)
-                    .setMessage(getString(R.string.permission_rationale_sms_read_send))
-                    .setPositiveButton(getString(R.string.ok)) { _, _ ->
-                        requestPermission(requestPermissionLauncher)
-                    }
-                    .setNegativeButton(getString(R.string.cancel), null)
-                    .show()
-            } else {
-                requestPermission(requestPermissionLauncher)
-            }
+            // if (shouldShowRequestPermissionRationale(this, READ_SMS))
+            // Always show the rationale
+            viewModel.onSmsPermissionDenied()
         }
     }
 
