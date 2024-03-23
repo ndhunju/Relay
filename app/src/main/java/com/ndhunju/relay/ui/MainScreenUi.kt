@@ -36,6 +36,7 @@ import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.rememberDrawerState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.State
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateListOf
@@ -55,13 +56,17 @@ import com.ndhunju.relay.ui.custom.SearchTextField
 import com.ndhunju.relay.ui.messages.Message
 import com.ndhunju.relay.ui.messages.MessageListItem
 import com.ndhunju.relay.util.composibles.DynamicLauncherIconImage
+import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.launch
 
 @Preview
 @Composable
 fun MainContentPreview() {
     val mockedMessages = remember { mutableStateListOf<Message>().apply { addAll(mockMessages) } }
-    MainContent(lastMessageList = mockedMessages)
+    MainContent(
+        lastMessageList = mockedMessages,
+        showErrorMessageForPermissionDenied = MutableStateFlow(false).collectAsState()
+    )
 }
 
 @Composable
