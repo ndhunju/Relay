@@ -20,38 +20,63 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.State
 import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import androidx.work.WorkManager
 import com.ndhunju.relay.R
-import com.ndhunju.relay.api.ApiInterfaceDummyImpl
+import com.ndhunju.relay.ui.custom.SimpleAlertDialog
 import com.ndhunju.relay.ui.custom.TopAppBarWithUpButton
+import com.ndhunju.relay.ui.mockChildUsers
 import com.ndhunju.relay.ui.theme.LocalDimens
-import com.ndhunju.relay.util.InMemoryCurrentUser
+import kotlinx.coroutines.flow.MutableStateFlow
 
 @Preview
 @Composable
 fun ChildUserListScreenPreview() {
-    ChildUserListScreen(ChildUserListViewModel(
-        ApiInterfaceDummyImpl,
-        WorkManager.getInstance(LocalContext.current),
-        InMemoryCurrentUser(),
-    ))
+    ChildUserListScreen(
+        showProgress = remember { mutableStateOf(false) },
+        childUsers = MutableStateFlow(mockChildUsers).collectAsState(),
+        showPostNotificationPermissionDialog = remember { mutableStateOf(false) }
+    )
 }
 
 @Composable
 fun ChildUserListScreen(
     viewModel: ChildUserListViewModel,
-    onUpPressed: (() -> Unit)? = null
+    onUpPressed: (() -> Unit)? = null,
+    ) {
+    ChildUserListScreen(
+        viewModel.showProgress.collectAsState(),
+        viewModel.childUsers.collectAsState(),
+        viewModel.showPostNotificationPermissionDialog,
+        viewModel::onClickChildUser,
+        viewModel::onClickAddChildKey,
+        viewModel::onClickAllowNotificationDialogBtnOk,
+        viewModel::onClickAllowNotificationDialogBtnCancel,
+        onUpPressed
+    )
+}
+
+
+@Composable
+fun ChildUserListScreen(
+    showProgress: State<Boolean>,
+    childUsers: State<List<Child>>,
+    showPostNotificationPermissionDialog: State<Boolean>,
+    onClickChildUser: ((Child) -> Unit)? = null,
+    onClickAddChildKey: ((Child) -> Unit)? = null,
+    onClickAllowNotificationDialogBtnOk: (() -> Unit)? = null,
+    onClickAllowNotificationDialogBtnCancel: (() -> Unit)? = null,
+    onUpPressed: (() -> Unit)? = null,
 ) {
-    val childUsers = viewModel.childUsers.collectAsState()
     Scaffold(
         topBar = {
             TopAppBarWithUpButton(
@@ -60,8 +85,6 @@ fun ChildUserListScreen(
             )
         }
     ) { innerPadding ->
-
-        val showProgress = viewModel.showProgress.collectAsState()
 
         if (showProgress.value) {
             LoadingIndicator()
@@ -75,11 +98,7 @@ fun ChildUserListScreen(
                 content = {
                     itemsIndexed(childUsers.value, key = { _, item -> item.id })
                     { _: Int, childUser: Child ->
-                        ChildUserColumnItem(
-                            viewModel::onClickChildUser,
-                            viewModel::onClickAddChildKey,
-                            childUser
-                        )
+                        ChildUserColumnItem(onClickChildUser, onClickAddChildKey, childUser)
                         Divider()
                     }
                 }
@@ -131,14 +150,9 @@ private fun ChildUserColumnItem(
 
 @Composable
 private fun LoadingIndicator() {
-    Box(
-        modifier = Modifier
-            .fillMaxSize()
-    ) {
+    Box(modifier = Modifier.fillMaxSize()) {
         CircularProgressIndicator(
-            modifier = Modifier
-                .align(Alignment.Center)
-                .size(32.dp),
+            modifier = Modifier.align(Alignment.Center).size(32.dp),
             color = MaterialTheme.colorScheme.onBackground
         )
     }
