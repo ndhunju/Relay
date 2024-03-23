@@ -11,7 +11,10 @@ import com.ndhunju.relay.util.extensions.getOrPut
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.firstOrNull
+import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.sync.Mutex
+import kotlinx.coroutines.sync.withLock
 import java.io.IOException
 
 /**
@@ -43,20 +46,25 @@ class DataStoreKeyValuePersistService(
     private val context: Context
 ): SimpleKeyValuePersistService {
 
+    private val mutex = Mutex()
     private val keyCache = mutableMapOf<String, Preferences.Key<String>>()
     private val Context.dataStore: DataStore<Preferences> by preferencesDataStore(
         "DataStoreKeyValuePersistService"
     )
 
     override suspend fun save(key: String, value: String) {
-        context.dataStore.edit { pref ->
-            pref[keyCache.getOrPut(key, stringPreferencesKey(key))] = value
+        mutex.withLock(this) {
+            context.dataStore.edit { pref ->
+                pref[keyCache.getOrPut(key, stringPreferencesKey(key))] = value
+            }
         }
     }
 
     override suspend fun saveFirstTime(key: String, value: String) {
-        if (retrieve(key).firstOrNull() == null) {
-            save(key, value)
+        mutex.withLock(this) {
+            if (retrieve(key).firstOrNull() == null) {
+                save(key, value)
+            }
         }
     }
 
@@ -70,6 +78,26 @@ class DataStoreKeyValuePersistService(
         }.map { pref ->
             pref[keyCache.getOrPut(key, stringPreferencesKey(key))]
         }
+    }
+
+}
+
+object FakeSimpleKeyValuePersistService: SimpleKeyValuePersistService {
+
+    val map = mutableMapOf<String, String>()
+
+    override suspend fun save(key: String, value: String) {
+        map[key] = value
+    }
+
+    override suspend fun saveFirstTime(key: String, value: String) {
+        if (map[key] == null) {
+            map[key] = value
+        }
+    }
+
+    override suspend fun retrieve(key: String): Flow<String?> {
+        return flow { map[key] }
     }
 
 }
