@@ -104,6 +104,14 @@ fun ChildUserListScreen(
                 }
             )
         }
+
+        AnimatedVisibility(visible = showPostNotificationPermissionDialog.value) {
+            SimpleAlertDialog(
+                message = stringResource(id = R.string.child_user_screen_notification_permission),
+                onClickDialogBtnOk = { onClickAllowNotificationDialogBtnOk?.invoke() },
+                onClickDialogBtnCancel = { onClickAllowNotificationDialogBtnCancel?.invoke() }
+            )
+        }
     }
 }
 

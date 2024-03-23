@@ -37,6 +37,11 @@ interface SimpleKeyValuePersistService {
      */
     suspend fun retrieve(key: String): Flow<String?>
 
+    /**
+     * Deletes entry for [key]
+     */
+    suspend fun delete(key: String)
+
 }
 
 /**
@@ -80,6 +85,14 @@ class DataStoreKeyValuePersistService(
         }
     }
 
+    override suspend fun delete(key: String) {
+        mutex.withLock(this) {
+            context.dataStore.edit { pref ->
+                pref.remove(keyCache.getOrPut(key, stringPreferencesKey(key)))
+            }
+        }
+    }
+
 }
 
 object FakeSimpleKeyValuePersistService: SimpleKeyValuePersistService {
@@ -98,6 +111,10 @@ object FakeSimpleKeyValuePersistService: SimpleKeyValuePersistService {
 
     override suspend fun retrieve(key: String): Flow<String?> {
         return flow { map[key] }
+    }
+
+    override suspend fun delete(key: String) {
+        map.remove(key)
     }
 
 }

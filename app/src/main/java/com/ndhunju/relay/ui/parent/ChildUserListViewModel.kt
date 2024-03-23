@@ -67,10 +67,18 @@ class ChildUserListViewModel(
         }
     }
 
-    fun onClickAllowNotificationDialogButton() {
+    fun onClickAllowNotificationDialogBtnOk() {
         // Dismiss the dialog when any button is clicked
         _showPostNotificationPermissionDialog.value = false
+        doRequestNotificationPermission?.invoke()
     }
+
+    fun onClickAllowNotificationDialogBtnCancel() {
+        // Dismiss the dialog when any button is clicked
+        _showPostNotificationPermissionDialog.value = false
+        onDeniedNotificationPermission()
+    }
+
 
     init {
         viewModelScope.launch(Dispatchers.IO) {
@@ -106,9 +114,16 @@ class ChildUserListViewModel(
                         Child(it.id, it.email ?: "", it.encryptionKey)
                     }
 
-                    doSyncChildMessagesFromServer()
+                    if (_childUsers.value.isNotEmpty()) {
+                        doSyncChildMessagesFromServer()
+                    }
                 }
             }
+
+            // Delete for testing purposes
+            //simpleKeyValuePersistService.delete(
+            //    keyNotificationPermissionDeniedTime,
+            //)
 
             showAllowNotificationDialogIfNeeded()
         }
@@ -119,9 +134,29 @@ class ChildUserListViewModel(
         _childUsers.value = currentUser.user.getChildUsers().map { childUser ->
             Child(childUser.id, childUser.email ?: "", childUser.encryptionKey)
         }
+        showAllowNotificationDialogIfNeeded()
     }
 
     private fun doSyncChildMessagesFromServer() {
         workManager.enqueue(OneTimeWorkRequestBuilder<SyncChildMessagesWorker>().build())
+    }
+    
+    private fun showAllowNotificationDialogIfNeeded() {
+        viewModelScope.launch {
+            _showPostNotificationPermissionDialog.value =
+                // Show if user has not already given notification permission
+                checkIfPostNotificationPermissionGranted(application).not()
+                // Show if user hadn't previously denied it
+                && didUserPreviouslyDenyNotificationPermission()
+                // Show if there is at least one child
+                && _childUsers.value.isNotEmpty()
+        }
+    }
+
+    private suspend fun didUserPreviouslyDenyNotificationPermission(): Boolean {
+        // True if keyNotificationPermissionDeniedTime is saved
+        return simpleKeyValuePersistService.retrieve(
+            keyNotificationPermissionDeniedTime
+        ).firstOrNull() == null
     }
 }
