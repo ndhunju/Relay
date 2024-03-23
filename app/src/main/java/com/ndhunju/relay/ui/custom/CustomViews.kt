@@ -2,7 +2,8 @@ package com.ndhunju.relay.ui.custom
 
 import android.content.res.Configuration
 import androidx.compose.foundation.background
-import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
@@ -11,10 +12,12 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.BasicTextField
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
+import androidx.compose.material3.Button
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
@@ -141,22 +144,48 @@ fun TopAppBarWithUpButton(
 @Composable
 private fun CenteredTextPreview() {
     RelayTheme {
-        CenteredText(modifier = Modifier, string = "This text should be centered on the screen.")
+        Surface {
+            CenteredMessageWithButton(
+                modifier = Modifier,
+                message = "This text should be centered on the screen.",
+                buttonText = "Action Button"
+            )
+        }
     }
 }
 
+/**
+ * Centers the [message] and [buttonText] on the screen
+ */
 @Composable
-fun CenteredText(modifier: Modifier, string: String) {
-    Box(
-        modifier = modifier
-            .background(MaterialTheme.colorScheme.background)
-            .fillMaxSize()
-            .padding(horizontal = LocalDimens.current.contentPaddingHorizontal),
+fun CenteredMessageWithButton(
+    modifier: Modifier,
+    message: String? = null,
+    buttonText: String? = null,
+    onClickButton: (() -> Unit)? = null,
     ) {
-        Text(
-            text = string,
-            textAlign = TextAlign.Center,
-            modifier = Modifier.align(Alignment.Center)
-        )
+    Column(
+        modifier = modifier
+            .fillMaxSize()
+            .padding(horizontal = LocalDimens.current.contentPaddingHorizontal.times(2)),
+        horizontalAlignment = Alignment.CenterHorizontally,
+        verticalArrangement = Arrangement.Center
+    ) {
+        if (message != null) {
+            Text(
+                text = message,
+                textAlign = TextAlign.Center,
+                style = MaterialTheme.typography.bodyMedium
+            )
+        }
+
+        if (buttonText != null) {
+            Button(
+                onClick = { onClickButton?.invoke() },
+                modifier = Modifier.padding(16.dp)
+            ) {
+                Text(text = buttonText)
+            }
+        }
     }
 }

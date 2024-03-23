@@ -22,7 +22,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.ndhunju.relay.R
-import com.ndhunju.relay.ui.custom.CenteredText
+import com.ndhunju.relay.ui.custom.CenteredMessageWithButton
 import com.ndhunju.relay.ui.custom.SyncStatusIcon
 import com.ndhunju.relay.ui.custom.TopAppBarWithUpButton
 import com.ndhunju.relay.ui.messages.Message
@@ -51,7 +51,10 @@ fun MessagesFromView(
             modifier = Modifier.fillMaxSize(),
             topBar = { TopAppBarWithUpButton(senderAddress, onBackPressed) }
         ) { innerPadding ->
-            CenteredText(Modifier.padding(innerPadding), stringResource(R.string.msg_no_sender))
+            CenteredMessageWithButton(
+                Modifier.padding(innerPadding),
+                stringResource(R.string.msg_no_sender)
+            )
         }
     } else {
         // Using a separate Scaffold so that the error message could be centered on the screen
