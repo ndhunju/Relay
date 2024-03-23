@@ -1,9 +1,6 @@
 package com.ndhunju.relay.ui.account
 
-import android.util.Patterns
-import androidx.annotation.StringRes
 import androidx.annotation.VisibleForTesting
-import androidx.core.util.PatternsCompat
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.ndhunju.relay.R
@@ -13,8 +10,13 @@ import com.ndhunju.relay.api.Result
 import com.ndhunju.relay.service.AppStateBroadcastService
 import com.ndhunju.relay.service.analyticsprovider.AnalyticsProvider
 import com.ndhunju.relay.util.CurrentUser
+import com.ndhunju.relay.util.ENC_KEY_MIN_LENGTH
 import com.ndhunju.relay.util.User
 import com.ndhunju.relay.util.extensions.combine
+import com.ndhunju.relay.util.isValidEmail
+import com.ndhunju.relay.util.isValidEncryptionKey
+import com.ndhunju.relay.util.isValidName
+import com.ndhunju.relay.util.isValidPhoneNumber
 import com.ndhunju.relay.util.wrapper.StringResource
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -24,7 +26,6 @@ import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.launch
 import java.lang.RuntimeException
 import java.util.UUID
-import java.util.regex.Pattern
 
 class AccountViewModel(
     private val appStateBroadcastService: AppStateBroadcastService,
@@ -38,9 +39,8 @@ class AccountViewModel(
     val state: StateFlow<AccountScreenUiState>
         get() { return _state.asStateFlow() }
 
-    private val encryptionKeyMinLength = 6
     private val randomEncKey by lazy {
-        UUID.randomUUID().toString().subSequence(0, encryptionKeyMinLength.times(2)).toString()
+        UUID.randomUUID().toString().subSequence(0, ENC_KEY_MIN_LENGTH.times(2)).toString()
     }
 
     private val email = MutableStateFlow(user.email)
@@ -80,10 +80,10 @@ class AccountViewModel(
 
     val onEncKeyChange: (String) -> Unit = {
         encKey.value = it
-        errorStrResIdForEncKey.value = if (it.length < encryptionKeyMinLength) {
-            StringResource(R.string.account_invalid_enc_key, encryptionKeyMinLength)
-        } else {
+        errorStrResIdForEncKey.value = if (isValidEncryptionKey(it)) {
             null
+        } else {
+            StringResource(R.string.account_invalid_enc_key, ENC_KEY_MIN_LENGTH)
         }
     }
 
@@ -234,60 +234,6 @@ class AccountViewModel(
         encryptionKey = state.value.encKey
     )
 }
-
-/**
- * Data class representing the state of [AccountScreen]
- */
-data class AccountScreenUiState(
-    val mode: Mode = Mode.Create,
-    val email: String? = null,
-    val name: String? = null,
-    val phone: String? = null,
-    val encKey: String? = null,
-    @StringRes val errorStrIdForEmailField: Int? = null,
-    @StringRes val errorStrIdForNameField: Int? = null,
-    @StringRes val errorStrIdForPhoneField: Int? = null,
-    val errorStrResForEncKeyField: StringResource? = null,
-    @StringRes val errorStrIdForGenericError: Int? = null,
-    /**
-     * True when the app is making network call to create/update [User]
-     */
-    val showProgress: Boolean = false,
-    val showDialog: Boolean = errorStrIdForGenericError != null,
-    val isEmailTextFieldEnabled: Boolean = showProgress.not(),
-    val isNameTextFieldEnabled: Boolean = showProgress.not(),
-    val isPhoneTextFieldEnabled: Boolean = showProgress.not(),
-    val isEncKeyTextFieldEnabled: Boolean = showProgress.not(),
-) {
-    fun isCreateUpdateBtnEnabled(): Boolean {
-        return showProgress.not() // Disable when showing progress
-                // Disable if there is an error in Email, Name or Phone
-                && email?.isValidEmail() == true
-                && isValidName(name)
-                && isValidPhoneNumber(phone)
-    }
-}
-
-fun String?.isValidEmail(): Boolean {
-    if (this == null) return false
-    return PatternsCompat.EMAIL_ADDRESS.matcher(this).matches()
-}
-
-private fun isValidName(it: String?) = it != null && it.isEmpty().not()
-
-/**
- * Copied from [Patterns.PHONE].
- * For some reason, [Patterns.PHONE] is null while running the test cases
- */
-val phonePattern: Pattern by lazy {
-    Pattern.compile( // sdd = space, dot, or dash
-        ("(\\+[0-9]+[\\- \\.]*)?" // +<digits><sdd>*
-                + "(\\([0-9]+\\)[\\- \\.]*)?" // <digit><digit|sdd>+<digit>
-                + "([0-9][0-9\\- \\.]+[0-9])")) // <digit><digit|sdd>+<digit>
-}
-private fun isValidPhoneNumber(it: String?) = it != null
-        && it.length > 8 // Has to be at least 9 digits
-        && phonePattern.matcher(it).matches()
 
 /**
  * All possible modes that user could be using [AccountScreen] in.

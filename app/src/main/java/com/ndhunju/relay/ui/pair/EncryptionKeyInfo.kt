@@ -1,6 +1,6 @@
 package com.ndhunju.relay.ui.pair
 
-import com.ndhunju.relay.ui.account.isValidEmail
+import com.ndhunju.relay.util.isValidEmail
 import kotlin.contracts.ExperimentalContracts
 import kotlin.contracts.contract
 
