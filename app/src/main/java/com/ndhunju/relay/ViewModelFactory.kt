@@ -23,7 +23,8 @@ val RelayViewModelFactory: ViewModelProvider.Factory = object : ViewModelProvide
         extras: CreationExtras
     ): T {
         // Get the Application object from extras
-        val appComponent = (checkNotNull(extras[APPLICATION_KEY]) as RelayApplication).appComponent
+        val application = checkNotNull(extras[APPLICATION_KEY])
+        val appComponent = (application as RelayApplication).appComponent
         val deviceSmsReaderService = appComponent.deviceSmsReaderService()
         val apiInterface = appComponent.apiInterface()
         val smsInfoRepository = appComponent.smsInfoRepository()
@@ -32,6 +33,7 @@ val RelayViewModelFactory: ViewModelProvider.Factory = object : ViewModelProvide
         val workManager = appComponent.workManager()
         val analyticsManager = appComponent.analyticsProvider()
         val appStateBroadcasterService = appComponent.appStateBroadcastService()
+        val simpleKeyValuePersistService = appComponent.simpleKeyValuePersistService()
         val gson = appComponent.gson()
         with(modelClass) {
             return when {
@@ -62,6 +64,8 @@ val RelayViewModelFactory: ViewModelProvider.Factory = object : ViewModelProvide
                         apiInterface,
                         workManager,
                         currentUser,
+                        application,
+                        simpleKeyValuePersistService
                     ) as T
                 }
                 isAssignableFrom(MessagesFromChildViewModel::class.java) -> {

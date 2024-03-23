@@ -22,6 +22,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.ndhunju.relay.R
 import com.ndhunju.relay.ui.custom.RelayOutlinedTextField
+import com.ndhunju.relay.ui.custom.SimpleAlertDialog
 import com.ndhunju.relay.ui.custom.TopAppBarWithUpButton
 import com.ndhunju.relay.ui.theme.LocalDimens
 import com.ndhunju.relay.util.wrapper.stringResource
@@ -122,31 +123,12 @@ fun AccountScreen(
                 )
 
                 if (accountScreenUiState.showDialog) {
-                    AlertDialog(onDismissRequest = {}) {
-                        Surface {
-                            Column(modifier = Modifier
-                                .padding(
-                                    horizontal = LocalDimens.current.contentPaddingHorizontal,
-                                    vertical = LocalDimens.current.itemPaddingVertical
-                                ),
-                                verticalArrangement = Arrangement.spacedBy(
-                                    LocalDimens.current.itemPaddingVertical
-                                )
-                            ) {
-                                Text(
-                                    text = getString(
-                                        resId = accountScreenUiState.errorStrIdForGenericError
-                                    ) ?: ""
-                                )
-                                Button(
-                                    modifier = Modifier.fillMaxWidth(),
-                                    onClick = onClickDialogBtnOk
-                                ) {
-                                    Text(text = stringResource(id = R.string.ok))
-                                }
-                            }
-                        }
-                    }
+                    SimpleAlertDialog(
+                        getString(
+                            resId = accountScreenUiState.errorStrIdForGenericError
+                        ) ?: "",
+                        onClickDialogBtnOk
+                    )
                 }
             }
 

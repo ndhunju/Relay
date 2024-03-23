@@ -1,6 +1,8 @@
 package com.ndhunju.relay.util.extensions
 
 import android.database.Cursor
+import androidx.compose.runtime.MutableState
+import androidx.compose.runtime.State
 import kotlinx.coroutines.flow.Flow
 
 /**
@@ -67,4 +69,17 @@ fun <K,V> MutableMap<K,V>.getOrPut(key: K, default: V): V {
     }
 
     return  this[key] ?: default
+}
+
+/**
+ * Get the [MutableState] object as [State]
+ * whose value can't be changed by consumer
+ */
+fun <T> MutableState<T>.asState(): State<T> {
+    val originalState = this
+    return object: State<T> {
+        override val value: T
+            get() = originalState.value
+
+    }
 }

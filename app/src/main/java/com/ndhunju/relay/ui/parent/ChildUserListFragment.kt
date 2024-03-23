@@ -14,6 +14,8 @@ import com.ndhunju.relay.RelayViewModelFactory
 import com.ndhunju.relay.ui.pair.AddChildEncryptionKeyFromQrCodeActivity
 import com.ndhunju.relay.ui.parent.messagesfromchild.MessagesFromChildFragment
 import com.ndhunju.relay.ui.theme.RelayTheme
+import com.ndhunju.relay.util.isNotificationPermissionGranted
+import com.ndhunju.relay.util.requestNotificationPermission
 
 /**
  * A [Fragment] subclass that shows list of paired child users
@@ -33,6 +35,14 @@ class ChildUserListFragment : Fragment() {
 
     }
 
+    private val requestPermissionLauncher = registerForActivityResult(
+        ActivityResultContracts.RequestMultiplePermissions()
+    ) { permissions ->
+        if (isNotificationPermissionGranted(permissions).not()) {
+            viewModel.onDeniedNotificationPermission()
+        }
+    }
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
@@ -50,6 +60,10 @@ class ChildUserListFragment : Fragment() {
             activityLauncher.launch(
                 Intent(context, AddChildEncryptionKeyFromQrCodeActivity::class.java)
             )
+        }
+
+        viewModel.doRequestNotificationPermission = {
+            requestNotificationPermission(requestPermissionLauncher)
         }
     }
 

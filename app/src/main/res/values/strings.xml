@@ -38,7 +38,7 @@
         SMS in order to show you the SMS and for you to send the SMS from the app.
     </string>
     <!-- Verb. Positive action button in a dialog -->
-    <string name="ok">OK</string>
+    <string name="ok">Ok</string>
     <!-- Verb. Negative action button in a dialog -->
     <string name="cancel">Cancel</string>
     <!-- Text shown in a button. When user clicks on it, app requests OS to grant permissions -->
@@ -117,6 +117,9 @@
     <string name="child_user_screen_title">Child Users</string>
     <!-- Description for child user menu icon shown in side navigation -->
     <string name="image_description_child_user_icon">Child User Icon</string>
+    <!-- Text shown inside a dialog -->
+    <string name="child_user_screen_notification_permission">Allow us to send you notifications.
+        This way, you get notified whenever there are new messages from the Child User.</string>
 
     <!-- WelcomeScreen-->
     <!-- Header of the welcome screen. Shown in a Text/Label -->

@@ -1,25 +1,35 @@
 package com.ndhunju.relay.ui.parent
 
+import android.app.Application
+import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import androidx.work.OneTimeWorkRequestBuilder
 import androidx.work.WorkManager
 import com.ndhunju.relay.api.ApiInterface
 import com.ndhunju.relay.api.Result
+import com.ndhunju.relay.service.SimpleKeyValuePersistService
 import com.ndhunju.relay.util.CurrentUser
 import com.ndhunju.relay.util.User
+import com.ndhunju.relay.util.checkIfPostNotificationPermissionGranted
+import com.ndhunju.relay.util.extensions.asState
 import com.ndhunju.relay.util.worker.SyncChildMessagesWorker
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.firstOrNull
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 
 class ChildUserListViewModel(
     apiInterface: ApiInterface,
     private val workManager: WorkManager,
-    private val currentUser: CurrentUser
+    private val currentUser: CurrentUser,
+    private val application: Application,
+    private val simpleKeyValuePersistService: SimpleKeyValuePersistService,
 ): ViewModel() {
+
+    private val keyNotificationPermissionDeniedTime = "notificationPermissionDeniedTimeStamp"
 
     private val _childUsers = MutableStateFlow<List<Child>>(emptyList())
     val childUsers = _childUsers.asStateFlow()
@@ -27,8 +37,12 @@ class ChildUserListViewModel(
     private val _showProgress = MutableStateFlow(false)
     val showProgress = _showProgress.asStateFlow()
 
+    private val _showPostNotificationPermissionDialog = mutableStateOf(false)
+    val showPostNotificationPermissionDialog = _showPostNotificationPermissionDialog.asState()
+
     var doOpenMessagesFromChildFragment: ((Child) -> Unit)? = null
     var doOpenAddChildEncryptionKeyFromQrCodeFragment: ((Child) -> Unit)? = null
+    var doRequestNotificationPermission: (() -> Unit)? = null
 
     /**
      * User clicked on [childUsers]
@@ -39,6 +53,23 @@ class ChildUserListViewModel(
 
     fun onClickAddChildKey(child: Child) {
         doOpenAddChildEncryptionKeyFromQrCodeFragment?.invoke(child)
+    }
+    
+    fun onDeniedNotificationPermission() {
+        _showPostNotificationPermissionDialog.value = false
+        // Save the timestamp of when was notification permission was denied
+        // This way, we can determine when to ask for this again next time
+        viewModelScope.launch {
+            simpleKeyValuePersistService.save(
+                keyNotificationPermissionDeniedTime,
+                System.currentTimeMillis().toString()
+            )
+        }
+    }
+
+    fun onClickAllowNotificationDialogButton() {
+        // Dismiss the dialog when any button is clicked
+        _showPostNotificationPermissionDialog.value = false
     }
 
     init {
@@ -78,6 +109,8 @@ class ChildUserListViewModel(
                     doSyncChildMessagesFromServer()
                 }
             }
+
+            showAllowNotificationDialogIfNeeded()
         }
     }
 
