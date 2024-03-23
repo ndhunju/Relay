@@ -16,6 +16,7 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.input.KeyboardCapitalization
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -23,6 +24,7 @@ import com.ndhunju.relay.R
 import com.ndhunju.relay.ui.custom.RelayOutlinedTextField
 import com.ndhunju.relay.ui.custom.TopAppBarWithUpButton
 import com.ndhunju.relay.ui.theme.LocalDimens
+import com.ndhunju.relay.util.wrapper.stringResource
 
 @Preview
 @Composable
@@ -90,14 +92,17 @@ fun AccountScreen(
                     labelRes = R.string.text_field_label_email,
                     enabled = accountScreenUiState.isEmailTextFieldEnabled,
                     errorMessage = getString(accountScreenUiState.errorStrIdForEmailField),
-                    onValueChange = onEmailChange
+                    onValueChange = onEmailChange,
+                    keyboardType = KeyboardType.Email
                 )
                 RelayOutlinedTextField(
                     value = accountScreenUiState.name ?: "",
                     labelRes = R.string.text_field_label_name,
                     enabled = accountScreenUiState.isNameTextFieldEnabled,
                     errorMessage = getString(accountScreenUiState.errorStrIdForNameField),
-                    onValueChange = onNameChange
+                    onValueChange = onNameChange,
+                    // Similar to inputType=textPersonName
+                    capitalization = KeyboardCapitalization.Words
                 )
                 RelayOutlinedTextField(
                     value = accountScreenUiState.phone ?: "",
@@ -113,6 +118,7 @@ fun AccountScreen(
                     enabled = accountScreenUiState.isEncKeyTextFieldEnabled,
                     onValueChange = onEncKeyChange,
                     supportingText = stringResource(R.string.enc_key_supporting_text),
+                    errorMessage = stringResource(accountScreenUiState.errorStrResForEncKeyField)
                 )
 
                 if (accountScreenUiState.showDialog) {

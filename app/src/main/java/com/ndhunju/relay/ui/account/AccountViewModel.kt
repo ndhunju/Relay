@@ -15,6 +15,7 @@ import com.ndhunju.relay.service.analyticsprovider.AnalyticsProvider
 import com.ndhunju.relay.util.CurrentUser
 import com.ndhunju.relay.util.User
 import com.ndhunju.relay.util.extensions.combine
+import com.ndhunju.relay.util.wrapper.StringResource
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -22,6 +23,7 @@ import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.launch
 import java.lang.RuntimeException
+import java.util.UUID
 import java.util.regex.Pattern
 
 class AccountViewModel(
@@ -36,13 +38,20 @@ class AccountViewModel(
     val state: StateFlow<AccountScreenUiState>
         get() { return _state.asStateFlow() }
 
+    private val encryptionKeyMinLength = 6
+    private val randomEncKey by lazy {
+        UUID.randomUUID().toString().subSequence(0, encryptionKeyMinLength.times(2)).toString()
+    }
+
     private val email = MutableStateFlow(user.email)
     private val name = MutableStateFlow(user.name)
     private val phone = MutableStateFlow(user.phone)
-    private val encKey = MutableStateFlow(user.encryptionKey)
+    // At first account creation, encryption key would be null. In such case, use random key
+    private val encKey = MutableStateFlow(user.encryptionKey ?: randomEncKey)
     private val errorStrIdForEmail = MutableStateFlow<Int?>(null)
     private val errorStrIdForName = MutableStateFlow<Int?>(null)
     private val errorStrIdForPhone = MutableStateFlow<Int?>(null)
+    private val errorStrResIdForEncKey = MutableStateFlow<StringResource?>(null)
     private val errorStrIdGeneric = MutableStateFlow<Int?>(null)
     private val showProgress = MutableStateFlow(false)
 
@@ -71,6 +80,11 @@ class AccountViewModel(
 
     val onEncKeyChange: (String) -> Unit = {
         encKey.value = it
+        errorStrResIdForEncKey.value = if (it.length < encryptionKeyMinLength) {
+            StringResource(R.string.account_invalid_enc_key, encryptionKeyMinLength)
+        } else {
+            null
+        }
     }
 
     /**
@@ -101,11 +115,13 @@ class AccountViewModel(
                 errorStrIdForEmail,
                 errorStrIdForName,
                 errorStrIdForPhone,
+                errorStrResIdForEncKey,
                 errorStrIdGeneric,
                 showProgress
             )
             { email, name, phone, encKey, errorStrIdForEmail,
-              errorStrIdForName, errorStrIdForPhone, errorStrIdGeneric, showProgress ->
+              errorStrIdForName, errorStrIdForPhone, errorStrResForEncKey,
+              errorStrIdGeneric, showProgress ->
                 AccountScreenUiState(
                     mode = if (user.isRegistered) Mode.Update else Mode.Create,
                     email = email,
@@ -117,6 +133,7 @@ class AccountViewModel(
                     errorStrIdForEmailField = errorStrIdForEmail,
                     errorStrIdForNameField = errorStrIdForName,
                     errorStrIdForPhoneField = errorStrIdForPhone,
+                    errorStrResForEncKeyField = errorStrResForEncKey,
                     errorStrIdForGenericError = errorStrIdGeneric,
                     showProgress = showProgress
                 )
@@ -230,6 +247,7 @@ data class AccountScreenUiState(
     @StringRes val errorStrIdForEmailField: Int? = null,
     @StringRes val errorStrIdForNameField: Int? = null,
     @StringRes val errorStrIdForPhoneField: Int? = null,
+    val errorStrResForEncKeyField: StringResource? = null,
     @StringRes val errorStrIdForGenericError: Int? = null,
     /**
      * True when the app is making network call to create/update [User]

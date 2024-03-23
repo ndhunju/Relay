@@ -14,6 +14,7 @@ import androidx.compose.ui.focus.FocusDirection
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.ImeAction
+import androidx.compose.ui.text.input.KeyboardCapitalization
 import androidx.compose.ui.text.input.KeyboardType
 
 /**
@@ -27,7 +28,8 @@ fun RelayOutlinedTextField(
     enabled: Boolean = true,
     errorMessage: String? = null,
     supportingText: String? = null,
-    keyboardType: KeyboardType = KeyboardType.Text
+    keyboardType: KeyboardType = KeyboardType.Text,
+    capitalization: KeyboardCapitalization = KeyboardCapitalization.None
     ) {
     val focusManager = LocalFocusManager.current
     OutlinedTextField(
@@ -50,7 +52,11 @@ fun RelayOutlinedTextField(
                 Text(text = supportingText)
             }
         },
-        keyboardOptions = KeyboardOptions(imeAction = ImeAction.Next, keyboardType = keyboardType),
+        keyboardOptions = KeyboardOptions(
+            imeAction = ImeAction.Next,
+            keyboardType = keyboardType,
+            capitalization = capitalization
+        ),
         keyboardActions = KeyboardActions(
             onNext = { focusManager.moveFocus(FocusDirection.Down) }
         )

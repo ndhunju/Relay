@@ -72,19 +72,21 @@
     <!-- Noun. Label for a text field where user can enter an encryption key -->
     <string name="text_field_label_enc_key">Encryption Key</string>
     <!-- Supporting Text shown below text field. Can take multiple lines-->
-    <string name="enc_key_supporting_text">This key is used to encrypt messages before sending to server. This key is stored on device only.</string>
+    <string name="enc_key_supporting_text">This key is used to encrypt messages before sending them to the server. This key is stored on your device only.</string>
     <!-- Label for a button. Click on it creates an account for the user -->
     <string name="button_label_create_account">Create</string>
     <!-- Label for a button. Clicking on it updates account info of the user -->
     <string name="button_label_update">Update</string>
-    <!-- Error message show below the Email text field -->
+    <!-- Error message shown below the Email text field -->
     <string name="account_invalid_email">Email is invalid.</string>
     <!-- Error message shown below the Email text field when the email user entered is already used-->
     <string name="account_duplicate_email">Email already exits.</string>
-    <!-- Error message show below the Name text field -->
+    <!-- Error message shown below the Name text field -->
     <string name="account_invalid_name">Name is invalid.</string>
-    <!-- Error message show below the Phone number text field -->
+    <!-- Error message shown below the Phone number text field -->
     <string name="account_invalid_phone">Phone number is invalid.</string>
+    <!-- Error message shown below the Encryption Key text field -->
+    <string name="account_invalid_enc_key">Encryption key needs to be at least %1$s characters long.</string>
     <!-- Error message show in a dialog when app fails to create -->
     <string name="account_user_create_failed">Failed to create user at this time. Please try again later.</string>
     <!-- Error message show in a dialog when app fails to update -->

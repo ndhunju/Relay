@@ -33,7 +33,7 @@ fun Cursor.getLongForColumn(column: String): Long {
  * Returns a [Flow] whose values are generated with [transform] function by combining
  * the most recently emitted values by each flow.
  */
-inline fun <reified T1, reified T2, reified T3, reified T4, reified T5, reified T6, reified T7, reified T8, reified T9, R> combine(
+inline fun <reified T1, reified T2, reified T3, reified T4, reified T5, reified T6, reified T7, reified T8, reified T9, reified T10, R> combine(
     flow: Flow<T1>,
     flow2: Flow<T2>,
     flow3: Flow<T3>,
@@ -43,9 +43,10 @@ inline fun <reified T1, reified T2, reified T3, reified T4, reified T5, reified 
     flow7: Flow<T7>,
     flow8: Flow<T8>,
     flow9: Flow<T9>,
-    crossinline transform: suspend (T1, T2, T3, T4, T5, T6, T7, T8, T9) -> R
+    flow10: Flow<T10>,
+    crossinline transform: suspend (T1, T2, T3, T4, T5, T6, T7, T8, T9, T10) -> R
 ): Flow<R> =
-    kotlinx.coroutines.flow.combine(flow, flow2, flow3, flow4, flow5, flow6, flow7, flow8, flow9) { args: Array<*> ->
+    kotlinx.coroutines.flow.combine(flow, flow2, flow3, flow4, flow5, flow6, flow7, flow8, flow9, flow10) { args: Array<*> ->
         transform(
             args[0] as T1,
             args[1] as T2,
@@ -56,6 +57,7 @@ inline fun <reified T1, reified T2, reified T3, reified T4, reified T5, reified 
             args[6] as T7,
             args[7] as T8,
             args[8] as T9,
+            args[9] as T10,
         )
     }
 
