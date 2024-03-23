@@ -5,10 +5,12 @@ import androidx.compose.animation.fadeIn
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.material.icons.Icons
@@ -19,11 +21,13 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.State
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.colorResource
@@ -32,6 +36,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.ndhunju.relay.R
+import com.ndhunju.relay.ui.custom.RelayOutlinedTextField
 import com.ndhunju.relay.ui.custom.SimpleAlertDialog
 import com.ndhunju.relay.ui.custom.TopAppBarWithUpButton
 import com.ndhunju.relay.ui.mockChildUsers
@@ -44,7 +49,8 @@ fun ChildUserListScreenPreview() {
     ChildUserListScreen(
         showProgress = remember { mutableStateOf(false) },
         childUsers = MutableStateFlow(mockChildUsers).collectAsState(),
-        showPostNotificationPermissionDialog = remember { mutableStateOf(false) }
+        showPostNotificationPermissionDialog = remember { mutableStateOf(false) },
+        showAddChildEncKeyDialog = MutableStateFlow(false).collectAsState()
     )
 }
 
@@ -57,10 +63,14 @@ fun ChildUserListScreen(
         viewModel.showProgress.collectAsState(),
         viewModel.childUsers.collectAsState(),
         viewModel.showPostNotificationPermissionDialog,
+        viewModel.showAddChildEncKeyDialog,
         viewModel::onClickChildUser,
         viewModel::onClickAddChildKey,
         viewModel::onClickAllowNotificationDialogBtnOk,
         viewModel::onClickAllowNotificationDialogBtnCancel,
+        viewModel::onClickChildEncKeyDialogBtnOk,
+        viewModel::onClickChildEncKeyDialogBtnCancel,
+        viewModel::onClickScanQrCodeToAddChildEncKey,
         onUpPressed
     )
 }
@@ -71,10 +81,14 @@ fun ChildUserListScreen(
     showProgress: State<Boolean>,
     childUsers: State<List<Child>>,
     showPostNotificationPermissionDialog: State<Boolean>,
+    showAddChildEncKeyDialog: State<Boolean>,
     onClickChildUser: ((Child) -> Unit)? = null,
     onClickAddChildKey: ((Child) -> Unit)? = null,
     onClickAllowNotificationDialogBtnOk: (() -> Unit)? = null,
     onClickAllowNotificationDialogBtnCancel: (() -> Unit)? = null,
+    onClickChildEncKeyDialogBtnOk: ((String) -> Unit)? = null,
+    onClickChildEncKeyDialogBtnCancel: (() -> Unit)? = null,
+    onClickScanQrCodeToAddChildEncKey: (() -> Unit)? = null,
     onUpPressed: (() -> Unit)? = null,
 ) {
     Scaffold(
@@ -107,9 +121,53 @@ fun ChildUserListScreen(
 
         AnimatedVisibility(visible = showPostNotificationPermissionDialog.value) {
             SimpleAlertDialog(
-                message = stringResource(id = R.string.child_user_screen_notification_permission),
-                onClickDialogBtnOk = { onClickAllowNotificationDialogBtnOk?.invoke() },
-                onClickDialogBtnCancel = { onClickAllowNotificationDialogBtnCancel?.invoke() }
+                stringResource(id = R.string.child_user_screen_notification_permission),
+                onClickAllowNotificationDialogBtnOk,
+                onClickAllowNotificationDialogBtnCancel
+            )
+        }
+
+        AnimatedVisibility(visible = showAddChildEncKeyDialog.value) {
+            EncryptionKeyInputAlertDialog(
+                onClickChildEncKeyDialogBtnOk,
+                onClickChildEncKeyDialogBtnCancel,
+                onClickScanQrCodeToAddChildEncKey
+            )
+        }
+    }
+}
+
+@Preview
+@Composable
+private fun EncryptionKeyInputAlertDialog(
+    onClickChildEncKeyDialogBtnOk: ((String) -> Unit)? = null,
+    onClickChildEncKeyDialogBtnCancel: (() -> Unit)? = null,
+    onClickScanQrCodeToAddChildEncKey: (() -> Unit)? = null
+) {
+    val input = rememberSaveable { mutableStateOf("") }
+
+    SimpleAlertDialog(
+        onClickDialogBtnOk = { onClickChildEncKeyDialogBtnOk?.invoke(input.value) },
+        onClickChildEncKeyDialogBtnCancel
+    ) {
+
+        RelayOutlinedTextField(
+            value = input.value,
+            labelRes = R.string.text_field_label_enc_key,
+            onValueChange = { input.value = it }
+        )
+
+        TextButton(
+            modifier = Modifier.align(Alignment.CenterHorizontally),
+            onClick = { onClickScanQrCodeToAddChildEncKey?.invoke() }
+        ) {
+            Icon(
+                painter = painterResource(id = R.drawable.baseline_qr_code_scanner_24),
+                contentDescription = stringResource(id = R.string.child_user_screen_scan_qr_code)
+            )
+            Spacer(modifier = Modifier.width(8.dp))
+            Text(
+                text = stringResource(R.string.child_user_screen_scan_qr_code).uppercase(),
             )
         }
     }

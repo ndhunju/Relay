@@ -120,6 +120,8 @@
     <!-- Text shown inside a dialog -->
     <string name="child_user_screen_notification_permission">Allow us to send you notifications.
         This way, you get notified whenever there are new messages from the Child User.</string>
+    <!-- Text shown in a button. -->
+    <string name="child_user_screen_scan_qr_code">Scan QR code</string>
 
     <!-- WelcomeScreen-->
     <!-- Header of the welcome screen. Shown in a Text/Label -->

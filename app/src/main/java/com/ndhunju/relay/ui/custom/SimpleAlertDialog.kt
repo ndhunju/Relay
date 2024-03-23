@@ -1,7 +1,7 @@
 package com.ndhunju.relay.ui.custom
 
-import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.ColumnScope
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.AlertDialog
@@ -14,6 +14,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.window.DialogProperties
 import com.ndhunju.relay.R
 import com.ndhunju.relay.ui.theme.LocalDimens
 import com.ndhunju.relay.ui.theme.RelayTheme
@@ -28,27 +29,43 @@ private fun SimpleAlertDialogPreview() {
 
 
 @Composable
+fun SimpleAlertDialog(
+    message: String? = null,
+    onClickDialogBtnOk: (() -> Unit)? = null,
+    onClickDialogBtnCancel: (() -> Unit)? = null,
+    dialogProperties: DialogProperties = DialogProperties(dismissOnClickOutside = false)
+) {
+    SimpleAlertDialog(onClickDialogBtnOk, onClickDialogBtnCancel, dialogProperties) {
+        if (message != null) {
+            Text(text = message)
+        }
+    }
+}
+
+@Composable
 @OptIn(ExperimentalMaterial3Api::class)
 fun SimpleAlertDialog(
-    message: String,
     onClickDialogBtnOk: (() -> Unit)? = null,
-    onClickDialogBtnCancel: (() -> Unit)? = null
+    onClickDialogBtnCancel: (() -> Unit)? = null,
+    dialogProperties: DialogProperties = DialogProperties(dismissOnClickOutside = false),
+    customContent: @Composable (ColumnScope.() -> Unit)
 ) {
-    AlertDialog(onDismissRequest = {}) {
+    AlertDialog(onDismissRequest = {}, properties = dialogProperties) {
         Surface {
             Column(
                 modifier = Modifier
                     .padding(
                         horizontal = LocalDimens.current.contentPaddingHorizontal,
                         vertical = LocalDimens.current.itemPaddingVertical
-                    ),
-                verticalArrangement = Arrangement.spacedBy(
-                    LocalDimens.current.itemPaddingVertical
-                )
+                    )
             ) {
-                Text(text = message)
+
+                customContent()
+
                 Row(
-                    Modifier.align(Alignment.End),
+                    Modifier
+                        .align(Alignment.End)
+                        .padding(top = LocalDimens.current.itemPaddingVertical),
                 ) {
                     TextButton(
                         onClick = { onClickDialogBtnCancel?.invoke() }

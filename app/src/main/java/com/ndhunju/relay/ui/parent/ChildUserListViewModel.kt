@@ -51,9 +51,39 @@ class ChildUserListViewModel(
         doOpenMessagesFromChildFragment?.invoke(childUser)
     }
 
+    //region AddChildEncKeyDialog
+
+    private var currentChild: Child? = null
+
+    private val _showAddChildEncKeyDialog = mutableStateOf(false)
+    val showAddChildEncKeyDialog = _showAddChildEncKeyDialog.asState()
+
     fun onClickAddChildKey(child: Child) {
-        doOpenAddChildEncryptionKeyFromQrCodeFragment?.invoke(child)
+        _showAddChildEncKeyDialog.value = true
+        currentChild = child
     }
+
+    fun onClickChildEncKeyDialogBtnOk(encryptionKey: String) {
+        val isAdded = currentUser.user.addEncryptionKeyOfChild(currentChild?.email, encryptionKey)
+        if (isAdded) {
+            invalidateChildUsers()
+        }
+        // Dismiss the dialog
+        _showAddChildEncKeyDialog.value = false
+    }
+
+    fun onClickChildEncKeyDialogBtnCancel() {
+        // Dismiss the dialog
+        _showAddChildEncKeyDialog.value = false
+    }
+
+    fun onClickScanQrCodeToAddChildEncKey() {
+        currentChild?.let { doOpenAddChildEncryptionKeyFromQrCodeFragment?.invoke(it) }
+        // Dismiss the dialog
+        _showAddChildEncKeyDialog.value = false
+    }
+
+    //endregion
     
     fun onDeniedNotificationPermission() {
         _showPostNotificationPermissionDialog.value = false
