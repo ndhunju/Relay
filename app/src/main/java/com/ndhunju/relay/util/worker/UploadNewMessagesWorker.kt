@@ -28,7 +28,7 @@ import com.ndhunju.relay.service.analyticsprovider.d
 import com.ndhunju.relay.ui.messages.Message
 import com.ndhunju.relay.ui.toSmsInfo
 import com.ndhunju.relay.util.CurrentUser
-import com.ndhunju.relay.util.checkIfPermissionGranted
+import com.ndhunju.relay.util.checkIfSmsPermissionsGranted
 import kotlinx.coroutines.flow.firstOrNull
 import java.util.concurrent.TimeUnit
 import kotlin.String
@@ -100,7 +100,7 @@ class UploadNewMessagesWorker(
 
     override suspend fun doWork(): Result {
         analyticsProvider.d(TAG, "doWork() start")
-        if (checkIfPermissionGranted(applicationContext).not()) {
+        if (checkIfSmsPermissionsGranted(applicationContext).not()) {
             // No work we can do for now
             return Result.success()
         }
