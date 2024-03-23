@@ -30,14 +30,28 @@ class MainViewModel(
     private val appStateBroadcastService: AppStateBroadcastService
 ): ViewModel() {
 
-    private var _state = MutableStateFlow(MainScreenUiState())
+    private val _title = mutableStateOf("")
+    val title: State<String> = _title
+
+    val showUpIcon: State<Boolean> = mutableStateOf(false)
+
+    private val _lastMessageForEachThread  = mutableStateListOf<Message>()
+    val lastMessageForEachThread: SnapshotStateList<Message> = _lastMessageForEachThread
+
+    // Note: Compose doesn't track inner fields for changes unless we use mutableStateOf
+    private val _showErrorMessageForPermissionDenied = mutableStateOf(false)
+    var showErrorMessageForPermissionDenied: State<Boolean> = _showErrorMessageForPermissionDenied
+
+    // var showSearchTextField: Boolean by mutableStateOf(false)
+    private val _showSearchTextField = mutableStateOf(false)
+    var showSearchTextField: State<Boolean> = _showSearchTextField
+
+
+    // TODO: Nikesh - Remove this as well
     private var _messageFromUiState = MutableStateFlow(MessageFromUiState())
 
     private val _showSplashScreen = MutableStateFlow(true)
     val showSplashScreen = _showSplashScreen.asStateFlow()
-
-    val state: StateFlow<MainScreenUiState>
-        get() { return _state }
 
     /**
      * Represents UI state of [MessagesFromFragment]
@@ -45,9 +59,9 @@ class MainViewModel(
     val messageFromUiState: StateFlow<MessageFromUiState>
         get() {return _messageFromUiState}
 
-    // UI Events
+    //region UI Events
     val onClickSearchIcon = {
-        _state.value.showSearchTextField.value = !_state.value.showSearchTextField.value
+        _showSearchTextField.value = _showSearchTextField.value.not()
     }
 
     val onSearchTextChanged: (String) -> Unit = {}
@@ -64,6 +78,10 @@ class MainViewModel(
             NavItem.EncryptionKeyNavItem -> doOpenEncryptionKeyScreen?.invoke()
         }
     }
+
+    //endregion
+
+    //region Action Callbacks
 
     /**
      * Invoked when [MessagesFromFragment] needs to be opened
@@ -105,11 +123,20 @@ class MainViewModel(
      */
     var doRequestPermission: (() -> Unit)? = null
 
+    //endregion
+
     val onAllPermissionGranted = {
         // All permissions granted
         viewModelScope.launch { updateLastMessagesWithCorrectSyncStatus() }
         // Reset this value in case it was set to true earlier
-        state.value.showErrorMessageForPermissionDenied.value = false
+        _showErrorMessageForPermissionDenied.value = false
+    }
+
+    val onPermissionDenied = {
+        updateLastMessages(null)
+        _showErrorMessageForPermissionDenied.value = true
+        // Hide Splash Screen so that the error message can be shown
+        _showSplashScreen.value = false
     }
 
     private val newMessageObserver = Observer<List<Message>> { newMessages ->
@@ -135,7 +162,7 @@ class MainViewModel(
             // Update the UI by thread Id instead of address
             var oldLastMessageIndex = -1
             // Find the thread in which the message is sent to
-            state.value.lastMessageList.forEachIndexed { index, lastMessage ->
+            _lastMessageForEachThread.forEachIndexed { index, lastMessage ->
                 if (lastMessage.threadId == messageFromAndroidDb.threadId) {
                     oldLastMessageIndex = index
                     return@forEachIndexed
@@ -144,15 +171,15 @@ class MainViewModel(
 
             if (oldLastMessageIndex > -1) {
                 // Update last message shown with the new message
-                state.value.lastMessageList[oldLastMessageIndex].copy(
+                _lastMessageForEachThread[oldLastMessageIndex].copy(
                     body = messageFromAndroidDb.body,
                     date = messageFromAndroidDb.date
-                ).let { state.value.lastMessageList[oldLastMessageIndex] = it }
+                ).let { _lastMessageForEachThread[oldLastMessageIndex] = it }
 
                 // Update the icon based on update call status
-                state.value.lastMessageList[oldLastMessageIndex].copy(
+                _lastMessageForEachThread[oldLastMessageIndex].copy(
                     syncStatus = messageFromAndroidDb.syncStatus
-                ).let { state.value.lastMessageList[oldLastMessageIndex] = it }
+                ).let { _lastMessageForEachThread[oldLastMessageIndex] = it }
             } else {
                 // Update the entire list since matching thread wasn't found
                 updateLastMessagesWithCorrectSyncStatus()
@@ -161,7 +188,7 @@ class MainViewModel(
     }
 
     fun setTitle(title: String) {
-        _state.value.title.value = title
+        _title.value = title
     }
 
     /**
@@ -202,9 +229,14 @@ class MainViewModel(
             message.syncStatus = smsInfoForLastMessages[index]?.syncStatus
         }
 
-        state.value.updateLastMessages(lastMessages)
+        updateLastMessages(lastMessages)
         // Hide splash screen
         _showSplashScreen.value = false
+    }
+
+    private fun updateLastMessages(messages: List<Message>?) {
+        _lastMessageForEachThread.clear()
+        _lastMessageForEachThread.addAll(messages ?: emptyList())
     }
 
 }
@@ -215,28 +247,6 @@ class MainViewModel(
  * automatically generated functions. The compiler excludes properties declared inside the
  * class body from the generated implementations.
  */
-data class MainScreenUiState(
-    private var lastMessageForEachThread: List<Message> = emptyList(),
-    val showUpIcon: State<Boolean> = mutableStateOf(false)
-) {
-    var lastMessageList = mutableStateListOf<Message>()
-    // Note: Compose doesn't track inner fields for change unless we use mutableStateOf
-    var showErrorMessageForPermissionDenied = mutableStateOf(false)
-    // var showSearchTextField: Boolean by mutableStateOf(false)
-    var showSearchTextField = mutableStateOf(false)
-
-    var title = mutableStateOf("")
-
-    init {
-        updateLastMessages(lastMessageForEachThread)
-    }
-
-    fun updateLastMessages(messages: List<Message>) {
-        lastMessageList.clear()
-        lastMessageList.addAll(messages)
-    }
-}
-
 data class MessageFromUiState(
     var messagesInThread: SnapshotStateList<Message> = mutableStateListOf(),
     var isLoading: MutableState<Boolean> = mutableStateOf(true)

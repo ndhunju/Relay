@@ -36,12 +36,13 @@ import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.rememberDrawerState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.State
-import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.snapshots.SnapshotStateList
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
@@ -49,20 +50,19 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.ndhunju.relay.R
 import com.ndhunju.relay.ui.custom.SearchTextField
 import com.ndhunju.relay.ui.messages.Message
 import com.ndhunju.relay.ui.messages.MessageListItem
 import com.ndhunju.relay.ui.theme.LocalDimens
 import com.ndhunju.relay.util.composibles.DynamicLauncherIconImage
-import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.launch
 
 @Preview
 @Composable
 fun MainContentPreview() {
-    MainContent(viewState = MutableStateFlow(MainScreenUiState(mockMessages)).collectAsState())
+    val mockedMessages = remember { mutableStateListOf<Message>().apply { addAll(mockMessages) } }
+    MainContent(lastMessageList = mockedMessages)
 }
 
 @Composable
@@ -95,7 +95,6 @@ fun MainScreen(viewModel: MainViewModel?) {
     ) {
         MainContent(
             viewModel = viewModel,
-            uiState = viewModel?.state?.collectAsStateWithLifecycle(),
             onClickMenuOrUpIcon = { coroutineScope.launch { drawerState.open() } }
         )
     }
@@ -147,11 +146,14 @@ fun MainDrawerContent(
 @Composable
 fun MainContent(
     viewModel: MainViewModel? = null,
-    uiState: State<MainScreenUiState>?,
     onClickMenuOrUpIcon: () -> Unit
 ) {
     MainContent(
-        viewState = uiState,
+        viewModel?.title,
+        viewModel?.showUpIcon,
+        viewModel?.showSearchTextField,
+        viewModel?.showErrorMessageForPermissionDenied,
+        viewModel?.lastMessageForEachThread,
         viewModel?.onClickSearchIcon,
         viewModel?.onSearchTextChanged,
         viewModel?.onClickGrantPermission,
@@ -163,7 +165,11 @@ fun MainContent(
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
 fun MainContent(
-    viewState: State<MainScreenUiState>?,
+    title: State<String>? = null,
+    showUpIcon: State<Boolean>? = null,
+    showSearchTextField: State<Boolean>? = null,
+    showErrorMessageForPermissionDenied: State<Boolean>? = null,
+    lastMessageList: SnapshotStateList<Message>? = null,
     onClickSearchIcon: (() -> Unit)? = null,
     onSearchTextChanged: ((String) -> Unit)? = null,
     onClickGrantPermission: (() -> Unit)? = null,
@@ -179,9 +185,9 @@ fun MainContent(
     Scaffold(
         topBar = {
             MainScreenAppBar(
-                title = viewState?.value?.title,
-                viewState?.value?.showSearchTextField,
-                viewState?.value?.showUpIcon,
+                title,
+                showUpIcon,
+                showSearchTextField,
                 // Put all callbacks inside lambda so that recomposition
                 // is not triggered when reference to those callback changes?
                 { onClickSearchIcon?.invoke() },
@@ -207,7 +213,9 @@ fun MainContent(
         }
 
     ) { innerPadding ->
-        if (viewState?.value?.showErrorMessageForPermissionDenied?.value == true) {
+        if (showErrorMessageForPermissionDenied?.value == true) {
+            // TODO: Nikesh - Combine below with CenteredText
+            //CenteredText(modifier = , string = )
             Column(
                 modifier = Modifier
                     .padding(innerPadding)
@@ -236,7 +244,7 @@ fun MainContent(
                 state = state,
                 content = {
                     itemsIndexed(
-                        viewState?.value?.lastMessageList ?: emptyList(),
+                        lastMessageList?.toList() ?: emptyList(),
                         // Pass key for better performance like setHasStableIds
                         key = { _, item -> item.threadId },
                     ) { _: Int, message: Message ->
@@ -256,8 +264,8 @@ fun MainContent(
 @Composable
 fun MainScreenAppBar(
     title: State<String>? = mutableStateOf(""),
-    showSearchTextField: State<Boolean>? = mutableStateOf(false),
     showUpIcon: State<Boolean>? = mutableStateOf(false),
+    showSearchTextField: State<Boolean>? = mutableStateOf(false),
     onClickSearchIcon: (() -> Unit)? = {},
     onSearchTextChanged: ((String) -> Unit)? = {},
     onClickMenuOrUpIcon: (() -> Unit)? = {}

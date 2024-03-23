@@ -34,7 +34,7 @@ val mockMessages = listOf(
     ),
     Message(
         "1",
-        "ThreadId2",
+        "ThreadId23",
         "Nabil Bank",
         "2,300.00 added to your account.",
         System.currentTimeMillis(),
@@ -52,7 +52,7 @@ val mockMessages = listOf(
     ),
     Message(
         "2",
-        "ThreadId3",
+        "ThreadId32",
         "Bikesh",
         "Hi there!",
         System.currentTimeMillis(),

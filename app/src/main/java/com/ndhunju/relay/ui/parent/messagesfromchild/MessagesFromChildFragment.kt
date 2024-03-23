@@ -63,7 +63,9 @@ class MessagesFromChildFragment : Fragment() {
             setContent {
                 RelayTheme {
                     MainContent(
-                        viewState = viewModel.state.collectAsStateWithLifecycle(),
+                        title = viewModel.title,
+                        showSearchTextField = viewModel.showSearchTextField,
+                        lastMessageList = viewModel.lastMessageForEachThread,
                         onClickSearchIcon = viewModel.onClickSearchIcon,
                         onSearchTextChanged = viewModel.onSearchTextChanged,
                         onClickGrantPermission = {},

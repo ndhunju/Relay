@@ -41,7 +41,7 @@ class MainActivity : BaseActivity() {
             // Create and register the SMS broadcast receiver
         } else {
             // Permissions denied
-            viewModel.state.value.showErrorMessageForPermissionDenied.value = true
+            viewModel.onPermissionDenied()
         }
     }
 
@@ -78,9 +78,12 @@ class MainActivity : BaseActivity() {
                 .commit()
         }
 
-        viewModel.doOpenPairWithChild = {
-            startActivity(Intent(this, PairWithChildByScanningQrCodeActivity::class.java))
-        }
+        //viewModel.doOpenPairWithChild = {
+        //    startActivity(Intent(
+        //        this,
+        //        PairWithChildByScanningQrCodeActivity::class.java
+        //    ))
+        //}
 
         viewModel.doOpenEncryptionKeyScreen = {
             startActivity(Intent(this, ShareEncryptionKeyWithQrCodeActivity::class.java))
