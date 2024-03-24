@@ -58,7 +58,7 @@
     <!-- Shown in side navigation drawer -->
     <string name="nav_item_child_user">Child Users</string>
     <!-- Shown in side navigation drawer -->
-    <string name="nav_item_enc_key">Encryption Key</string>
+    <string name="nav_item_enc_key">Share Encryption Key</string>
 
     <!-- AccountsScreen -->
     <!-- Title used for an screen -->
