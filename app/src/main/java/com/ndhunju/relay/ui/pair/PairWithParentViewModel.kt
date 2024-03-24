@@ -17,10 +17,10 @@ class PairWithParentViewModel(
     private val currentChildUser: CurrentUser,
 ): ViewModel() {
 
-    private val _parentEmailAddress = MutableStateFlow(
+    private val _selectedParentEmailAddress = MutableStateFlow(
         currentChildUser.user.getParentEmails().firstOrNull() ?: ""
     )
-    val parentEmailAddress = _parentEmailAddress.asStateFlow()
+    val selectedParentEmailAddress = _selectedParentEmailAddress.asStateFlow()
 
     private val _showProgress = MutableStateFlow(false)
     val showProgress = _showProgress.asStateFlow()
@@ -28,15 +28,15 @@ class PairWithParentViewModel(
     private val _errorMsgResId = MutableStateFlow<Int?>(null)
     val errorMsgResId = _errorMsgResId.asStateFlow()
 
-    private val _isPaired = MutableStateFlow(evaluateIsPaired())
-    val isPaired = _isPaired.asStateFlow()
+    private val _isSelectedParentPaired = MutableStateFlow(evaluateIsPaired())
+    val isSelectedParentPaired = _isSelectedParentPaired.asStateFlow()
 
     private val _pairedUserEmailList = MutableStateFlow(currentChildUser.user.getParentEmails())
     val pairedUserEmailList = _pairedUserEmailList.asStateFlow()
 
     fun onParentEmailAddressChanged(newValue: String) {
-        _parentEmailAddress.value = newValue
-        _isPaired.value = evaluateIsPaired()
+        _selectedParentEmailAddress.value = newValue
+        _isSelectedParentPaired.value = evaluateIsPaired()
     }
 
     fun onClickPair() {
@@ -51,13 +51,13 @@ class PairWithParentViewModel(
             _showProgress.value = true
             val result = apiInterface.postPairWithParent(
                 currentChildUser.user.id,
-                parentEmailAddress.value
+                selectedParentEmailAddress.value
             )
 
             when (result) {
                 is Result.Failure -> {
                     _showProgress.value = false
-                    _isPaired.value = evaluateIsPaired()
+                    _isSelectedParentPaired.value = evaluateIsPaired()
                     if (result.throwable is UserNotFoundException) {
                         _errorMsgResId.value = R.string.pair_screen_user_email_not_found
                     }
@@ -73,15 +73,15 @@ class PairWithParentViewModel(
 
                     currentChildUser.user.addParentUser(User(
                         id = parentUserId,
-                        email = _parentEmailAddress.value)
-                    )
+                        email = _selectedParentEmailAddress.value
+                    ))
 
                     //userSettingsPersistService.save(currentChildUser.user)
 
                     // Update the UI
                     _showProgress.value = false
                     _errorMsgResId.value = null
-                    _isPaired.value = evaluateIsPaired()
+                    _isSelectedParentPaired.value = evaluateIsPaired()
                     _pairedUserEmailList.value = currentChildUser.user.getParentEmails()
                 }
             }
@@ -89,17 +89,21 @@ class PairWithParentViewModel(
     }
 
     /**
-     * Evaluates value of [_isPaired] property
+     * Evaluates value of [_isSelectedParentPaired] property
      */
     private fun evaluateIsPaired(): Boolean {
         // Return true if _parentEmailAddress.value matches with
         // any item in currentChildUser.user.parentUserEmails
         currentChildUser.user.getParentEmails().forEach { parentUserEmail ->
-            if (parentUserEmail == _parentEmailAddress.value) {
+            if (parentUserEmail == _selectedParentEmailAddress.value) {
                 return true
             }
         }
         return false
+    }
+
+    fun onClickPairedUser(email: String) {
+        // TODO: Nikesh - Fill the edit text with the email
     }
 
 }

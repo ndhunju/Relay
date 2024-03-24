@@ -4,6 +4,7 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.platform.ComposeView
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
@@ -28,8 +29,15 @@ class PairWithParentFragment: Fragment() {
             setContent {
                 RelayTheme {
                     PairWithParentScreen(
-                        viewModel,
-                        onUpPressed = { parentFragmentManager.popBackStack() }
+                        viewModel.pairedUserEmailList.collectAsState(),
+                        viewModel.selectedParentEmailAddress.collectAsState(),
+                        viewModel.isSelectedParentPaired.collectAsState(),
+                        viewModel.showProgress.collectAsState(),
+                        viewModel.errorMsgResId.collectAsState(),
+                        onUpPressed = { parentFragmentManager.popBackStack() },
+                        onClickPair = viewModel::onClickPair,
+                        onClickPairedUser = viewModel::onClickPairedUser,
+                        onParentEmailAddressChanged = viewModel::onParentEmailAddressChanged
                     )
                 }
             }

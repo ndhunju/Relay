@@ -18,7 +18,7 @@ import com.ndhunju.relay.ui.theme.LocalDimens
 fun ProgressButton(
     onClick: () -> Unit,
     labelStrRes: Int,
-    showSpinner: State<Boolean>
+    showSpinner: State<Boolean>?
 ) {
     //Log.d("TAG", "ProgressButton: called")
     Button(
@@ -27,7 +27,7 @@ fun ProgressButton(
             .padding(vertical = LocalDimens.current.itemPaddingVertical),
         onClick = onClick
     ) {
-        if (showSpinner.value) {
+        if (showSpinner?.value == true) {
             CircularProgressIndicator(
                 modifier = Modifier.size(32.dp),
                 color = MaterialTheme.colorScheme.onBackground
