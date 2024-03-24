@@ -11,7 +11,7 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.BasicTextField
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.ArrowBack
+import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material3.Button
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
@@ -115,7 +115,8 @@ fun SyncStatusIcon(modifier: Modifier = Modifier, syncStatus: Result<Void>? = Re
 fun TopAppBarWithUpButton(
     title: String?,
     onUpPressed: (() -> Unit)?,
-    showUpButton: Boolean = true) {
+    showUpButton: Boolean = true
+) {
     TopAppBar(
         modifier = Modifier
             .background(MaterialTheme.colorScheme.background)
@@ -131,7 +132,7 @@ fun TopAppBarWithUpButton(
                 IconButton(onClick = { onUpPressed?.invoke() }) {
                     Icon(
                         modifier = Modifier.padding(4.dp),
-                        imageVector = Icons.Filled.ArrowBack,
+                        imageVector = Icons.AutoMirrored.Filled.ArrowBack,
                         contentDescription = stringResource(R.string.image_description_go_back)
                     )
                 }

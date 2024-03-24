@@ -182,7 +182,7 @@ fun MainContent(
     title: State<String>? = null,
     isRefreshing: State<Boolean>? = null,
     showProgress: State<Boolean>? = null,
-    showUpIcon: State<Boolean>? = null,
+    showUpIcon: State<Boolean>? = mutableStateOf(true),
     showSearchTextField: State<Boolean>? = null,
     showErrorMessageForPermissionDenied: State<Boolean>? = null,
     lastMessageList: SnapshotStateList<Message>? = null,
@@ -266,7 +266,11 @@ fun MainContent(
             }
 
             if (showProgress?.value == true) {
-                CircularProgressIndicator(modifier = Modifier.size(32.dp).align(Alignment.Center))
+                CircularProgressIndicator(
+                    modifier = Modifier
+                        .size(32.dp)
+                        .align(Alignment.Center)
+                )
             }
 
             PullRefreshIndicator(
