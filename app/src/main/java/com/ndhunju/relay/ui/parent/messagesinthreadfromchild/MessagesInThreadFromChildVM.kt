@@ -29,6 +29,7 @@ class MessagesInThreadFromChildVM(
             _messageFromUiState.value.isLoading.value = true
             childSmsInfoRepository.getAllChildSmsInfoOfChildAndThread(childUserId, threadId)
                 .collect { childSmsInfoList ->
+                    _messageFromUiState.value.messagesInThread.clear()
                     _messageFromUiState.value.messagesInThread.addAll(childSmsInfoList.map {
                         Message(
                             it.idInAndroidDb,

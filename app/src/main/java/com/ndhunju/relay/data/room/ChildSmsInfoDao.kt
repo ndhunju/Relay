@@ -24,7 +24,7 @@ interface ChildSmsInfoDao {
             "    GROUP BY threadId")
     fun getLastSmsOfChild(childUserId: String): Flow<List<ChildSmsInfo>>
 
-    @Query("SELECT * FROM ChildSmsInfo WHERE childUserId=:childUserId AND threadId=:threadId")
+    @Query("SELECT * FROM ChildSmsInfo WHERE childUserId=:childUserId AND threadId=:threadId ORDER BY date DESC")
     fun getAllChildSmsInfoOfChildAndThread(
         childUserId: String,
         threadId: String
