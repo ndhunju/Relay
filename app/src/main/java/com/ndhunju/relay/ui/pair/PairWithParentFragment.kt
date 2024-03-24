@@ -35,7 +35,7 @@ class PairWithParentFragment: Fragment() {
                         viewModel.showProgress.collectAsState(),
                         viewModel.errorMsgResId.collectAsState(),
                         onUpPressed = { parentFragmentManager.popBackStack() },
-                        onClickPair = viewModel::onClickPair,
+                        onClickPairUnPair = viewModel::onClickPairUnpair,
                         onClickPairedUser = viewModel::onClickPairedUser,
                         onParentEmailAddressChanged = viewModel::onSelectedParentEmailAddressChanged
                     )

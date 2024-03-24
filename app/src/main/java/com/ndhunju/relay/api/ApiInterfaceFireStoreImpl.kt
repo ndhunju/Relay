@@ -126,10 +126,9 @@ class ApiInterfaceFireStoreImpl(
         childUserId: String,
         parentEmailAddress: String
     ): Result<String> {
-        // TODO: Nikesh - check if user has already paired with 3 parents
-        // Check that such parent email address already exists
         return try {
-            val queryByEmail = userCollection.whereEqualTo("Email", parentEmailAddress)
+            // Check that such parent email address already exists
+            val queryByEmail = userCollection.whereEqualTo(UserEntry.Email, parentEmailAddress)
             val querySnapshot = queryByEmail.get().await()
             if (querySnapshot.isEmpty) {
                 return Result.Failure(UserNotFoundException("Parent email id not found"))
@@ -149,6 +148,36 @@ class ApiInterfaceFireStoreImpl(
             )).await()
 
             Result.Success(parentUserId)
+        } catch (ex: Exception) {
+            Result.Failure(ex)
+        }
+
+    }
+
+    override suspend fun postUnPairWithParent(
+        childUserId: String,
+        parentUserId: String
+    ): Result<Boolean> {
+        return try {
+            val parentChildDocs = parentChildCollection
+                .whereEqualTo(ParentChild.ParentUserId, parentUserId)
+                .whereEqualTo(ParentChild.ChildUserId, childUserId)
+                .get().await().documents
+
+            // There should be only one entry but in case there are multiple, log it
+            if (parentChildDocs.size > 1) {
+                analyticsProvider.logEvent(
+                    "didFindMultipleEntryForSameParentChildPair",
+                    "${parentChildDocs.size} entries"
+                )
+            }
+
+            parentChildDocs.forEach { parentChildDoc ->
+                parentChildCollection.document(parentChildDoc.id).delete().await()
+            }
+
+            return Result.Success(true)
+
         } catch (ex: Exception) {
             Result.Failure(ex)
         }

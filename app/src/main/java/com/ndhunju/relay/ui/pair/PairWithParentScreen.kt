@@ -23,7 +23,6 @@ import com.ndhunju.relay.ui.custom.RelayOutlinedTextField
 import com.ndhunju.relay.ui.custom.TopAppBarWithUpButton
 import com.ndhunju.relay.ui.mockChildUsers
 import com.ndhunju.relay.ui.theme.LocalDimens
-import com.ndhunju.relay.util.InMemoryCurrentUser
 import kotlinx.coroutines.flow.MutableStateFlow
 
 @Preview
@@ -43,7 +42,7 @@ fun PairWithParentScreen(
     showProgress: State<Boolean>? = null,
     errorMsgResId: State<Int?>? = null,
     onUpPressed: () -> Unit = {},
-    onClickPair: () -> Unit = {},
+    onClickPairUnPair: () -> Unit = {},
     onParentEmailAddressChanged: (String) -> Unit = {},
     onClickPairedUser: (String) -> Unit = {}
 ) {
@@ -78,7 +77,7 @@ fun PairWithParentScreen(
                 )
 
                 ProgressButton(
-                    onClick = onClickPair,
+                    onClick = onClickPairUnPair,
                     labelStrRes = if (isSelectedParentPaired.value) {
                         R.string.pair_screen_un_pair
                     } else {
@@ -104,8 +103,8 @@ fun PairWithParentScreen(
                         text = email,
                         modifier = Modifier
                             .fillMaxWidth()
-                            .padding(vertical = LocalDimens.current.itemPaddingVertical)
                             .clickable { onClickPairedUser(email) }
+                            .padding(vertical = LocalDimens.current.itemPaddingVertical)
                     )
                 }
             }

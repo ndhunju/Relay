@@ -123,6 +123,10 @@ data class User(
         onUserUpdated?.invoke(this)
     }
 
+    fun removeParent(user: User) {
+        parentUsers.removeIf { it.id == user.id}
+    }
+
     fun updateChildUsers(newChildUsers: List<User>) {
         childUsers.clear()
         childUsers.addAll(newChildUsers)

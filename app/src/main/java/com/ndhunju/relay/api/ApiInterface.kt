@@ -36,6 +36,12 @@ interface ApiInterface {
     suspend fun postPairWithParent(childUserId: String, parentEmailAddress: String): Result<String>
 
     /**
+     * Makes API request to unpair [childUserId] with a
+     * parent with id [parentUserId].
+     */
+    suspend fun postUnPairWithParent(childUserId: String, parentUserId: String): Result<Boolean>
+
+    /**
      * Makes API request to pair with a Child with email [childEmailAddress]
      * and pairing code [pairingCode]
      * Returns child user's id in [Result.Success.data]

@@ -39,7 +39,49 @@ class PairWithParentViewModel(
         _isSelectedParentPaired.value = evaluateIsPaired()
     }
 
-    fun onClickPair() {
+    fun onClickPairUnpair() {
+        if (evaluateIsPaired()) {
+            doUnPairWithSelectedParent()
+        } else {
+            doPairWithSelectedParent()
+        }
+    }
+
+    private fun doUnPairWithSelectedParent() {
+        viewModelScope.launch {
+            _showProgress.value = true
+            val selectedParent = currentChildUser.user.getParentUsers().first {
+                it.email == selectedParentEmailAddress.value
+            }
+
+            val result = apiInterface.postUnPairWithParent(
+                currentChildUser.user.id,
+                selectedParent.id
+            )
+
+            when (result) {
+                is Result.Failure -> {
+                    _showProgress.value = false
+                    _isSelectedParentPaired.value = evaluateIsPaired()
+                    _errorMsgResId.value = R.string.pair_screen_unpair_failed
+                }
+
+                is Result.Pending -> _showProgress.value = true
+                is Result.Success -> {
+                    // Update the local copy
+                    currentChildUser.user.removeParent(selectedParent)
+
+                    // Update the UI
+                    _showProgress.value = false
+                    _errorMsgResId.value = null
+                    _isSelectedParentPaired.value = evaluateIsPaired()
+                    _pairedUserEmailList.value = currentChildUser.user.getParentEmails()
+                }
+            }
+        }
+    }
+
+    private fun doPairWithSelectedParent() {
         // Check if user has already paired with 3 users
         if (currentChildUser.user.getParentUsers().size >= 3) {
             _errorMsgResId.value = R.string.pair_screen_max_limit_reached

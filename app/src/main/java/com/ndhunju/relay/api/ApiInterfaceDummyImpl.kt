@@ -30,6 +30,13 @@ object ApiInterfaceDummyImpl : ApiInterface {
         return returnFailure()
     }
 
+    override suspend fun postUnPairWithParent(
+        childUserId: String,
+        parentUserId: String
+    ): Result<Boolean> {
+        return returnFailure()
+    }
+
     @Deprecated("See parent method")
     override suspend fun postPairWithChild(
         childEmailAddress: String,
