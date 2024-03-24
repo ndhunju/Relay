@@ -37,6 +37,9 @@ class MainViewModel(
     private val _isRefreshing = mutableStateOf(false)
     val isRefresh = _isRefreshing.asState()
 
+    private val _showProgress = mutableStateOf(false)
+    val showProgress = _showProgress.asState()
+
     val showUpIcon: State<Boolean> = mutableStateOf(false)
 
     private val _lastMessageForEachThread  = mutableStateListOf<Message>()
@@ -66,6 +69,9 @@ class MainViewModel(
     //region UI Events
     val onRefreshByUser = {
        // TODO: Refresh the data in the UI
+        // Once the data is refreshed, call
+        _isRefreshing.value = false
+        _showProgress.value = false
     }
 
     val onClickSearchIcon = {

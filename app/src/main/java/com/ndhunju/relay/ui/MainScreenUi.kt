@@ -27,6 +27,7 @@ import androidx.compose.material.icons.rounded.Search
 import androidx.compose.material.pullrefresh.PullRefreshIndicator
 import androidx.compose.material.pullrefresh.pullRefresh
 import androidx.compose.material.pullrefresh.rememberPullRefreshState
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Divider
 import androidx.compose.material3.DrawerValue
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -161,6 +162,7 @@ fun MainContent(
     MainContent(
         viewModel?.title,
         viewModel?.isRefresh,
+        viewModel?.showProgress,
         viewModel?.showUpIcon,
         viewModel?.showSearchTextField,
         viewModel?.showErrorMessageForPermissionDenied,
@@ -179,6 +181,7 @@ fun MainContent(
 fun MainContent(
     title: State<String>? = null,
     isRefreshing: State<Boolean>? = null,
+    showProgress: State<Boolean>? = null,
     showUpIcon: State<Boolean>? = null,
     showSearchTextField: State<Boolean>? = null,
     showErrorMessageForPermissionDenied: State<Boolean>? = null,
@@ -244,7 +247,11 @@ fun MainContent(
             onRefresh = { onRefreshByUser?.invoke() }
         )
 
-        Box(modifier = Modifier.fillMaxSize().pullRefresh(pullRefreshState)) {
+        Box(
+            modifier = Modifier
+                .fillMaxSize()
+                .pullRefresh(pullRefreshState)
+        ) {
             AnimatedVisibility(
                 visible = !(showErrorMessageForPermissionDenied?.value ?: false),
                 enter = fadeIn(),
@@ -256,6 +263,10 @@ fun MainContent(
                     lastMessageList,
                     onClickMessage
                 )
+            }
+
+            if (showProgress?.value == true) {
+                CircularProgressIndicator(modifier = Modifier.size(32.dp).align(Alignment.Center))
             }
 
             PullRefreshIndicator(

@@ -59,6 +59,7 @@ class MessagesFromChildFragment : Fragment() {
                     MainContent(
                         title = viewModel.title,
                         isRefreshing = viewModel.isRefresh,
+                        showProgress = viewModel.showProgress,
                         showSearchTextField = viewModel.showSearchTextField,
                         lastMessageList = viewModel.lastMessageForEachThread,
                         onRefreshByUser = viewModel.onRefreshByUser,
