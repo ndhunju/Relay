@@ -34,7 +34,7 @@ class PairWithParentViewModel(
     private val _pairedUserEmailList = MutableStateFlow(currentChildUser.user.getParentEmails())
     val pairedUserEmailList = _pairedUserEmailList.asStateFlow()
 
-    fun onParentEmailAddressChanged(newValue: String) {
+    fun onSelectedParentEmailAddressChanged(newValue: String) {
         _selectedParentEmailAddress.value = newValue
         _isSelectedParentPaired.value = evaluateIsPaired()
     }
@@ -103,7 +103,8 @@ class PairWithParentViewModel(
     }
 
     fun onClickPairedUser(email: String) {
-        // TODO: Nikesh - Fill the edit text with the email
+        _selectedParentEmailAddress.value = email
+        onSelectedParentEmailAddressChanged(email)
     }
 
 }
