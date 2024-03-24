@@ -6,7 +6,9 @@ import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
@@ -15,12 +17,16 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.lazy.rememberLazyListState
+import androidx.compose.material.ExperimentalMaterialApi
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.ArrowBack
+import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.filled.KeyboardArrowUp
 import androidx.compose.material.icons.filled.Menu
 import androidx.compose.material.icons.rounded.Close
 import androidx.compose.material.icons.rounded.Search
+import androidx.compose.material.pullrefresh.PullRefreshIndicator
+import androidx.compose.material.pullrefresh.pullRefresh
+import androidx.compose.material.pullrefresh.rememberPullRefreshState
 import androidx.compose.material3.Divider
 import androidx.compose.material3.DrawerValue
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -154,10 +160,12 @@ fun MainContent(
 ) {
     MainContent(
         viewModel?.title,
+        viewModel?.isRefresh,
         viewModel?.showUpIcon,
         viewModel?.showSearchTextField,
         viewModel?.showErrorMessageForPermissionDenied,
         viewModel?.lastMessageForEachThread,
+        viewModel?.onRefreshByUser,
         viewModel?.onClickSearchIcon,
         viewModel?.onSearchTextChanged,
         viewModel?.onClickGrantPermission,
@@ -166,14 +174,16 @@ fun MainContent(
     )
 }
 
-@OptIn(ExperimentalFoundationApi::class)
+@OptIn(ExperimentalMaterialApi::class)
 @Composable
 fun MainContent(
     title: State<String>? = null,
+    isRefreshing: State<Boolean>? = null,
     showUpIcon: State<Boolean>? = null,
     showSearchTextField: State<Boolean>? = null,
     showErrorMessageForPermissionDenied: State<Boolean>? = null,
     lastMessageList: SnapshotStateList<Message>? = null,
+    onRefreshByUser: (() -> Unit)? = null,
     onClickSearchIcon: (() -> Unit)? = null,
     onSearchTextChanged: ((String) -> Unit)? = null,
     onClickGrantPermission: (() -> Unit)? = null,
@@ -229,16 +239,29 @@ fun MainContent(
             )
         }
 
-        AnimatedVisibility(
-            visible = showErrorMessageForPermissionDenied?.value == false,
-            enter = fadeIn(),
-            exit = fadeOut()
-        ) {
-            MessageList(
-                Modifier.padding(innerPadding),
-                listState,
-                lastMessageList,
-                onClickMessage
+        val pullRefreshState = rememberPullRefreshState(
+            refreshing = isRefreshing?.value ?: false,
+            onRefresh = { onRefreshByUser?.invoke() }
+        )
+
+        Box(modifier = Modifier.fillMaxSize().pullRefresh(pullRefreshState)) {
+            AnimatedVisibility(
+                visible = !(showErrorMessageForPermissionDenied?.value ?: false),
+                enter = fadeIn(),
+                exit = fadeOut()
+            ) {
+                MessageList(
+                    Modifier.padding(innerPadding),
+                    listState,
+                    lastMessageList,
+                    onClickMessage
+                )
+            }
+
+            PullRefreshIndicator(
+                isRefreshing?.value ?: false,
+                pullRefreshState,
+                Modifier.align(Alignment.TopCenter)
             )
         }
     }
@@ -253,8 +276,7 @@ private fun MessageList(
     onClickMessage: ((Message) -> Unit)?
 ) {
     LazyColumn(
-        modifier = modifier
-            .fillMaxWidth(),
+        modifier = modifier.fillMaxSize(),
         state = lazyListState,
         content = {
             itemsIndexed(
@@ -290,7 +312,7 @@ fun MainScreenAppBar(
             if (showUpIcon?.value == true) {
                 IconButton(onClick = onClickMenuOrUpIcon ?: {}) {
                     Icon(
-                        imageVector = Icons.Default.ArrowBack,
+                        imageVector = Icons.AutoMirrored.Filled.ArrowBack,
                         contentDescription = stringResource(id = R.string.image_description_go_back)
                     )
                 }

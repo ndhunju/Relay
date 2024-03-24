@@ -19,6 +19,7 @@ import com.ndhunju.relay.ui.messagesfrom.MessagesFromFragment
 import com.ndhunju.relay.ui.pair.PairWithChildByScanningQrCodeActivity
 import com.ndhunju.relay.ui.pair.PairWithParentFragment
 import com.ndhunju.relay.ui.parent.ChildUserListFragment
+import com.ndhunju.relay.util.extensions.asState
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -32,6 +33,9 @@ class MainViewModel(
 
     private val _title = mutableStateOf("")
     val title: State<String> = _title
+
+    private val _isRefreshing = mutableStateOf(false)
+    val isRefresh = _isRefreshing.asState()
 
     val showUpIcon: State<Boolean> = mutableStateOf(false)
 
@@ -60,6 +64,10 @@ class MainViewModel(
         get() {return _messageFromUiState}
 
     //region UI Events
+    val onRefreshByUser = {
+       // TODO: Refresh the data in the UI
+    }
+
     val onClickSearchIcon = {
         _showSearchTextField.value = _showSearchTextField.value.not()
     }
@@ -215,8 +223,7 @@ class MainViewModel(
     }
 
     /**
-     * Updates the [MainScreenUiState.lastMessageList] stored in [_state] with
-     * correct value for [Message.syncStatus]
+     * Updates the [lastMessageForEachThread] with correct value for [Message.syncStatus]
      */
     private suspend fun updateLastMessagesWithCorrectSyncStatus() {
         // Update syncStatus info of Last Message with info available in database

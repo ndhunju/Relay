@@ -2,6 +2,8 @@ package com.ndhunju.relay.util.worker
 
 import android.content.Context
 import androidx.work.CoroutineWorker
+import androidx.work.OneTimeWorkRequestBuilder
+import androidx.work.WorkManager
 import androidx.work.WorkerParameters
 import com.google.gson.Gson
 import com.ndhunju.relay.R
@@ -18,6 +20,7 @@ import com.ndhunju.relay.util.User
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import java.lang.RuntimeException
+import java.util.UUID
 import com.ndhunju.relay.api.Result as RelayResult
 
 /**
@@ -136,5 +139,18 @@ class SyncChildMessagesWorker(
             throwable?.message
         )
         return Result.failure()
+    }
+
+    companion object {
+
+        val TAG: String = SyncChildMessagesWorker::class.java.simpleName
+
+        fun doSyncChildMessagesFromServer(workManager: WorkManager): UUID {
+            val workRequest = OneTimeWorkRequestBuilder<SyncChildMessagesWorker>()
+                .addTag(TAG)
+                .build()
+            workManager.enqueue(workRequest)
+            return workRequest.id
+        }
     }
 }

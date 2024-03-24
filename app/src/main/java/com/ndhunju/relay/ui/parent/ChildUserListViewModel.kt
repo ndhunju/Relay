@@ -4,7 +4,6 @@ import android.app.Application
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import androidx.work.OneTimeWorkRequestBuilder
 import androidx.work.WorkManager
 import com.ndhunju.relay.api.ApiInterface
 import com.ndhunju.relay.api.Result
@@ -145,7 +144,7 @@ class ChildUserListViewModel(
                     }
 
                     if (_childUsers.value.isNotEmpty()) {
-                        doSyncChildMessagesFromServer()
+                        SyncChildMessagesWorker.doSyncChildMessagesFromServer(workManager)
                     }
                 }
             }
@@ -165,10 +164,6 @@ class ChildUserListViewModel(
             Child(childUser.id, childUser.email ?: "", childUser.encryptionKey)
         }
         showAllowNotificationDialogIfNeeded()
-    }
-
-    private fun doSyncChildMessagesFromServer() {
-        workManager.enqueue(OneTimeWorkRequestBuilder<SyncChildMessagesWorker>().build())
     }
     
     private fun showAllowNotificationDialogIfNeeded() {

@@ -7,7 +7,6 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.compose.ui.platform.ComposeView
 import androidx.fragment.app.viewModels
-import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.ndhunju.relay.RelayViewModelFactory
 import com.ndhunju.relay.ui.MainContent
 import com.ndhunju.relay.ui.messagesfrom.MessagesFromFragment
@@ -25,19 +24,15 @@ private const val ARG_CHILD_USER_EMAIL = "ARG_CHILD_USER_EMAIL"
 class MessagesFromChildFragment : Fragment() {
 
     private val viewModel: MessagesFromChildViewModel by viewModels { RelayViewModelFactory }
-    private var childUserId: String? = null
-    private var childUserEmail: String? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         arguments?.let {
-            childUserId = it.getString(ARG_CHILD_USER_ID)
-            childUserEmail = it.getString(ARG_CHILD_USER_EMAIL)
+            viewModel.childUserId = it.getString(ARG_CHILD_USER_ID) ?: ""
+            viewModel.childUserEmail = it.getString(ARG_CHILD_USER_EMAIL)
         }
 
-        val childUserId = childUserId ?: return
-
-        viewModel.doOpenMessagesInThreadFromChildFragment = { message ->
+        viewModel.doOpenMessagesInThreadFromChildFragment = { childUserId, message ->
             parentFragmentManager.beginTransaction()
                 .add(
                     android.R.id.content,
@@ -51,7 +46,6 @@ class MessagesFromChildFragment : Fragment() {
                 .commit()
         }
 
-        viewModel.childUserEmail = childUserEmail
     }
 
     override fun onCreateView(
@@ -64,8 +58,10 @@ class MessagesFromChildFragment : Fragment() {
                 RelayTheme {
                     MainContent(
                         title = viewModel.title,
+                        isRefreshing = viewModel.isRefresh,
                         showSearchTextField = viewModel.showSearchTextField,
                         lastMessageList = viewModel.lastMessageForEachThread,
+                        onRefreshByUser = viewModel.onRefreshByUser,
                         onClickSearchIcon = viewModel.onClickSearchIcon,
                         onSearchTextChanged = viewModel.onSearchTextChanged,
                         onClickGrantPermission = {},
@@ -79,8 +75,7 @@ class MessagesFromChildFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        val childUserId = childUserId ?: return
-        viewModel.getLastSmsInfoOfEachChild(childUserId)
+        viewModel.getLastSmsInfoOfEachChild()
     }
 
     companion object {

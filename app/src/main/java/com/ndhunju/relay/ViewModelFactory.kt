@@ -69,7 +69,7 @@ val RelayViewModelFactory: ViewModelProvider.Factory = object : ViewModelProvide
                     ) as T
                 }
                 isAssignableFrom(MessagesFromChildViewModel::class.java) -> {
-                    MessagesFromChildViewModel(childSmsInfoRepository) as T
+                    MessagesFromChildViewModel(workManager, childSmsInfoRepository) as T
                 }
                 isAssignableFrom(MessagesInThreadFromChildVM::class.java) -> {
                     MessagesInThreadFromChildVM(childSmsInfoRepository) as T
