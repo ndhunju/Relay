@@ -6,6 +6,7 @@ import androidx.lifecycle.viewModelScope
 import com.ndhunju.relay.R
 import com.ndhunju.relay.api.ApiInterface
 import com.ndhunju.relay.api.EmailAlreadyExistException
+import com.ndhunju.relay.api.NetworkNotFoundException
 import com.ndhunju.relay.api.Result
 import com.ndhunju.relay.service.AppStateBroadcastService
 import com.ndhunju.relay.service.analyticsprovider.AnalyticsProvider
@@ -173,12 +174,21 @@ class AccountViewModel(
                 onNewUserCreated()
             }
             is Result.Failure -> {
-                if (result.throwable is EmailAlreadyExistException) {
-                    errorStrIdForEmail.value = R.string.account_duplicate_email
-                    showProgress.value = false
-                } else {
-                    errorStrIdGeneric.value = R.string.account_user_create_failed
-                    showProgress.value = false
+                when (result.throwable) {
+                    is EmailAlreadyExistException -> {
+                        errorStrIdForEmail.value = R.string.account_duplicate_email
+                        showProgress.value = false
+                    }
+
+                    is NetworkNotFoundException -> {
+                        errorStrIdGeneric.value = R.string.default_network_not_found_msg
+                        showProgress.value = false
+                    }
+
+                    else -> {
+                        errorStrIdGeneric.value = R.string.account_user_create_failed
+                        showProgress.value = false
+                    }
                 }
             }
         }

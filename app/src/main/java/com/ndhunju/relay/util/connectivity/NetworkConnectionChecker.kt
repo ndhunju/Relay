@@ -41,17 +41,7 @@ abstract class NetworkConnectionChecker(val context: Context) : MutableLiveData<
      * Convenient method to check if the device has internet connection or not
      */
     private fun checkIfDeviceHasInternet(): Boolean {
-
-        val capabilities = connectivityManager?.getNetworkCapabilities(
-            connectivityManager?.activeNetwork
-        ) ?: return false
-
-        // isValidated is false on emulator
-        //val hasInternet = capabilities.hasCapability(NetworkCapabilities.NET_CAPABILITY_INTERNET)
-        //val isValidated = capabilities.hasCapability(NetworkCapabilities.NET_CAPABILITY_VALIDATED)
-        //Log.d("TAG", "checkIfDeviceHasInternet: hasInternet=$hasInternet;isValidated=$isValidated")
-        //Throwable().printStackTrace()
-        return capabilities.hasCapability(NetworkCapabilities.NET_CAPABILITY_INTERNET)
+       return checkIfDeviceHasInternet(connectivityManager)
     }
 
     /**
@@ -59,5 +49,31 @@ abstract class NetworkConnectionChecker(val context: Context) : MutableLiveData<
      */
     fun checkAndPostNetworkConnectivityState() {
         postValue(checkIfDeviceHasInternet())
+    }
+
+    companion object {
+
+        fun checkIfDeviceHasInternet(context: Context): Boolean {
+            return checkIfDeviceHasInternet(
+                ContextCompat.getSystemService(
+                    context,
+                    ConnectivityManager::class.java
+                )
+            )
+        }
+
+        private fun checkIfDeviceHasInternet(connectivityManager: ConnectivityManager?): Boolean {
+
+            val capabilities = connectivityManager?.getNetworkCapabilities(
+                connectivityManager.activeNetwork
+            ) ?: return false
+
+            // isValidated is false on emulator
+            //val hasInternet = capabilities.hasCapability(NetworkCapabilities.NET_CAPABILITY_INTERNET)
+            //val isValidated = capabilities.hasCapability(NetworkCapabilities.NET_CAPABILITY_VALIDATED)
+            //Log.d("TAG", "checkIfDeviceHasInternet: hasInternet=$hasInternet;isValidated=$isValidated")
+            //Throwable().printStackTrace()
+            return capabilities.hasCapability(NetworkCapabilities.NET_CAPABILITY_INTERNET)
+        }
     }
 }

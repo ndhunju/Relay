@@ -12,6 +12,7 @@ import com.ndhunju.relay.service.analyticsprovider.AnalyticsProvider
 import com.ndhunju.relay.ui.parent.Child
 import com.ndhunju.relay.util.CurrentUser
 import com.ndhunju.relay.util.User
+import com.ndhunju.relay.util.connectivity.NetworkConnectionChecker
 import kotlinx.coroutines.runBlocking
 import kotlinx.coroutines.tasks.await
 
@@ -25,6 +26,8 @@ class ApiInterfaceFireStoreImpl(
     private val currentUser: CurrentUser,
     private val analyticsProvider: AnalyticsProvider
 ) : ApiInterface {
+
+    private val context by lazy { Firebase.firestore.app.applicationContext }
 
     private var userId: String
         get() {
@@ -57,6 +60,10 @@ class ApiInterfaceFireStoreImpl(
         deviceId: String?,
         pushNotificationToken: String?,
     ): Result<String> {
+
+        val exception = checkForCommonExceptions()
+        if (exception != null) return Result.Failure(exception)
+
         val newUser = makeMapForUserCollection(name, email, phone, deviceId, pushNotificationToken)
 
         val userWithEmailExits = userCollection
@@ -85,6 +92,10 @@ class ApiInterfaceFireStoreImpl(
         name: String?,
         phone: String?,
     ): Result<Void> {
+
+        val exception = checkForCommonExceptions()
+        if (exception != null) return Result.Failure(exception)
+
         // If null is passed, use existing values
         val finalName = name ?: currentUser.user.name
         val finalPhone = phone ?: currentUser.user.phone
@@ -126,6 +137,10 @@ class ApiInterfaceFireStoreImpl(
         childUserId: String,
         parentEmailAddress: String
     ): Result<String> {
+
+        val exception = checkForCommonExceptions()
+        if (exception != null) return Result.Failure(exception)
+
         return try {
             // Check that such parent email address already exists
             val queryByEmail = userCollection.whereEqualTo(UserEntry.Email, parentEmailAddress)
@@ -158,6 +173,10 @@ class ApiInterfaceFireStoreImpl(
         childUserId: String,
         parentUserId: String
     ): Result<Boolean> {
+
+        val exception = checkForCommonExceptions()
+        if (exception != null) return Result.Failure(exception)
+
         return try {
             val parentChildDocs = parentChildCollection
                 .whereEqualTo(ParentChild.ParentUserId, parentUserId)
@@ -189,6 +208,10 @@ class ApiInterfaceFireStoreImpl(
         childEmailAddress: String,
         pairingCode: String
     ): Result<String> {
+
+        val exception = checkForCommonExceptions()
+        if (exception != null) return Result.Failure(exception)
+
         // TODO: Nikesh - check if user has already paired with 3 parents
         return try {
             val queryByEmail = userCollection
@@ -214,6 +237,10 @@ class ApiInterfaceFireStoreImpl(
     }
 
     override suspend fun getChildUsers(parentUserId: String): Result<List<Child>> {
+
+        val exception = checkForCommonExceptions()
+        if (exception != null) return Result.Failure(exception)
+
         return try {
             // Fetch the list of child user ids for passed parent
             val childUserIds = parentChildCollection
@@ -243,6 +270,10 @@ class ApiInterfaceFireStoreImpl(
     }
 
     override suspend fun getParentUsers(childUserId: String): Result<List<User>> {
+
+        val exception = checkForCommonExceptions()
+        if (exception != null) return Result.Failure(exception)
+
         return try {
             // Fetch the list of child user ids for passed parent
             val parentUserIds = parentChildCollection
@@ -274,6 +305,10 @@ class ApiInterfaceFireStoreImpl(
     override suspend fun getMessagesFromChildUser(
         childUserId: String
     ): Result<List<MessageEntry>> {
+
+        val exception = checkForCommonExceptions()
+        if (exception != null) return Result.Failure(exception)
+
         return try {
             val messageEntries = messageCollection
                 .whereEqualTo(MessageEntry.SenderUserId, childUserId)
@@ -297,6 +332,10 @@ class ApiInterfaceFireStoreImpl(
     override suspend fun postDidSaveFetchedMessages(
         childSmsInfoList: List<ChildSmsInfo>
     ): Result<Void> {
+
+        val exception = checkForCommonExceptions()
+        if (exception != null) return Result.Failure(exception)
+
         return try {
             val failedMessageIds = arrayListOf<String>()
             childSmsInfoList.forEach{ childSmsInfo ->
@@ -393,6 +432,9 @@ class ApiInterfaceFireStoreImpl(
      */
     override suspend fun postMessage(message: MessageEntry): Result<Void> {
 
+        val exception = checkForCommonExceptions()
+        if (exception != null) return Result.Failure(exception)
+
         if (currentUser.isUserSignedIn().not()) {
             return Result.Failure(UserSignedOutException("User is not signed in."))
         }
@@ -422,6 +464,10 @@ class ApiInterfaceFireStoreImpl(
     }
 
     override suspend fun postUserPushNotificationToken(token: String): Result<Void> {
+
+        val exception = checkForCommonExceptions()
+        if (exception != null) return Result.Failure(exception)
+
         if (currentUser.isUserSignedIn().not()) {
             return Result.Failure(UserSignedOutException("User is not signed in."))
         }
@@ -450,6 +496,14 @@ class ApiInterfaceFireStoreImpl(
             Result.Failure()
         }
 
+    }
+
+    private fun checkForCommonExceptions(): Exception? {
+        if (NetworkConnectionChecker.checkIfDeviceHasInternet(context).not()) {
+            return NetworkNotFoundException
+        }
+
+        return null
     }
 
     /**
@@ -513,3 +567,10 @@ class EmailAlreadyExistException(message: String): Exception(message)
  * Exception thrown when user is not signed in
  */
 class UserSignedOutException(message: String): Exception(message)
+
+/**
+ * Exception thrown when device is not connected to the network/internet
+ */
+object NetworkNotFoundException: Exception() {
+    private fun readResolve(): Any = NetworkNotFoundException
+}

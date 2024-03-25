@@ -3,11 +3,13 @@
 
     <!-- General -->
     <!-- Alert shown to user when the device is offline -->
-    <string name="alert_offline_body">You are offline.</string>
+    <string name="alert_offline_body">You appear to be offline.</string>
     <!-- Dismiss action for Snack bar, Dialog etc -->
     <string name="action_dismiss">Dismiss</string>
     <!-- Default error message shown whenever the app catches FirebaseFirestoreException-->
     <string name="default_firebase_ex_msg">There is an issue with Firebase</string>
+    <!--  Shown in a dialog to the user when the device seems to be offline -->
+    <string name="default_network_not_found_msg">We can not reach the Network. Please make sure you are connected to the Internet</string>
 
 
     <!-- General Image Descriptions -->
