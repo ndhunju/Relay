@@ -60,6 +60,7 @@ class ApiInterfaceFireStoreImpl(
         name: String?,
         email: String?,
         phone: String?,
+        password: String?,
         deviceId: String?,
         pushNotificationToken: String?,
     ): Result<String> {
@@ -67,8 +68,12 @@ class ApiInterfaceFireStoreImpl(
         val exception = checkForCommonExceptions()
         if (exception != null) return Result.Failure(exception)
 
-        val newUser = makeMapForUserCollection(name, email, phone, deviceId, pushNotificationToken)
+        val newUser = makeMapForUserCollection(name, email, phone)
 
+        // TODO: Nikesh - Put name, email and phone in one collection
+        //  and put sensitive info like password, tokens and device id in separate collections
+        //  as we need a lose rule on user table so that parent user can retrieve child user's info
+        //  Also, encrypt or salt these sensitive information
         return try {
             val userWithEmailExits = userCollection
                 .whereEqualTo(UserEntry.Email, email)
@@ -80,7 +85,11 @@ class ApiInterfaceFireStoreImpl(
                 )
             }
 
-            userId = userCollection.add(newUser).await().id
+            Firebase.firestore.runTransaction {
+                userId = userCollection.add(newUser).await().id
+                // Add password in it's own collection
+                // Add pushNotificationToken in it's own collection
+            }
             Result.Success(userId)
         } catch (ex: Exception) {
             logIfFirebaseException(ex)
@@ -124,14 +133,10 @@ class ApiInterfaceFireStoreImpl(
         name: String? = null,
         email: String? = null,
         phone: String? = null,
-        deviceId: String? = null,
-        pushNotificationToken: String? = null
     ) = hashMapOf(
         UserEntry.Name to name,
         UserEntry.Email to email,
         UserEntry.Phone to phone,
-        UserEntry.DeviceId to deviceId,
-        UserEntry.PushNotificationToken to pushNotificationToken
     ).filter {
         // Don't include in the map if the value is null as
         // Firebase overrides existing value with null
@@ -546,9 +551,12 @@ class ApiInterfaceFireStoreImpl(
     object UserEntry {
         const val Name = "Name"
         const val Phone = "Phone"
-        const val DeviceId = "DeviceId"
-        const val PushNotificationToken = "PushNotificationToken"
         const val Email = "Email"
+    }
+
+    object UserPassword {
+        const val UserId = "UserId"
+        const val Password = "Password"
     }
 
     /**

@@ -17,6 +17,7 @@ interface ApiInterface {
         name: String? = null,
         email: String? = null,
         phone: String? = null,
+        password: String? = null,
         deviceId: String? = null,
         pushNotificationToken: String? = null,
     ): Result<String>

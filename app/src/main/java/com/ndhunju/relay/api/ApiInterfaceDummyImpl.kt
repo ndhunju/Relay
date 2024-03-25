@@ -13,6 +13,7 @@ object ApiInterfaceDummyImpl : ApiInterface {
         name: String?,
         email: String?,
         phone: String?,
+        password: String?,
         deviceId: String?,
         pushNotificationToken: String?
     ): Result<String> {

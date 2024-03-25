@@ -176,7 +176,8 @@ class AccountViewModel(
         val result = apiInterface.postUser(
             name = name.value,
             email = email.value,
-            phone = phone.value
+            phone = phone.value,
+            password = password.value,
         )
         when (result) {
             is Result.Pending -> {}
