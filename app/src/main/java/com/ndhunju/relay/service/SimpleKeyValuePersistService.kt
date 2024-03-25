@@ -58,10 +58,8 @@ class DataStoreKeyValuePersistService(
     )
 
     override suspend fun save(key: String, value: String) {
-        mutex.withLock(this) {
-            context.dataStore.edit { pref ->
-                pref[keyCache.getOrPut(key, stringPreferencesKey(key))] = value
-            }
+        context.dataStore.edit { pref ->
+            pref[keyCache.getOrPut(key, stringPreferencesKey(key))] = value
         }
     }
 
