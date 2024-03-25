@@ -6,11 +6,13 @@ import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Surface
@@ -77,6 +79,7 @@ fun WelcomeScreen(
                         horizontal = LocalDimens.current.contentPaddingHorizontal,
                         vertical = LocalDimens.current.itemPaddingVertical
                     )
+                    .verticalScroll(rememberScrollState())
                     .fillMaxSize(),
                 verticalArrangement = Arrangement.Top,
                 horizontalAlignment = Alignment.CenterHorizontally
@@ -88,7 +91,7 @@ fun WelcomeScreen(
                     ),
                     modifier = Modifier.size(LocalDimens.current.welcomeLauncherIconSize)
                 )
-                Spacer(modifier = Modifier.fillMaxHeight(0.025f))
+                Spacer(modifier = Modifier.height(LocalDimens.current.welcomeSpacerHeight))
                 Text(
                     text = stringResource(
                         R.string.welcome_screen_header,
@@ -98,7 +101,7 @@ fun WelcomeScreen(
                     fontWeight = FontWeight.Bold,
                     fontSize = LocalDimens.current.welcomeHeaderTextSize
                 )
-                Spacer(modifier = Modifier.fillMaxHeight(0.15f))
+                Spacer(modifier = Modifier.height(LocalDimens.current.welcomeSpacerHeight))
                 Text(
                     text = stringResource(
                         R.string.welcome_screen_body,
