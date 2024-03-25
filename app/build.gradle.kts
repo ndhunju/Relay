@@ -38,7 +38,10 @@ android {
                 getDefaultProguardFile("proguard-android-optimize.txt"),
                 "proguard-rules.pro"
             )
-            signingConfig = signingConfigs.findByName(releaseSigningConfig)
+
+            if (releaseSigningConfig != null) {
+                signingConfig = signingConfigs.findByName(releaseSigningConfig)
+            }
         }
     }
 
@@ -168,7 +171,7 @@ dependencies {
  * can be used to assign to a product flavor or build types
  * This is also helpful to print the SHA by running gradle signingReport command
  */
-fun createReleaseSigningConfig(baseAppModuleExtension: BaseAppModuleExtension): String {
+fun createReleaseSigningConfig(baseAppModuleExtension: BaseAppModuleExtension): String? {
     /*
     NOTE: For this to work, create a file inside "keystore" folder. Create folder if needed.
     Inside "keystore" folder, add a file named "release.keystore.properties" with following props
@@ -177,19 +180,25 @@ fun createReleaseSigningConfig(baseAppModuleExtension: BaseAppModuleExtension): 
          storeFile=someStoreFileNameAlongWithExtension
          storePassword=someStorePassword
      */
-    val keystoreRootFolderPath = "keystore"
-    val keyStorePropsFile = file("$keystoreRootFolderPath/release.keystore.properties")
-    val keyStoreProps = Properties().apply { load(keyStorePropsFile.inputStream()) }
-    val keyStoreFileName = keyStoreProps["storeFile"] as String
+    try {
+        val keystoreRootFolderPath = "keystore"
+        val keyStorePropsFile = file("$keystoreRootFolderPath/release.keystore.properties")
+        val keyStoreProps = Properties().apply { load(keyStorePropsFile.inputStream()) }
+        val keyStoreFileName = keyStoreProps["storeFile"] as String
 
-    baseAppModuleExtension.signingConfigs {
-        create(keyStoreFileName) {
-            keyAlias = keyStoreProps["keyAlias"] as String
-            keyPassword = keyStoreProps["keyPassword"] as String
-            storeFile = file("$keystoreRootFolderPath/$keyStoreFileName")
-            storePassword = keyStoreProps["storePassword"] as String
-            println("Done")
+        baseAppModuleExtension.signingConfigs {
+            create(keyStoreFileName) {
+                keyAlias = keyStoreProps["keyAlias"] as String
+                keyPassword = keyStoreProps["keyPassword"] as String
+                storeFile = file("$keystoreRootFolderPath/$keyStoreFileName")
+                storePassword = keyStoreProps["storePassword"] as String
+                println("Done")
+            }
         }
+
+        return keyStoreFileName
+
+    } catch (ex: Exception) {
+        return null
     }
-    return keyStoreFileName
 }
