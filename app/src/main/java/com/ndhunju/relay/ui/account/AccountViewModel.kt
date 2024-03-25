@@ -12,11 +12,13 @@ import com.ndhunju.relay.service.AppStateBroadcastService
 import com.ndhunju.relay.service.analyticsprovider.AnalyticsProvider
 import com.ndhunju.relay.util.CurrentUser
 import com.ndhunju.relay.util.ENC_KEY_MIN_LENGTH
+import com.ndhunju.relay.util.PASS_MIN_LENGTH
 import com.ndhunju.relay.util.User
 import com.ndhunju.relay.util.extensions.combine
 import com.ndhunju.relay.util.isValidEmail
 import com.ndhunju.relay.util.isValidEncryptionKey
 import com.ndhunju.relay.util.isValidName
+import com.ndhunju.relay.util.isValidPassword
 import com.ndhunju.relay.util.isValidPhoneNumber
 import com.ndhunju.relay.util.wrapper.StringResource
 import kotlinx.coroutines.Dispatchers
@@ -47,11 +49,13 @@ class AccountViewModel(
     private val email = MutableStateFlow(user.email)
     private val name = MutableStateFlow(user.name)
     private val phone = MutableStateFlow(user.phone)
+    private val password = MutableStateFlow<String?>("")
     // At first account creation, encryption key would be null. In such case, use random key
     private val encKey = MutableStateFlow(user.encryptionKey ?: randomEncKey)
     private val errorStrIdForEmail = MutableStateFlow<Int?>(null)
     private val errorStrIdForName = MutableStateFlow<Int?>(null)
     private val errorStrIdForPhone = MutableStateFlow<Int?>(null)
+    private val errorStrResIdForPassword = MutableStateFlow<StringResource?>(null)
     private val errorStrResIdForEncKey = MutableStateFlow<StringResource?>(null)
     private val errorStrIdGeneric = MutableStateFlow<Int?>(null)
     private val showProgress = MutableStateFlow(false)
@@ -76,6 +80,15 @@ class AccountViewModel(
             null
         } else {
             R.string.account_invalid_phone
+        }
+    }
+
+    val onPasswordChange: (String) -> Unit = {
+        password.value = it
+        errorStrResIdForPassword.value = if (isValidPassword(it)) {
+            null
+        } else {
+            StringResource(R.string.account_invalid_password, PASS_MIN_LENGTH, 1, 1)
         }
     }
 
@@ -112,28 +125,32 @@ class AccountViewModel(
                 email,
                 name,
                 phone,
+                password,
                 encKey,
                 errorStrIdForEmail,
                 errorStrIdForName,
                 errorStrIdForPhone,
+                errorStrResIdForPassword,
                 errorStrResIdForEncKey,
                 errorStrIdGeneric,
                 showProgress
             )
-            { email, name, phone, encKey, errorStrIdForEmail,
-              errorStrIdForName, errorStrIdForPhone, errorStrResForEncKey,
+            { email, name, phone, password, encKey, errorStrIdForEmail, errorStrIdForName,
+              errorStrIdForPhone, errorStrResIdForPassword, errorStrResForEncKey,
               errorStrIdGeneric, showProgress ->
                 AccountScreenUiState(
                     mode = if (user.isRegistered) Mode.Update else Mode.Create,
                     email = email,
                     name = name,
                     phone = phone,
+                    password = password,
                     encKey = encKey,
                     // Disable email text field if user is already registered or network progress
                     isEmailTextFieldEnabled = user.isRegistered.not() && showProgress.not(),
                     errorStrIdForEmailField = errorStrIdForEmail,
                     errorStrIdForNameField = errorStrIdForName,
                     errorStrIdForPhoneField = errorStrIdForPhone,
+                    errorStrResForPasswordField = errorStrResIdForPassword,
                     errorStrResForEncKeyField = errorStrResForEncKey,
                     errorStrIdForGenericError = errorStrIdGeneric,
                     showProgress = showProgress

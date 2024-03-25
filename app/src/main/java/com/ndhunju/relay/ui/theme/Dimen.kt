@@ -15,7 +15,8 @@ data class Dimensions(
     // Welcome Screen
     val welcomeLauncherIconSize: Dp = 200.dp,
     val welcomeHeaderTextSize: TextUnit = 32.sp,
-    val welcomeBodyTextSize: TextUnit = 18.sp
+    val welcomeBodyTextSize: TextUnit = 18.sp,
+    val welcomeSpacerHeight: Dp = 32.dp,
 )
 
 val CompactDimensions = Dimensions(
@@ -25,6 +26,7 @@ val CompactDimensions = Dimensions(
 val Sw600Dimensions = Dimensions(
     contentPaddingHorizontal = 24.dp,
     itemPaddingVertical = 24.dp,
+    welcomeSpacerHeight = 64.dp,
 )
 
 val Sw840Dimensions = Dimensions(
@@ -35,7 +37,8 @@ val Sw840Dimensions = Dimensions(
     // Welcome Screen
     welcomeLauncherIconSize = 300.dp,
     welcomeHeaderTextSize = 64.sp,
-    welcomeBodyTextSize = 36.sp
+    welcomeBodyTextSize = 36.sp,
+    welcomeSpacerHeight = 64.dp,
 )
 
 

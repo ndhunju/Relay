@@ -37,7 +37,7 @@
     <!-- Shown to user inside a dialog or a text label when the app needs the permissions -->
     <string name="permission_rationale_sms_read_send">Grant the permission to read and send
         SMS so that the app can relay them to the parent user in another device. All the
-        messages sent are encrypted.
+        sent messages are encrypted.
     </string>
     <!-- Verb. Positive action button in a dialog
          NOTE: If OK is lower cased to Ok, lint gives a warning that it needs to be OK -->
@@ -72,6 +72,8 @@
     <string name="text_field_label_name">Name</string>
     <!-- Noun. Label for a text field where user can input their phone -->
     <string name="text_field_label_phone">Phone</string>
+    <!-- Noun. Label for a text field where user can enter password -->
+    <string name="text_field_label_password">Password</string>
     <!-- Noun. Label for a text field where user can enter an encryption key -->
     <string name="text_field_label_enc_key">Encryption Key</string>
     <!-- Supporting Text shown below text field. Can take multiple lines-->
@@ -88,6 +90,8 @@
     <string name="account_invalid_name">Name is invalid.</string>
     <!-- Error message shown below the Phone number text field -->
     <string name="account_invalid_phone">Phone number is invalid.</string>
+    <!-- Error message shown below the Password number text field -->
+    <string name="account_invalid_password">Password should be %1$s characters long, have at least %2$s letter/s and %3$s number/s.</string>
     <!-- Error message shown below the Encryption Key text field -->
     <string name="account_invalid_enc_key">Encryption key needs to be at least %1$s characters long.</string>
     <!-- Error message show in a dialog when app fails to create -->

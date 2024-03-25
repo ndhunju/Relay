@@ -33,7 +33,6 @@ fun AccountScreenPreview() {
     AccountScreen(AccountScreenUiState())
 }
 
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun AccountScreen(
     accountScreenUiState: AccountScreenUiState,
@@ -42,6 +41,7 @@ fun AccountScreen(
     onEmailChange: (String) -> Unit = {},
     onNameChange: (String) -> Unit = {},
     onPhoneChange: (String) -> Unit = {},
+    onPasswordChange: (String) -> Unit = {},
     onEncKeyChange: (String) -> Unit = {},
     onClickCreateUpdate: () -> Unit = {},
     onClickDialogBtnOk: () -> Unit = {},
@@ -112,6 +112,13 @@ fun AccountScreen(
                     errorMessage = getString(accountScreenUiState.errorStrIdForPhoneField),
                     onValueChange = onPhoneChange,
                     keyboardType = KeyboardType.Phone
+                )
+                RelayOutlinedTextField(
+                    value = accountScreenUiState.password ?: "",
+                    labelRes = R.string.text_field_label_password,
+                    enabled = accountScreenUiState.isPasswordTextFieldEnabled,
+                    onValueChange = onPasswordChange,
+                    errorMessage = stringResource(accountScreenUiState.errorStrResForPasswordField)
                 )
                 RelayOutlinedTextField(
                     value = accountScreenUiState.encKey ?: "",

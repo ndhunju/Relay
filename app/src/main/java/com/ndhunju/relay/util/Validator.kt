@@ -13,6 +13,13 @@ fun isValidName(it: String?) = it != null && it.isEmpty().not()
 const val ENC_KEY_MIN_LENGTH = 6
 fun isValidEncryptionKey(it: String?) = (it?.length ?: 0) > ENC_KEY_MIN_LENGTH
 
+const val PASS_MIN_LENGTH = 6
+val characterOnlyRegex by lazy { Regex("[a-zA-Z]") }
+val numberOnlyRegex by lazy { Regex("[0-9]") }
+fun isValidPassword(it: String?) = (it?.length ?: 0) > PASS_MIN_LENGTH
+        && it?.contains(characterOnlyRegex) ?: false // At least one alphabet
+        && it?.contains(numberOnlyRegex) ?: false // At least one number
+
 /**
  * Copied from [Patterns.PHONE].
  * For some reason, [Patterns.PHONE] is null while running the test cases
