@@ -1,3 +1,6 @@
+import com.android.build.gradle.internal.dsl.BaseAppModuleExtension
+import java.util.Properties
+
 plugins {
     id("com.android.application")
     id("org.jetbrains.kotlin.android")
@@ -12,6 +15,8 @@ plugins {
 android {
     namespace = "com.ndhunju.relay"
     compileSdk = 34
+
+    val releaseSigningConfig = createReleaseSigningConfig(this)
 
     defaultConfig {
         applicationId = "com.ndhunju.relay"
@@ -33,6 +38,7 @@ android {
                 getDefaultProguardFile("proguard-android-optimize.txt"),
                 "proguard-rules.pro"
             )
+            signingConfig = signingConfigs.findByName(releaseSigningConfig)
         }
     }
 
@@ -155,4 +161,35 @@ dependencies {
     testImplementation("org.mockito:mockito-core:5.11.0")
     testImplementation("org.jetbrains.kotlinx:kotlinx-coroutines-test")
 
+}
+
+/**
+ * Creates signing config for release and returns the name of the signing config that
+ * can be used to assign to a product flavor or build types
+ * This is also helpful to print the SHA by running gradle signingReport command
+ */
+fun createReleaseSigningConfig(baseAppModuleExtension: BaseAppModuleExtension): String {
+    /*
+    NOTE: For this to work, create a file inside "keystore" folder. Create folder if needed.
+    Inside "keystore" folder, add a file named "release.keystore.properties" with following props
+         keyAlias=someKeyAlias
+         keyPassword=someKeyPassword
+         storeFile=someStoreFileNameAlongWithExtension
+         storePassword=someStorePassword
+     */
+    val keystoreRootFolderPath = "keystore"
+    val keyStorePropsFile = file("$keystoreRootFolderPath/release.keystore.properties")
+    val keyStoreProps = Properties().apply { load(keyStorePropsFile.inputStream()) }
+    val keyStoreFileName = keyStoreProps["storeFile"] as String
+
+    baseAppModuleExtension.signingConfigs {
+        create(keyStoreFileName) {
+            keyAlias = keyStoreProps["keyAlias"] as String
+            keyPassword = keyStoreProps["keyPassword"] as String
+            storeFile = file("$keystoreRootFolderPath/$keyStoreFileName")
+            storePassword = keyStoreProps["storePassword"] as String
+            println("Done")
+        }
+    }
+    return keyStoreFileName
 }
