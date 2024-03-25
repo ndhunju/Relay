@@ -2,6 +2,7 @@ package com.ndhunju.relay.api
 
 import com.google.firebase.firestore.CollectionReference
 import com.google.firebase.firestore.FieldPath
+import com.google.firebase.firestore.FirebaseFirestoreException
 import com.google.firebase.firestore.Transaction
 import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.ktx.Firebase
@@ -66,20 +67,21 @@ class ApiInterfaceFireStoreImpl(
 
         val newUser = makeMapForUserCollection(name, email, phone, deviceId, pushNotificationToken)
 
-        val userWithEmailExits = userCollection
-            .whereEqualTo(UserEntry.Email, email)
-            .get().await().documents.isNotEmpty()
-
-        if (userWithEmailExits) {
-            return Result.Failure(
-                EmailAlreadyExistException("User with email $email already exits.")
-            )
-        }
-
         return try {
+            val userWithEmailExits = userCollection
+                .whereEqualTo(UserEntry.Email, email)
+                .get().await().documents.isNotEmpty()
+
+            if (userWithEmailExits) {
+                return Result.Failure(
+                    EmailAlreadyExistException("User with email $email already exits.")
+                )
+            }
+
             userId = userCollection.add(newUser).await().id
             Result.Success(userId)
         } catch (ex: Exception) {
+            logIfFirebaseException(ex)
             analyticsProvider.logEvent("didFailToCreateUser", ex.message)
             Result.Failure(ex)
         }
@@ -106,6 +108,7 @@ class ApiInterfaceFireStoreImpl(
             ).await()
             Result.Success()
         } catch (ex: Exception) {
+            logIfFirebaseException(ex)
             analyticsProvider.logEvent("didFailToUpdateUser", ex.message)
             Result.Failure(ex)
         }
@@ -164,6 +167,7 @@ class ApiInterfaceFireStoreImpl(
 
             Result.Success(parentUserId)
         } catch (ex: Exception) {
+            logIfFirebaseException(ex)
             Result.Failure(ex)
         }
 
@@ -198,6 +202,7 @@ class ApiInterfaceFireStoreImpl(
             return Result.Success(true)
 
         } catch (ex: Exception) {
+            logIfFirebaseException(ex)
             Result.Failure(ex)
         }
 
@@ -231,6 +236,7 @@ class ApiInterfaceFireStoreImpl(
 
             Result.Success(childUserId)
         } catch (ex: Exception) {
+            logIfFirebaseException(ex)
             Result.Failure(ex)
         }
 
@@ -264,6 +270,7 @@ class ApiInterfaceFireStoreImpl(
 
             Result.Success(childList)
         } catch (ex: Exception) {
+            logIfFirebaseException(ex)
             return Result.Failure(ex)
         }
 
@@ -297,6 +304,7 @@ class ApiInterfaceFireStoreImpl(
 
             Result.Success(parentList)
         } catch (ex: Exception) {
+            logIfFirebaseException(ex)
             return Result.Failure(ex)
         }
 
@@ -325,6 +333,7 @@ class ApiInterfaceFireStoreImpl(
                 }
             Result.Success(messageEntries)
         } catch (ex: Exception) {
+            logIfFirebaseException(ex)
             Result.Failure(ex)
         }
     }
@@ -357,6 +366,7 @@ class ApiInterfaceFireStoreImpl(
             }
             Result.Success()
         } catch (ex: Exception) {
+            logIfFirebaseException(ex)
             Result.Failure(ex)
         }
     }
@@ -458,6 +468,7 @@ class ApiInterfaceFireStoreImpl(
             ))
             Result.Success()
         } catch (ex: Exception) {
+            logIfFirebaseException(ex)
             analyticsProvider.logEvent("didFailToPushMessage", ex.message)
             Result.Failure(ex)
         }
@@ -492,6 +503,7 @@ class ApiInterfaceFireStoreImpl(
 
             Result.Success()
         } catch (ex: Exception) {
+            logIfFirebaseException(ex)
             analyticsProvider.logEvent("didFailToPostPushNotificationToken", ex.message)
             Result.Failure()
         }
@@ -504,6 +516,15 @@ class ApiInterfaceFireStoreImpl(
         }
 
         return null
+    }
+
+    private fun logIfFirebaseException(ex: Exception) {
+        if (ex is FirebaseFirestoreException) {
+            analyticsProvider.logEvent(
+                "didCatchFirebaseFirestoreException",
+                "${ex.message}\nStack: ${Throwable().stackTrace.getOrNull(1)}"
+            )
+        }
     }
 
     /**
