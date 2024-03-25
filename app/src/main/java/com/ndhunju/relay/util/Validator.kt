@@ -1,14 +1,6 @@
 package com.ndhunju.relay.util
 
-import androidx.core.util.PatternsCompat
 import java.util.regex.Pattern
-
-fun String?.isValidEmail(): Boolean {
-    if (this == null) return false
-    return PatternsCompat.EMAIL_ADDRESS.matcher(this).matches()
-}
-
-fun isValidName(it: String?) = it != null && it.isEmpty().not()
 
 const val ENC_KEY_MIN_LENGTH = 6
 fun isValidEncryptionKey(it: String?) = (it?.length ?: 0) > ENC_KEY_MIN_LENGTH

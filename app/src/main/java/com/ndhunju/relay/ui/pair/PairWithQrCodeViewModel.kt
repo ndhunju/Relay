@@ -29,11 +29,11 @@ class PairWithQrCodeViewModel(
             val encryptionKeyInfo = getEncryptionInfo(barcode)
             if (encryptionKeyInfo.isValid()) {
                 // See if we can extract the email given the passed barcode is valid
-                if (encryptionKeyInfo.childEmail != null && encryptionKeyInfo.encryptionKey != null) {
+                if (encryptionKeyInfo.childPhone != null && encryptionKeyInfo.encryptionKey != null) {
                     // Make API call on IO to find the child user
                     val childUserResult = withContext(Dispatchers.IO) {
                         apiInterface.postPairWithChild(
-                            encryptionKeyInfo.childEmail,
+                            encryptionKeyInfo.childPhone,
                             encryptionKeyInfo.encryptionKey
                         )
                     }

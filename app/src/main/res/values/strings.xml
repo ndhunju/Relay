@@ -37,7 +37,7 @@
     <!-- Shown to user inside a dialog or a text label when the app needs the permissions -->
     <string name="permission_rationale_sms_read_send">Grant the permission to read and send
         SMS so that the app can relay them to the parent user in another device. All the
-        messages sent are encrypted.
+        sent messages are encrypted.
     </string>
     <!-- Verb. Positive action button in a dialog
          NOTE: If OK is lower cased to Ok, lint gives a warning that it needs to be OK -->
@@ -72,6 +72,8 @@
     <string name="text_field_label_name">Name</string>
     <!-- Noun. Label for a text field where user can input their phone -->
     <string name="text_field_label_phone">Phone</string>
+    <!-- Noun. Label for a text field where user can enter password -->
+    <string name="text_field_label_password">Password</string>
     <!-- Noun. Label for a text field where user can enter an encryption key -->
     <string name="text_field_label_enc_key">Encryption Key</string>
     <!-- Supporting Text shown below text field. Can take multiple lines-->
@@ -82,12 +84,14 @@
     <string name="button_label_update">Update</string>
     <!-- Error message shown below the Email text field -->
     <string name="account_invalid_email">Email is invalid.</string>
-    <!-- Error message shown below the Email text field when the email user entered is already used-->
-    <string name="account_duplicate_email">Email already exits.</string>
+    <!-- Error message shown below the Phone text field when the phone entered is already used-->
+    <string name="account_phone_registered">Phone already exits.</string>
     <!-- Error message shown below the Name text field -->
     <string name="account_invalid_name">Name is invalid.</string>
     <!-- Error message shown below the Phone number text field -->
     <string name="account_invalid_phone">Phone number is invalid.</string>
+    <!-- Error message shown below the Password number text field -->
+    <string name="account_invalid_password">Password should be %1$s characters long, have at least %2$s letter/s and %3$s number/s.</string>
     <!-- Error message shown below the Encryption Key text field -->
     <string name="account_invalid_enc_key">Encryption key needs to be at least %1$s characters long.</string>
     <!-- Error message show in a dialog when app fails to create -->
@@ -132,7 +136,8 @@
     <!-- Header of the welcome screen. Shown in a Text/Label -->
     <string name="welcome_screen_header">Welcome to %1$s!</string>
     <!-- Body of the welcome screen.-->
-    <string name="welcome_screen_body">To get started with %1$s, create your account - just provide your email, name and phone.\n\nWe\'ll send a one-time password to your inbox. Click \'verify\' in your email or enter the code here, and you\'re good to go!</string>
+    <string name="welcome_screen_body">To get started with %1$s, just provide your phone in the next screen.\n\n
+        We\'ll send a one-time passcode to your number. Enter the code, and you\'re good to go!</string>
     <!-- Text shown inside a button -->
     <string name="welcome_screen_create_account_btn">Create Account</string>
 

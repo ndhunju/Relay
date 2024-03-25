@@ -12,14 +12,14 @@ class ShareEncryptionKeyWithQrCodeViewModel(
     fun getEncryptionKeyInfo(): String {
         return gson.toJson(
             EncryptionKeyInfo(
-                currentUser.user.email,
+                currentUser.user.phone,
                 currentUser.user.encryptionKey
             )
         )
     }
 
     fun getBodyText(): String {
-        return currentUser.user.email ?: ""
+        return currentUser.user.phone ?: ""
     }
 
 }

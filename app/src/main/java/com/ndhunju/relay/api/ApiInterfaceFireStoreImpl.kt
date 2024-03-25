@@ -58,25 +58,22 @@ class ApiInterfaceFireStoreImpl(
      */
     override suspend fun postUser(
         name: String?,
-        email: String?,
         phone: String?,
-        deviceId: String?,
-        pushNotificationToken: String?,
     ): Result<String> {
 
         val exception = checkForCommonExceptions()
         if (exception != null) return Result.Failure(exception)
 
-        val newUser = makeMapForUserCollection(name, email, phone, deviceId, pushNotificationToken)
+        val newUser = makeMapForUserCollection(name, phone)
 
         return try {
             val userWithEmailExits = userCollection
-                .whereEqualTo(UserEntry.Email, email)
+                .whereEqualTo(UserEntry.Phone, phone)
                 .get().await().documents.isNotEmpty()
 
             if (userWithEmailExits) {
                 return Result.Failure(
-                    EmailAlreadyExistException("User with email $email already exits.")
+                    PhoneAlreadyRegisteredException("User with phone $phone already registered.")
                 )
             }
 
@@ -94,7 +91,6 @@ class ApiInterfaceFireStoreImpl(
      */
     override suspend fun putUser(
         name: String?,
-        phone: String?,
     ): Result<Void> {
 
         val exception = checkForCommonExceptions()
@@ -102,11 +98,10 @@ class ApiInterfaceFireStoreImpl(
 
         // If null is passed, use existing values
         val finalName = name ?: currentUser.user.name
-        val finalPhone = phone ?: currentUser.user.phone
 
         return try {
             userCollection.document(userId).update(
-                makeMapForUserCollection(name = finalName, phone = finalPhone).toMap()
+                makeMapForUserCollection(name = finalName).toMap()
             ).await()
             Result.Success()
         } catch (ex: Exception) {
@@ -122,16 +117,10 @@ class ApiInterfaceFireStoreImpl(
      */
     private fun makeMapForUserCollection(
         name: String? = null,
-        email: String? = null,
         phone: String? = null,
-        deviceId: String? = null,
-        pushNotificationToken: String? = null
     ) = hashMapOf(
         UserEntry.Name to name,
-        UserEntry.Email to email,
         UserEntry.Phone to phone,
-        UserEntry.DeviceId to deviceId,
-        UserEntry.PushNotificationToken to pushNotificationToken
     ).filter {
         // Don't include in the map if the value is null as
         // Firebase overrides existing value with null
@@ -148,10 +137,10 @@ class ApiInterfaceFireStoreImpl(
 
         return try {
             // Check that such parent email address already exists
-            val queryByEmail = userCollection.whereEqualTo(UserEntry.Email, parentEmailAddress)
-            val querySnapshot = queryByEmail.get().await()
+            val queryByPhone = userCollection.whereEqualTo(UserEntry.Phone, parentEmailAddress)
+            val querySnapshot = queryByPhone.get().await()
             if (querySnapshot.isEmpty) {
-                return Result.Failure(UserNotFoundException("Parent email id not found"))
+                return Result.Failure(UserNotFoundException("Parent phone id not found"))
             }
             val parentUserId = querySnapshot.documents.first().id
 
@@ -212,7 +201,7 @@ class ApiInterfaceFireStoreImpl(
 
     @Deprecated("See parent message")
     override suspend fun postPairWithChild(
-        childEmailAddress: String,
+        childPhoneNumber: String,
         pairingCode: String
     ): Result<String> {
 
@@ -222,7 +211,7 @@ class ApiInterfaceFireStoreImpl(
         // TODO: Nikesh - check if user has already paired with 3 parents
         return try {
             val queryByEmail = userCollection
-                .whereEqualTo("Email", childEmailAddress)
+                .whereEqualTo(UserEntry.Phone, childPhoneNumber)
                 .whereEqualTo("Key", pairingCode)
             val querySnapshot = queryByEmail.get().await()
             if (querySnapshot.isEmpty) {
@@ -259,14 +248,14 @@ class ApiInterfaceFireStoreImpl(
                 .distinct() // Filter out duplicates
                 .filter { it.isNotEmpty() } // Filter out empty strings
 
-            // Fetch the email of each child user
+            // Fetch the phone number of each child user
             val childList = childUserIds.map { childUserId ->
                 val email = userCollection
                     .whereEqualTo(FieldPath.documentId(), childUserId)
                     .get()
                     .await()
                     .documents.first()
-                    .get(UserEntry.Email) as String
+                    .get(UserEntry.Phone) as String
                 Child(childUserId, email)
             }
 
@@ -293,15 +282,15 @@ class ApiInterfaceFireStoreImpl(
                 .distinct() // Filter out duplicates
                 .filter { it.isNotEmpty() } // Filter out empty strings
 
-            // Fetch the email of each parent user
+            // Fetch the phone number of each parent user
             val parentList = parentUserIds.map { parentUserId ->
-                val email = userCollection
+                val phone = userCollection
                     .whereEqualTo(FieldPath.documentId(), parentUserId)
                     .get()
                     .await()
                     .documents.first()
-                    .get(UserEntry.Email) as String
-                User(parentUserId, email)
+                    .get(UserEntry.Phone) as String
+                User(id = parentUserId, phone = phone)
             }
 
             Result.Success(parentList)
@@ -546,9 +535,6 @@ class ApiInterfaceFireStoreImpl(
     object UserEntry {
         const val Name = "Name"
         const val Phone = "Phone"
-        const val DeviceId = "DeviceId"
-        const val PushNotificationToken = "PushNotificationToken"
-        const val Email = "Email"
     }
 
     /**
@@ -582,9 +568,9 @@ class ApiInterfaceFireStoreImpl(
 class UserNotFoundException(message: String): Exception(message)
 
 /**
- * Exception thrown when email address is already used
+ * Exception thrown when phone number is already used
  */
-class EmailAlreadyExistException(message: String): Exception(message)
+class PhoneAlreadyRegisteredException(message: String): Exception(message)
 
 /**
  * Exception thrown when user is not signed in

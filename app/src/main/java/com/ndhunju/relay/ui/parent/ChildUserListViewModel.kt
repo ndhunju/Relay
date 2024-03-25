@@ -113,7 +113,7 @@ class ChildUserListViewModel(
         viewModelScope.launch(Dispatchers.IO) {
             // Show pair child users that were saved previously
             _childUsers.value = currentUser.user.getChildUsers().map { childUser ->
-                Child(childUser.id, childUser.email ?: "", childUser.encryptionKey)
+                Child(childUser.id, childUser.phone ?: "", childUser.encryptionKey)
             }
 
             // If no child users are saved before,
@@ -140,7 +140,7 @@ class ChildUserListViewModel(
                     // Update UI
                     _showProgress.value = false
                     _childUsers.value = currentUser.user.getChildUsers().map {
-                        Child(it.id, it.email ?: "", it.encryptionKey)
+                        Child(it.id, it.phone ?: "", it.encryptionKey)
                     }
 
                     if (_childUsers.value.isNotEmpty()) {
@@ -161,7 +161,7 @@ class ChildUserListViewModel(
     fun invalidateChildUsers() {
         // Update child users in UI
         _childUsers.value = currentUser.user.getChildUsers().map { childUser ->
-            Child(childUser.id, childUser.email ?: "", childUser.encryptionKey)
+            Child(childUser.id, childUser.phone ?: "", childUser.encryptionKey)
         }
         showAllowNotificationDialogIfNeeded()
     }

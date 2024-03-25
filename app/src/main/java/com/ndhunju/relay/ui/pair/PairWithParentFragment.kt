@@ -29,8 +29,8 @@ class PairWithParentFragment: Fragment() {
             setContent {
                 RelayTheme {
                     PairWithParentScreen(
-                        viewModel.pairedUserEmailList.collectAsState(),
-                        viewModel.selectedParentEmailAddress.collectAsState(),
+                        viewModel.pairedUserPhoneList.collectAsState(),
+                        viewModel.selectedParentPhoneAddress.collectAsState(),
                         viewModel.isSelectedParentPaired.collectAsState(),
                         viewModel.showProgress.collectAsState(),
                         viewModel.errorMsgResId.collectAsState(),

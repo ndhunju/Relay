@@ -5,7 +5,6 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.ndhunju.relay.R
 import com.ndhunju.relay.api.ApiInterface
-import com.ndhunju.relay.api.EmailAlreadyExistException
 import com.ndhunju.relay.api.NetworkNotFoundException
 import com.ndhunju.relay.api.Result
 import com.ndhunju.relay.service.AppStateBroadcastService
@@ -14,9 +13,7 @@ import com.ndhunju.relay.util.CurrentUser
 import com.ndhunju.relay.util.ENC_KEY_MIN_LENGTH
 import com.ndhunju.relay.util.User
 import com.ndhunju.relay.util.extensions.combine
-import com.ndhunju.relay.util.isValidEmail
 import com.ndhunju.relay.util.isValidEncryptionKey
-import com.ndhunju.relay.util.isValidName
 import com.ndhunju.relay.util.isValidPhoneNumber
 import com.ndhunju.relay.util.wrapper.StringResource
 import kotlinx.coroutines.Dispatchers
@@ -44,30 +41,17 @@ class AccountViewModel(
         UUID.randomUUID().toString().subSequence(0, ENC_KEY_MIN_LENGTH.times(2)).toString()
     }
 
-    private val email = MutableStateFlow(user.email)
     private val name = MutableStateFlow(user.name)
     private val phone = MutableStateFlow(user.phone)
     // At first account creation, encryption key would be null. In such case, use random key
     private val encKey = MutableStateFlow(user.encryptionKey ?: randomEncKey)
-    private val errorStrIdForEmail = MutableStateFlow<Int?>(null)
-    private val errorStrIdForName = MutableStateFlow<Int?>(null)
     private val errorStrIdForPhone = MutableStateFlow<Int?>(null)
     private val errorStrResIdForEncKey = MutableStateFlow<StringResource?>(null)
     private val errorStrIdGeneric = MutableStateFlow<Int?>(null)
     private val showProgress = MutableStateFlow(false)
 
-    val onEmailChange: (String) -> Unit = {
-        email.value = it
-        errorStrIdForEmail.value = if (it.isValidEmail()) {
-             null
-        } else {
-            R.string.account_invalid_email
-        }
-    }
-
     val onNameChange: (String) -> Unit = {
         name.value = it
-        errorStrIdForName.value = if (isValidName(it)) null else R.string.account_invalid_name
     }
 
     val onPhoneChange: (String) -> Unit = {
@@ -109,30 +93,25 @@ class AccountViewModel(
             // this approach might be expensive as change in any one field triggers
             // recomposition of the entire layout, top to bottom
             combine(
-                email,
-                name,
                 phone,
                 encKey,
-                errorStrIdForEmail,
-                errorStrIdForName,
                 errorStrIdForPhone,
                 errorStrResIdForEncKey,
                 errorStrIdGeneric,
                 showProgress
             )
-            { email, name, phone, encKey, errorStrIdForEmail,
-              errorStrIdForName, errorStrIdForPhone, errorStrResForEncKey,
-              errorStrIdGeneric, showProgress ->
+            {
+              phone,
+              encKey,
+              errorStrIdForPhone,
+              errorStrResForEncKey,
+              errorStrIdGeneric,
+              showProgress ->
                 AccountScreenUiState(
                     mode = if (user.isRegistered) Mode.Update else Mode.Create,
-                    email = email,
-                    name = name,
                     phone = phone,
                     encKey = encKey,
                     // Disable email text field if user is already registered or network progress
-                    isEmailTextFieldEnabled = user.isRegistered.not() && showProgress.not(),
-                    errorStrIdForEmailField = errorStrIdForEmail,
-                    errorStrIdForNameField = errorStrIdForName,
                     errorStrIdForPhoneField = errorStrIdForPhone,
                     errorStrResForEncKeyField = errorStrResForEncKey,
                     errorStrIdForGenericError = errorStrIdGeneric,
@@ -157,8 +136,6 @@ class AccountViewModel(
     suspend fun createNewUserInServer() {
         showProgress.value = true
         val result = apiInterface.postUser(
-            name = name.value,
-            email = email.value,
             phone = phone.value
         )
         when (result) {
@@ -175,16 +152,10 @@ class AccountViewModel(
             }
             is Result.Failure -> {
                 when (result.throwable) {
-                    is EmailAlreadyExistException -> {
-                        errorStrIdForEmail.value = R.string.account_duplicate_email
-                        showProgress.value = false
-                    }
-
                     is NetworkNotFoundException -> {
                         errorStrIdGeneric.value = R.string.default_network_not_found_msg
                         showProgress.value = false
                     }
-
                     else -> {
                         errorStrIdGeneric.value = R.string.account_user_create_failed
                         showProgress.value = false
@@ -207,8 +178,7 @@ class AccountViewModel(
     private suspend fun pushUserUpdatesToServer() {
         showProgress.value = true
         val result = apiInterface.putUser(
-            name = name.value,
-            phone = phone.value
+            name = name.value
         )
 
         when (result) {
@@ -237,7 +207,6 @@ class AccountViewModel(
         isRegistered: Boolean = true
         ) = User(
         id = id ?: user.id,
-        email = state.value.email,
         name = state.value.name,
         phone = state.value.phone,
         isRegistered = isRegistered,

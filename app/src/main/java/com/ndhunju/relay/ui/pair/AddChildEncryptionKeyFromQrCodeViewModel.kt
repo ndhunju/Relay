@@ -26,11 +26,15 @@ class AddChildEncryptionKeyFromQrCodeViewModel(
         emit(Result.Pending<Void>())
         try {
             val info = tryGettingPairingInfo(barcode)
-            if (info.isValid(info.childEmail, info.encryptionKey)) {
-                // If child user has already added current user as parent, add the key. Else show warning
-                val isAdded = currentUser.user.addEncryptionKeyOfChild(info.childEmail, info.encryptionKey)
+            if (info.isValid(info.childPhone, info.encryptionKey)) {
+                // If child user has already added current user as parent, add the key.
+                // Else show warning
+                val isAdded = currentUser.user.addEncryptionKeyOfChild(
+                    info.childPhone,
+                    info.encryptionKey
+                )
                 if (isAdded) emit(Result.Success())
-                else emit(Result.Failure(UserNotFoundException(info.childEmail)))
+                else emit(Result.Failure(UserNotFoundException(info.childPhone)))
             } else {
                 emit(Result.Failure(InvalidParameterException("QR code is invalid")))
             }

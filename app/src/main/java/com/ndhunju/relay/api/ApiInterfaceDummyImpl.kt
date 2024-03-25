@@ -11,15 +11,12 @@ object ApiInterfaceDummyImpl : ApiInterface {
 
     override suspend fun postUser(
         name: String?,
-        email: String?,
-        phone: String?,
-        deviceId: String?,
-        pushNotificationToken: String?
+        phone: String?
     ): Result<String> {
         return returnFailure()
     }
 
-    override suspend fun putUser(name: String?, phone: String?): Result<Void> {
+    override suspend fun putUser(name: String?): Result<Void> {
         return returnFailure()
     }
 
@@ -39,7 +36,7 @@ object ApiInterfaceDummyImpl : ApiInterface {
 
     @Deprecated("See parent method")
     override suspend fun postPairWithChild(
-        childEmailAddress: String,
+        childPhoneNumber: String,
         pairingCode: String
     ): Result<String> {
         return returnFailure()

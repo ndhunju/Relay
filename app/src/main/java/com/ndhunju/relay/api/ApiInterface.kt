@@ -15,17 +15,14 @@ interface ApiInterface {
      */
     suspend fun postUser(
         name: String? = null,
-        email: String? = null,
         phone: String? = null,
-        deviceId: String? = null,
-        pushNotificationToken: String? = null,
     ): Result<String>
 
     /**
      * Makes API request to update the user. If null is passed, don't update that value.
      * Only the non-null value must be updated in the server
      */
-    suspend fun putUser(name: String? = null, phone: String? = null, ): Result<Void>
+    suspend fun putUser(name: String? = null): Result<Void>
 
 
     /**
@@ -42,12 +39,12 @@ interface ApiInterface {
     suspend fun postUnPairWithParent(childUserId: String, parentUserId: String): Result<Boolean>
 
     /**
-     * Makes API request to pair with a Child with email [childEmailAddress]
+     * Makes API request to pair with a Child with email [childPhoneNumber]
      * and pairing code [pairingCode]
      * Returns child user's id in [Result.Success.data]
      */
     @Deprecated("Pairing with child from parent client involves too many edge cases")
-    suspend fun postPairWithChild(childEmailAddress: String, pairingCode: String): Result<String>
+    suspend fun postPairWithChild(childPhoneNumber: String, pairingCode: String): Result<String>
 
     /**
      * Makes API request to get parent users for passed [childUserId]

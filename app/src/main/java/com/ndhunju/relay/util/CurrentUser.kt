@@ -71,7 +71,6 @@ class PersistableCurrentUserImpl(
 
 data class User(
     val id: String = "",
-    val email: String? = null,
     val name: String? = null,
     val phone: String? = null,
     val isRegistered: Boolean = false,
@@ -105,8 +104,8 @@ data class User(
         return parentUsers.toList()
     }
 
-    fun getParentEmails(): List<String> {
-        return parentUsers.mapNotNull { it.email }
+    fun getParentPhoneNumbers(): List<String> {
+        return parentUsers.mapNotNull { it.phone }
     }
 
     /**
@@ -141,7 +140,7 @@ data class User(
         // Loop through each child in newChildUser
         newChildUsers.forEach { newChildUser ->
             // Check if they exist in current childUsers list
-            val index = findChildIndex(newChildUser.email)
+            val index = findChildIndex(newChildUser.phone)
             if (index != null && childUsers[index].encryptionKey != null) {
                 val exitingKey = childUsers[index].encryptionKey
                 newChildUsersWithExistingEncKey.add(newChildUser.copy(encryptionKey = exitingKey))
@@ -155,11 +154,11 @@ data class User(
         onUserUpdated?.invoke(this)
     }
 
-    private fun findChildIndex(childEmail: String?): Int? {
-        if (childEmail == null) return null
+    private fun findChildIndex(childPhoneNumber: String?): Int? {
+        if (childPhoneNumber == null) return null
 
         childUsers.forEachIndexed { i, childUser ->
-            if (childUser.email == childEmail) {
+            if (childUser.phone == childPhoneNumber) {
                 return i
             }
         }
@@ -167,9 +166,9 @@ data class User(
         return null
     }
 
-    fun findChildUserByEmail(childEmail: String?): User? {
+    fun findChildUserByPhoneNumber(childPhoneNumber: String?): User? {
         childUsers.forEach { childUser ->
-            if (childUser.email == childEmail) {
+            if (childUser.phone == childPhoneNumber) {
                 return childUser
             }
         }

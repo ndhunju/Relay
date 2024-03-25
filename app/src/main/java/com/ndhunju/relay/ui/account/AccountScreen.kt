@@ -8,7 +8,6 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
 import androidx.compose.material3.CircularProgressIndicator
-import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Surface
@@ -33,13 +32,11 @@ fun AccountScreenPreview() {
     AccountScreen(AccountScreenUiState())
 }
 
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun AccountScreen(
     accountScreenUiState: AccountScreenUiState,
     showUpButton: Boolean = true,
     onUpPressed: () -> Unit = {},
-    onEmailChange: (String) -> Unit = {},
     onNameChange: (String) -> Unit = {},
     onPhoneChange: (String) -> Unit = {},
     onEncKeyChange: (String) -> Unit = {},
@@ -88,23 +85,17 @@ fun AccountScreen(
                     .padding(LocalDimens.current.contentPaddingHorizontal),
                 verticalArrangement = Arrangement.spacedBy(LocalDimens.current.itemPaddingVertical)
             ) {
-                RelayOutlinedTextField(
-                    value = accountScreenUiState.email ?: "",
-                    labelRes = R.string.text_field_label_email,
-                    enabled = accountScreenUiState.isEmailTextFieldEnabled,
-                    errorMessage = getString(accountScreenUiState.errorStrIdForEmailField),
-                    onValueChange = onEmailChange,
-                    keyboardType = KeyboardType.Email
-                )
-                RelayOutlinedTextField(
-                    value = accountScreenUiState.name ?: "",
-                    labelRes = R.string.text_field_label_name,
-                    enabled = accountScreenUiState.isNameTextFieldEnabled,
-                    errorMessage = getString(accountScreenUiState.errorStrIdForNameField),
-                    onValueChange = onNameChange,
-                    // Similar to inputType=textPersonName
-                    capitalization = KeyboardCapitalization.Words
-                )
+                // Do not show Name during account creation to simplify
+                if (accountScreenUiState.mode == Mode.Update) {
+                    RelayOutlinedTextField(
+                        value = accountScreenUiState.name ?: "",
+                        labelRes = R.string.text_field_label_name,
+                        enabled = accountScreenUiState.isNameTextFieldEnabled,
+                        onValueChange = onNameChange,
+                        // Similar to inputType=textPersonName
+                        capitalization = KeyboardCapitalization.Words
+                    )
+                }
                 RelayOutlinedTextField(
                     value = accountScreenUiState.phone ?: "",
                     labelRes = R.string.text_field_label_phone,

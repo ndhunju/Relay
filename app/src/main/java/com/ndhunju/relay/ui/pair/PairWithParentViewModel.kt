@@ -17,10 +17,10 @@ class PairWithParentViewModel(
     private val currentChildUser: CurrentUser,
 ): ViewModel() {
 
-    private val _selectedParentEmailAddress = MutableStateFlow(
-        currentChildUser.user.getParentEmails().firstOrNull() ?: ""
+    private val _selectedParentPhoneAddress = MutableStateFlow(
+        currentChildUser.user.getParentPhoneNumbers().firstOrNull() ?: ""
     )
-    val selectedParentEmailAddress = _selectedParentEmailAddress.asStateFlow()
+    val selectedParentPhoneAddress = _selectedParentPhoneAddress.asStateFlow()
 
     private val _showProgress = MutableStateFlow(false)
     val showProgress = _showProgress.asStateFlow()
@@ -31,11 +31,11 @@ class PairWithParentViewModel(
     private val _isSelectedParentPaired = MutableStateFlow(evaluateIsPaired())
     val isSelectedParentPaired = _isSelectedParentPaired.asStateFlow()
 
-    private val _pairedUserEmailList = MutableStateFlow(currentChildUser.user.getParentEmails())
-    val pairedUserEmailList = _pairedUserEmailList.asStateFlow()
+    private val _pairedUserPhoneList = MutableStateFlow(currentChildUser.user.getParentPhoneNumbers())
+    val pairedUserPhoneList = _pairedUserPhoneList.asStateFlow()
 
     fun onSelectedParentEmailAddressChanged(newValue: String) {
-        _selectedParentEmailAddress.value = newValue
+        _selectedParentPhoneAddress.value = newValue
         _isSelectedParentPaired.value = evaluateIsPaired()
     }
 
@@ -51,7 +51,7 @@ class PairWithParentViewModel(
         viewModelScope.launch {
             _showProgress.value = true
             val selectedParent = currentChildUser.user.getParentUsers().first {
-                it.email == selectedParentEmailAddress.value
+                it.phone == selectedParentPhoneAddress.value
             }
 
             val result = apiInterface.postUnPairWithParent(
@@ -75,7 +75,7 @@ class PairWithParentViewModel(
                     _showProgress.value = false
                     _errorMsgResId.value = null
                     _isSelectedParentPaired.value = evaluateIsPaired()
-                    _pairedUserEmailList.value = currentChildUser.user.getParentEmails()
+                    _pairedUserPhoneList.value = currentChildUser.user.getParentPhoneNumbers()
                 }
             }
         }
@@ -93,7 +93,7 @@ class PairWithParentViewModel(
             _showProgress.value = true
             val result = apiInterface.postPairWithParent(
                 currentChildUser.user.id,
-                selectedParentEmailAddress.value
+                selectedParentPhoneAddress.value
             )
 
             when (result) {
@@ -115,7 +115,7 @@ class PairWithParentViewModel(
 
                     currentChildUser.user.addParentUser(User(
                         id = parentUserId,
-                        email = _selectedParentEmailAddress.value
+                        phone = _selectedParentPhoneAddress.value
                     ))
 
                     //userSettingsPersistService.save(currentChildUser.user)
@@ -124,7 +124,7 @@ class PairWithParentViewModel(
                     _showProgress.value = false
                     _errorMsgResId.value = null
                     _isSelectedParentPaired.value = evaluateIsPaired()
-                    _pairedUserEmailList.value = currentChildUser.user.getParentEmails()
+                    _pairedUserPhoneList.value = currentChildUser.user.getParentPhoneNumbers()
                 }
             }
         }
@@ -136,17 +136,17 @@ class PairWithParentViewModel(
     private fun evaluateIsPaired(): Boolean {
         // Return true if _parentEmailAddress.value matches with
         // any item in currentChildUser.user.parentUserEmails
-        currentChildUser.user.getParentEmails().forEach { parentUserEmail ->
-            if (parentUserEmail == _selectedParentEmailAddress.value) {
+        currentChildUser.user.getParentPhoneNumbers().forEach { parentPhoneNumber ->
+            if (parentPhoneNumber == _selectedParentPhoneAddress.value) {
                 return true
             }
         }
         return false
     }
 
-    fun onClickPairedUser(email: String) {
-        _selectedParentEmailAddress.value = email
-        onSelectedParentEmailAddressChanged(email)
+    fun onClickPairedUser(phone: String) {
+        _selectedParentPhoneAddress.value = phone
+        onSelectedParentEmailAddressChanged(phone)
     }
 
 }
