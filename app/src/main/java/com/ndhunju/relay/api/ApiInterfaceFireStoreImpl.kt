@@ -1,5 +1,6 @@
 package com.ndhunju.relay.api
 
+import android.app.Application
 import com.google.firebase.firestore.CollectionReference
 import com.google.firebase.firestore.FieldPath
 import com.google.firebase.firestore.FirebaseFirestoreException
@@ -23,12 +24,13 @@ private val TAG = ApiInterfaceFireStoreImpl::class.simpleName
  * Implements [ApiInterface] using [Firebase.firestore]
  */
 class ApiInterfaceFireStoreImpl(
+    private val application: Application,
     private val gson: Gson,
     private val currentUser: CurrentUser,
     private val analyticsProvider: AnalyticsProvider
 ) : ApiInterface {
 
-    private val context by lazy { Firebase.firestore.app.applicationContext }
+    private val context by lazy { application }
 
     private var userId: String
         get() {

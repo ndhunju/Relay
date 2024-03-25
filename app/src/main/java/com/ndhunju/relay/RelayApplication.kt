@@ -1,6 +1,9 @@
 package com.ndhunju.relay
 
 import android.app.Application
+import com.google.firebase.Firebase
+import com.google.firebase.appcheck.appCheck
+import com.google.firebase.initialize
 import com.ndhunju.relay.di.AndroidAppModule
 import com.ndhunju.relay.di.AppComponent
 import com.ndhunju.relay.di.AppModule
@@ -20,6 +23,7 @@ class RelayApplication: Application() {
 
     override fun onCreate() {
         super.onCreate()
+        setUpFirebase()
         setUpDaggerAppComponent()
         setUpAnalyticsManager()
         doEnqueueSecondaryAppStartTasksWorker()
@@ -43,6 +47,13 @@ class RelayApplication: Application() {
         // Useful when debugging to make sure only up-to-date workers exists in WorkerManager's database
         //appComponent.workManager().cancelAllWork()
         SecondaryAppStartTasksWorker.enqueue(appComponent.workManager(), applicationScope)
+    }
+
+    private fun setUpFirebase() {
+        Firebase.initialize(this)
+        Firebase.appCheck.installAppCheckProviderFactory(
+            AppCheckProviderFactoryProvider().provide()
+        )
     }
 
     private fun setUpAnalyticsManager() {

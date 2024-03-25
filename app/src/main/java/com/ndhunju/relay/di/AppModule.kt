@@ -96,6 +96,7 @@ class AppModule(private val application: Application) {
     @Singleton
     fun providesApiInterface(): ApiInterface {
         return ApiInterfaceFireStoreImpl(
+            application,
             appComponent.gson(),
             appComponent.currentUser(),
             appComponent.analyticsProvider()

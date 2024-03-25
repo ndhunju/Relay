@@ -153,6 +153,8 @@ dependencies {
     // Add the dependencies for the App Check libraries. This library
     // sends App Check tokens along with every request the app makes to Firebase
     implementation("com.google.firebase:firebase-appcheck-playintegrity")
+    // Add the dependencies for the App Check libraries to be used for debug build type
+    debugImplementation("com.google.firebase:firebase-appcheck-debug")
 
     testImplementation("junit:junit:4.13.2")
     androidTestImplementation("androidx.test.ext:junit:1.1.5")
