@@ -24,7 +24,6 @@ import com.ndhunju.relay.service.AppStateBroadcastServiceImpl
 import com.ndhunju.relay.service.DataStoreKeyValuePersistService
 import com.ndhunju.relay.service.DeviceSmsReaderService
 import com.ndhunju.relay.service.DeviceSmsReaderServiceImpl
-import com.ndhunju.relay.service.DeviceSmsReaderServiceMock
 import com.ndhunju.relay.service.EncryptionService
 import com.ndhunju.relay.service.SimpleKeyValuePersistService
 import com.ndhunju.relay.util.gson.ResultDeserializer
