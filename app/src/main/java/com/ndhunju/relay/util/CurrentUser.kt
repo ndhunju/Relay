@@ -96,6 +96,13 @@ data class User(
         this.onUserUpdated = onUserUpdated
     }
 
+    /**
+     * Return an unique identifier that could be shown to public
+     */
+    fun getPublicIdentifier(): String? {
+        return phone
+    }
+
     fun getChildUsers(): List<User> {
         return childUsers.toList()
     }
@@ -140,7 +147,7 @@ data class User(
         // Loop through each child in newChildUser
         newChildUsers.forEach { newChildUser ->
             // Check if they exist in current childUsers list
-            val index = findChildIndex(newChildUser.phone)
+            val index = findChildIndex(newChildUser.getPublicIdentifier())
             if (index != null && childUsers[index].encryptionKey != null) {
                 val exitingKey = childUsers[index].encryptionKey
                 newChildUsersWithExistingEncKey.add(newChildUser.copy(encryptionKey = exitingKey))
@@ -154,11 +161,11 @@ data class User(
         onUserUpdated?.invoke(this)
     }
 
-    private fun findChildIndex(childPhoneNumber: String?): Int? {
-        if (childPhoneNumber == null) return null
+    private fun findChildIndex(publicIdentifier: String?): Int? {
+        if (publicIdentifier == null) return null
 
         childUsers.forEachIndexed { i, childUser ->
-            if (childUser.phone == childPhoneNumber) {
+            if (childUser.getPublicIdentifier() == publicIdentifier) {
                 return i
             }
         }
@@ -177,19 +184,19 @@ data class User(
     }
 
     /**
-     * Adds passed [encryptionKey] for child with email [childUserEmail] is present.
+     * Adds passed [encryptionKey] for child with email [publicIdentifier] is present.
      * Otherwise, returns false
      */
-    fun addEncryptionKeyOfChild(childUserEmail: String?, encryptionKey: String?): Boolean {
-        val i = findChildIndex(childUserEmail) ?: return false
+    fun addEncryptionKeyOfChild(publicIdentifier: String?, encryptionKey: String?): Boolean {
+        val i = findChildIndex(publicIdentifier) ?: return false
         val updatedChildUser = childUsers[i].copy(encryptionKey = encryptionKey)
         childUsers[i] = updatedChildUser
         onUserUpdated?.invoke(this)
         return true
     }
 
-    fun invalidateEncryptionKeyOfChild(childUserEmail: String?): Boolean {
-        return addEncryptionKeyOfChild(childUserEmail, null)
+    fun invalidateEncryptionKeyOfChild(publicIdentifier: String?): Boolean {
+        return addEncryptionKeyOfChild(publicIdentifier, null)
     }
 
     fun getEncryptionKey(childUserId: String): String? {

@@ -5,15 +5,15 @@ import kotlin.contracts.ExperimentalContracts
 import kotlin.contracts.contract
 
 data class EncryptionKeyInfo(
-    val childPhone: String?,
+    val publicIdentifier: String?,
     val encryptionKey: String?,
 ) {
     @OptIn(ExperimentalContracts::class)
     fun isValid(
-        phone: String? = this.childPhone,
+        publicIdentifier: String? = this.publicIdentifier,
         encryptionKey: String? = this.encryptionKey
     ): Boolean {
-        contract { returns(true) implies (phone != null && encryptionKey != null) }
-        return isValidPhoneNumber(phone) && encryptionKey.isNullOrEmpty().not()
+        contract { returns(true) implies (publicIdentifier != null && encryptionKey != null) }
+        return isValidPhoneNumber(publicIdentifier) && encryptionKey.isNullOrEmpty().not()
     }
 }

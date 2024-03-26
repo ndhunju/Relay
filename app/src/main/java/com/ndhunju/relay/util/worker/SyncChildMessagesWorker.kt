@@ -83,7 +83,7 @@ class SyncChildMessagesWorker(
                     val decryptedPayLoad = encryptionService.decrypt(it.payLoad, password)
 
                     if (decryptedPayLoad == null || password == null) {
-                        currentUser.user.invalidateEncryptionKeyOfChild(childUser.phone)
+                        currentUser.user.invalidateEncryptionKeyOfChild(childUser.getPublicIdentifier())
                         notificationManager.notifyCriticalMessage(applicationContext.getString(
                             R.string.notification_invalid_encryption_key,
                             childUser.getPublicIdentifier()
