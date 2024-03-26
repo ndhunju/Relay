@@ -2,6 +2,7 @@ package com.ndhunju.relay.service
 
 import androidx.annotation.OpenForTesting
 import com.ndhunju.relay.service.analyticsprovider.AnalyticsProvider
+import com.ndhunju.relay.service.analyticsprovider.CrashlyticsAnalyticsProvider
 import com.ndhunju.relay.service.analyticsprovider.FirebaseAnalyticsProvider
 import com.ndhunju.relay.service.analyticsprovider.Level
 import com.ndhunju.relay.service.analyticsprovider.LocalAnalyticsProvider
@@ -23,7 +24,8 @@ open class AnalyticsManager @Inject constructor(): AnalyticsProvider {
     private val analyticsProviders by lazy {
         arrayOf(
             LocalAnalyticsProvider(),
-            FirebaseAnalyticsProvider()
+            FirebaseAnalyticsProvider(),
+            CrashlyticsAnalyticsProvider()
         )
     }
 
@@ -37,9 +39,9 @@ open class AnalyticsManager @Inject constructor(): AnalyticsProvider {
         }
     }
 
-    override fun setLevel(logLevel: Level) {
+    override fun setLevel(level: Level) {
         analyticsProviders.forEach { analyticsProvider ->
-            analyticsProvider.setLevel(logLevel)
+            analyticsProvider.setLevel(level)
         }
     }
 

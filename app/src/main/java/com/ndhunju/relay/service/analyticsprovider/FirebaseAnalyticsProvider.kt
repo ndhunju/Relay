@@ -3,11 +3,33 @@ package com.ndhunju.relay.service.analyticsprovider
 import android.os.Bundle
 import com.google.firebase.Firebase
 import com.google.firebase.analytics.analytics
+import com.google.firebase.app
+import com.ndhunju.relay.R
 
 /**
  * Implements [AnalyticsProvider] using [Firebase]
  */
 class FirebaseAnalyticsProvider: AnalyticsProvider {
+
+    private val appName by lazy {
+        Firebase.app.applicationContext.getString(R.string.app_name).lowercase()
+    }
+
+    /**
+     * Prefix with app name so that it is easier to filter in Analytics Dashboard
+     */
+    private val eventLog by lazy {
+        "${appName}_log"
+    }
+
+    private val messageParam by lazy {
+        "${appName}_param_message"
+    }
+
+    private val tagParam by lazy {
+        "${appName}_param_tag"
+    }
+
 
     /**
      * Log only anything of [Level.INFO] and above in Firebase
@@ -20,7 +42,9 @@ class FirebaseAnalyticsProvider: AnalyticsProvider {
 
     override fun logEvent(name: String, message: String?) {
         val bundle = Bundle()
-        bundle.putString("message", message)
+        // Firebase Analytics might crop the message if it is too long
+        // See Crashlytics for more details logs
+        bundle.putString(messageParam, message)
         Firebase.analytics.logEvent(name, bundle)
     }
 
@@ -31,9 +55,11 @@ class FirebaseAnalyticsProvider: AnalyticsProvider {
         }
 
         val bundle = Bundle()
-        bundle.putString("tag", tag)
-        bundle.putString("message", message)
-        Firebase.analytics.logEvent("Log", bundle)
+        bundle.putString(tagParam, tag)
+        bundle.putString(messageParam, message)
+        // Firebase Analytics might crop the message if it is too long
+        // See Crashlytics for more details logs
+        Firebase.analytics.logEvent(eventLog, bundle)
 
     }
 }
