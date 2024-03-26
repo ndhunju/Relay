@@ -15,10 +15,10 @@ import com.ndhunju.relay.ui.messagesfrom.MessagesFromFragment
 import com.ndhunju.relay.util.extensions.asState
 import com.ndhunju.relay.util.worker.SyncChildMessagesWorker
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
-import java.util.concurrent.CountDownLatch
-import java.util.concurrent.TimeUnit
+import kotlinx.coroutines.withTimeoutOrNull
 
 class MessagesFromChildViewModel(
     private val workManager: WorkManager,
@@ -107,7 +107,7 @@ class MessagesFromChildViewModel(
      * if it was finished. Otherwise, false if it timed out before finishing.
      */
     private suspend fun awaitTillLastSyncChildMessagesWorkerIsFinished(): Boolean {
-        val countDownLatch = CountDownLatch(1)
+        val channel = Channel<Int>()
         val liveData = workManager.getWorkInfosByTagLiveData(SyncChildMessagesWorker.TAG)
         // observeForever needs to be called on Main thread
         withContext(Dispatchers.Main) {
@@ -116,13 +116,18 @@ class MessagesFromChildViewModel(
                 override fun onChanged(value: List<WorkInfo>) {
                     if (value[value.lastIndex].state.isFinished) {
                         liveData.removeObserver(this)
-                        countDownLatch.countDown()
+                        channel.trySend(1)
                     }
                 }
             })
         }
-        countDownLatch.await(11, TimeUnit.SECONDS)
-        return countDownLatch.count < 1 // Return true if it did not time out
+        val received = withTimeoutOrNull(11_000) {
+            // The control remains here until time out
+            // or a new value is sent to this channel with trySend()
+            channel.receive()
+        }
+
+        return received == 1 // Return true if it did not time out
     }
 
 }
