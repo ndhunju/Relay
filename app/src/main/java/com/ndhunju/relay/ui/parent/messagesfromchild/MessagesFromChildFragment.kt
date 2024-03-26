@@ -14,7 +14,7 @@ import com.ndhunju.relay.ui.parent.messagesinthreadfromchild.MessagesInThreadFro
 import com.ndhunju.relay.ui.theme.RelayTheme
 
 private const val ARG_CHILD_USER_ID = "ARG_CHILD_USER_ID"
-private const val ARG_CHILD_USER_EMAIL = "ARG_CHILD_USER_EMAIL"
+private const val ARG_CHILD_USER_PHONE = "ARG_CHILD_USER_PHONE"
 
 /**
  * A simple [Fragment] subclass.
@@ -29,7 +29,7 @@ class MessagesFromChildFragment : Fragment() {
         super.onCreate(savedInstanceState)
         arguments?.let {
             viewModel.childUserId = it.getString(ARG_CHILD_USER_ID) ?: ""
-            viewModel.childUserEmail = it.getString(ARG_CHILD_USER_EMAIL)
+            viewModel.childUserPhone = it.getString(ARG_CHILD_USER_PHONE)
         }
 
         viewModel.doOpenMessagesInThreadFromChildFragment = { childUserId, message ->
@@ -89,11 +89,11 @@ class MessagesFromChildFragment : Fragment() {
          * @return A new instance of fragment MessagesFromChildFragment.
          */
         @JvmStatic
-        fun newInstance(childUserId: String, childUserEmail: String) =
+        fun newInstance(childUserId: String, childUserPhoneNumber: String) =
             MessagesFromChildFragment().apply {
                 arguments = Bundle().apply {
                     putString(ARG_CHILD_USER_ID, childUserId)
-                    putString(ARG_CHILD_USER_EMAIL, childUserEmail)
+                    putString(ARG_CHILD_USER_PHONE, childUserPhoneNumber)
                 }
             }
     }

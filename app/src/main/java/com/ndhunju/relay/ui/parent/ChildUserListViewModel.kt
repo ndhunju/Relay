@@ -63,7 +63,7 @@ class ChildUserListViewModel(
     }
 
     fun onClickChildEncKeyDialogBtnOk(encryptionKey: String) {
-        val isAdded = currentUser.user.addEncryptionKeyOfChild(currentChild?.email, encryptionKey)
+        val isAdded = currentUser.user.addEncryptionKeyOfChild(currentChild?.phone, encryptionKey)
         if (isAdded) {
             invalidateChildUsers()
         }
@@ -134,7 +134,7 @@ class ChildUserListViewModel(
                     val newChildUserWithoutEncKey = result.data as List<Child>
 
                     // Persist it locally
-                    val childUsers = newChildUserWithoutEncKey.map { User(it.id, it.email) }
+                    val childUsers = newChildUserWithoutEncKey.map { User(it.id, phone = it.phone) }
                     currentUser.user.updateChildUsersWithoutLosingEncryptionKey(childUsers)
 
                     // Update UI

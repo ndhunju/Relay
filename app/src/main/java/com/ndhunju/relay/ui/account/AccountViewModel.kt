@@ -111,7 +111,6 @@ class AccountViewModel(
                     mode = if (user.isRegistered) Mode.Update else Mode.Create,
                     phone = phone,
                     encKey = encKey,
-                    // Disable email text field if user is already registered or network progress
                     errorStrIdForPhoneField = errorStrIdForPhone,
                     errorStrResForEncKeyField = errorStrResForEncKey,
                     errorStrIdForGenericError = errorStrIdGeneric,

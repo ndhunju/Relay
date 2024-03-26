@@ -71,8 +71,8 @@ class PersistableCurrentUserImpl(
 
 data class User(
     val id: String = "",
-    val name: String? = null,
     val phone: String? = null,
+    val name: String? = null,
     val isRegistered: Boolean = false,
     val encryptionKey: String? = null,
     // TODO: Nikesh - Should we merge User and Child class?
@@ -184,7 +184,7 @@ data class User(
     }
 
     /**
-     * Adds passed [encryptionKey] for child with email [publicIdentifier] is present.
+     * Adds passed [encryptionKey] for child with [publicIdentifier] is present.
      * Otherwise, returns false
      */
     fun addEncryptionKeyOfChild(publicIdentifier: String?, encryptionKey: String?): Boolean {

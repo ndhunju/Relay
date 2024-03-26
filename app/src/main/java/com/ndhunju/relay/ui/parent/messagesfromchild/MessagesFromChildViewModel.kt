@@ -70,10 +70,10 @@ class MessagesFromChildViewModel(
      */
     var doOpenMessagesInThreadFromChildFragment: ((String, Message) -> Unit)? = null
 
-    var childUserEmail: String? = null
+    var childUserPhone: String? = null
         set(value) {
             field = value
-            _title.value = childUserEmail ?: ""
+            _title.value = childUserPhone ?: ""
         }
 
     lateinit var childUserId: String

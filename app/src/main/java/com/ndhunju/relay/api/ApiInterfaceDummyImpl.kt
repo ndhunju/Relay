@@ -22,7 +22,7 @@ object ApiInterfaceDummyImpl : ApiInterface {
 
     override suspend fun postPairWithParent(
         childUserId: String,
-        parentEmailAddress: String
+        parentPhone: String
     ): Result<String> {
         return returnFailure()
     }

@@ -67,11 +67,11 @@ class ApiInterfaceFireStoreImpl(
         val newUser = makeMapForUserCollection(name, phone)
 
         return try {
-            val userWithEmailExits = userCollection
+            val userWithPhoneNumberExits = userCollection
                 .whereEqualTo(UserEntry.Phone, phone)
                 .get().await().documents.isNotEmpty()
 
-            if (userWithEmailExits) {
+            if (userWithPhoneNumberExits) {
                 return Result.Failure(
                     PhoneAlreadyRegisteredException("User with phone $phone already registered.")
                 )
@@ -129,15 +129,15 @@ class ApiInterfaceFireStoreImpl(
 
     override suspend fun postPairWithParent(
         childUserId: String,
-        parentEmailAddress: String
+        parentPhone: String
     ): Result<String> {
 
         val exception = checkForCommonExceptions()
         if (exception != null) return Result.Failure(exception)
 
         return try {
-            // Check that such parent email address already exists
-            val queryByPhone = userCollection.whereEqualTo(UserEntry.Phone, parentEmailAddress)
+            // Check that such parent phone address already exists
+            val queryByPhone = userCollection.whereEqualTo(UserEntry.Phone, parentPhone)
             val querySnapshot = queryByPhone.get().await()
             if (querySnapshot.isEmpty) {
                 return Result.Failure(UserNotFoundException("Parent phone id not found"))
@@ -210,10 +210,10 @@ class ApiInterfaceFireStoreImpl(
 
         // TODO: Nikesh - check if user has already paired with 3 parents
         return try {
-            val queryByEmail = userCollection
+            val queryByPhoneNumber = userCollection
                 .whereEqualTo(UserEntry.Phone, childPhoneNumber)
                 .whereEqualTo("Key", pairingCode)
-            val querySnapshot = queryByEmail.get().await()
+            val querySnapshot = queryByPhoneNumber.get().await()
             if (querySnapshot.isEmpty) {
                 return Result.Failure(UserNotFoundException("Matching child user not found"))
             }
@@ -250,13 +250,13 @@ class ApiInterfaceFireStoreImpl(
 
             // Fetch the phone number of each child user
             val childList = childUserIds.map { childUserId ->
-                val email = userCollection
+                val phoneNumber = userCollection
                     .whereEqualTo(FieldPath.documentId(), childUserId)
                     .get()
                     .await()
                     .documents.first()
                     .get(UserEntry.Phone) as String
-                Child(childUserId, email)
+                Child(childUserId, phoneNumber)
             }
 
             Result.Success(childList)

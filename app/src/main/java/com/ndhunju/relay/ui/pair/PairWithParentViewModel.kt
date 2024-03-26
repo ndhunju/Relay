@@ -101,7 +101,7 @@ class PairWithParentViewModel(
                     _showProgress.value = false
                     _isSelectedParentPaired.value = evaluateIsPaired()
                     if (result.throwable is UserNotFoundException) {
-                        _errorMsgResId.value = R.string.pair_screen_user_email_not_found
+                        _errorMsgResId.value = R.string.pair_screen_user_phone_not_found
                     }
                     else {
                         _errorMsgResId.value = R.string.pair_screen_pair_failed
@@ -134,8 +134,6 @@ class PairWithParentViewModel(
      * Evaluates value of [_isSelectedParentPaired] property
      */
     private fun evaluateIsPaired(): Boolean {
-        // Return true if _parentEmailAddress.value matches with
-        // any item in currentChildUser.user.parentUserEmails
         currentChildUser.user.getParentPhoneNumbers().forEach { parentPhoneNumber ->
             if (parentPhoneNumber == _selectedParentPhoneAddress.value) {
                 return true

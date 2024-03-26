@@ -98,12 +98,12 @@ fun PairWithParentScreen(
                         .padding(vertical = LocalDimens.current.itemPaddingVertical)
                     )
 
-                for (email in pairedUserPhoneList.value) {
+                for (phoneNumber in pairedUserPhoneList.value) {
                     Text(
-                        text = email,
+                        text = phoneNumber,
                         modifier = Modifier
                             .fillMaxWidth()
-                            .clickable { onClickPairedUser(email) }
+                            .clickable { onClickPairedUser(phoneNumber) }
                             .padding(vertical = LocalDimens.current.itemPaddingVertical)
                     )
                 }

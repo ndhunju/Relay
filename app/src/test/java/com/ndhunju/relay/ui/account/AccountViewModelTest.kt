@@ -96,7 +96,7 @@ class AccountViewModelTest {
     }
 
     @Test
-    fun `when Api returns EmailAlreadyExistException Then error message should match`() {
+    fun `when Api returns PhoneAlreadyRegisteredException Then error message should match`() {
         runTest(timeout = Duration.parse("3s")) {
             // Mock the response
             `when`(apiInterfaceMock.postUser())
@@ -114,7 +114,7 @@ class AccountViewModelTest {
     }
 
     @Test
-    fun `when Api returns EmailAlreadyExistException Then error message should not match generic message`() {
+    fun `when Api returns PhoneAlreadyRegisteredException Then error message should not match generic message`() {
         runBlocking {
             // Mock the response
             `when`(apiInterfaceMock.postUser())

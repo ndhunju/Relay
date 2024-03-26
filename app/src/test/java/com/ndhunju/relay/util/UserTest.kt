@@ -15,8 +15,8 @@ class UserTest {
             id = "id_parent",
             phone = "+14083207200",
             childUsers = mutableListOf(
-                User("id_child_1", "email_child_1@gmail.com", encryptionKey = "key_child_1"),
-                User("id_child_2", "email_child_2@gmail.com"),
+                User("id_child_1", "+123456789", encryptionKey = "key_child_1"),
+                User("id_child_2", "+987654321"),
             )
         )
     }
@@ -29,8 +29,8 @@ class UserTest {
 
         val newChildUsers = mutableListOf(
             copyOfExistingChildUserWithOutEncKey,
-            User("id_new_child_2", "new_child_2@gmail.com"),
-            User("id_new_child_3", "new_child_3@gmail.com"),
+            User("id_new_child_2", "+987654321"),
+            User("id_new_child_3", "+123456789"),
         )
 
         user.updateChildUsersWithoutLosingEncryptionKey(newChildUsers)
@@ -57,11 +57,11 @@ class UserTest {
             user.findChildUserByPhoneNumber(oldChildUserIdThatIsNotInNewList)
         )
 
-        val newChildUserEmailThatIsNotInOldList = "new_child_2@gmail.com"
+        val newChildUserPhoneThatIsNotInOldList = "1234567756"
 
         Assert.assertNotNull(
-            "New Child User with email $newChildUserEmailThatIsNotInOldList should be present",
-            user.findChildUserByPhoneNumber(newChildUserEmailThatIsNotInOldList)
+            "New Child User with phone $newChildUserPhoneThatIsNotInOldList should be present",
+            user.findChildUserByPhoneNumber(newChildUserPhoneThatIsNotInOldList)
         )
 
     }

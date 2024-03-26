@@ -66,8 +66,6 @@
     <!-- AccountsScreen -->
     <!-- Title used for an screen -->
     <string name="screen_title_account">Account</string>
-    <!-- Noun. Label for a text field where user can input their email -->
-    <string name="text_field_label_email">Email</string>
     <!-- Noun. Label for a text field where user can input their name -->
     <string name="text_field_label_name">Name</string>
     <!-- Noun. Label for a text field where user can input their phone -->
@@ -82,8 +80,6 @@
     <string name="button_label_create_account">Create</string>
     <!-- Label for a button. Clicking on it updates account info of the user -->
     <string name="button_label_update">Update</string>
-    <!-- Error message shown below the Email text field -->
-    <string name="account_invalid_email">Email is invalid.</string>
     <!-- Error message shown below the Phone text field when the phone entered is already used-->
     <string name="account_phone_registered">Phone already exits.</string>
     <!-- Error message shown below the Name text field -->
@@ -114,11 +110,11 @@
     <string name="pair_screen_pair_failed">Failed to pair. Please try again</string>
     <!-- Error message shown when unpairing fails -->
     <string name="pair_screen_unpair_failed">Failed to unpair. Please try again</string>
-    <!-- Error message shown when user with that email is not found -->
-    <string name="pair_screen_user_email_not_found">User with this email is not found.</string>
+    <!-- Error message shown when user with that phone number is not found -->
+    <string name="pair_screen_user_phone_not_found">User with this phone is not found.</string>
     <!-- Error message shown when user has reached maximum allowed devices to pair -->
     <string name="pair_screen_max_limit_reached">You have already paired with maximum allowed users.</string>
-    <!-- Title for a list that show paired user's email -->
+    <!-- Title for a list that show paired user's phone -->
     <string name="pair_screen_paired_users">Paired Users</string>
 
     <!-- ChildUserListScreen -->
@@ -136,8 +132,8 @@
     <!-- Header of the welcome screen. Shown in a Text/Label -->
     <string name="welcome_screen_header">Welcome to %1$s!</string>
     <!-- Body of the welcome screen.-->
-    <string name="welcome_screen_body">To get started with %1$s, just provide your phone in the next screen.\n\n
-        We\'ll send a one-time passcode to your number. Enter the code, and you\'re good to go!</string>
+    <string name="welcome_screen_body">To get started with %1$s, just provide your phone in the next screen.
+        \n\nWe\'ll send a one-time passcode to your number. Enter the code, and you\'re good to go!</string>
     <!-- Text shown inside a button -->
     <string name="welcome_screen_create_account_btn">Create Account</string>
 

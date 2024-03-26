@@ -50,7 +50,7 @@ class ChildUserListFragment : Fragment() {
             parentFragmentManager.beginTransaction()
                 .add(
                     android.R.id.content,
-                    MessagesFromChildFragment.newInstance(child.id, child.email)
+                    MessagesFromChildFragment.newInstance(child.id, child.phone)
                 )
                 .addToBackStack(MessagesFromChildFragment.TAG)
                 .commit()

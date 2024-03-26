@@ -27,10 +27,10 @@ interface ApiInterface {
 
     /**
      * Makes API request to pair [childUserId] with a
-     * parent user whose email is [parentEmailAddress].
+     * parent user whose phone number is [parentPhone].
      * Returns parent user's id in [Result.Success.data]
      */
-    suspend fun postPairWithParent(childUserId: String, parentEmailAddress: String): Result<String>
+    suspend fun postPairWithParent(childUserId: String, parentPhone: String): Result<String>
 
     /**
      * Makes API request to unpair [childUserId] with a
@@ -39,7 +39,7 @@ interface ApiInterface {
     suspend fun postUnPairWithParent(childUserId: String, parentUserId: String): Result<Boolean>
 
     /**
-     * Makes API request to pair with a Child with email [childPhoneNumber]
+     * Makes API request to pair with a Child with phone [childPhoneNumber]
      * and pairing code [pairingCode]
      * Returns child user's id in [Result.Success.data]
      */

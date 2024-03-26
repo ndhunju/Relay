@@ -89,7 +89,7 @@ class PairWithChildByScanningQrCodeActivity: BarcodeScannerActivity() {
                                 showError(getString(R.string.default_firebase_ex_msg))
                             }
                             is UserNotFoundException -> {
-                                showError(getString(R.string.pair_screen_user_email_not_found))
+                                showError(getString(R.string.pair_screen_user_phone_not_found))
                             }
                             else -> showError(getString(R.string.general_error_message))
                         }
