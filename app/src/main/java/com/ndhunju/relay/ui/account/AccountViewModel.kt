@@ -6,6 +6,7 @@ import androidx.lifecycle.viewModelScope
 import com.ndhunju.relay.R
 import com.ndhunju.relay.api.ApiInterface
 import com.ndhunju.relay.api.NetworkNotFoundException
+import com.ndhunju.relay.api.PhoneAlreadyRegisteredException
 import com.ndhunju.relay.api.Result
 import com.ndhunju.relay.service.AppStateBroadcastService
 import com.ndhunju.relay.service.analyticsprovider.AnalyticsProvider
@@ -151,6 +152,10 @@ class AccountViewModel(
             }
             is Result.Failure -> {
                 when (result.throwable) {
+                    is PhoneAlreadyRegisteredException -> {
+                        errorStrIdForPhone.value = R.string.account_phone_registered
+                        showProgress.value = false
+                    }
                     is NetworkNotFoundException -> {
                         errorStrIdGeneric.value = R.string.default_network_not_found_msg
                         showProgress.value = false
