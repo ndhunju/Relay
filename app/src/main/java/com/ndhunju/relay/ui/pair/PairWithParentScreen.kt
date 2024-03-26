@@ -29,21 +29,21 @@ import kotlinx.coroutines.flow.MutableStateFlow
 @Composable
 fun PairWithParentScreenPreview() {
     PairWithParentScreen(
-        pairedUserEmailList = MutableStateFlow(mockChildUsers.map { it.email }).collectAsState(),
-        selectedParentEmailAddress = MutableStateFlow("parent@gmail.com").collectAsState(),
+        pairedUserPhoneList = MutableStateFlow(mockChildUsers.map { it.phone }).collectAsState(),
+        selectedParentPhoneAddress = MutableStateFlow("+15512345678").collectAsState(),
         isSelectedParentPaired = MutableStateFlow(true).collectAsState()
     )
 }
 @Composable
 fun PairWithParentScreen(
-    pairedUserEmailList: State<List<String>>,
-    selectedParentEmailAddress: State<String>,
+    pairedUserPhoneList: State<List<String>>,
+    selectedParentPhoneAddress: State<String>,
     isSelectedParentPaired: State<Boolean>,
     showProgress: State<Boolean>? = null,
     errorMsgResId: State<Int?>? = null,
     onUpPressed: () -> Unit = {},
     onClickPairUnPair: () -> Unit = {},
-    onParentEmailAddressChanged: (String) -> Unit = {},
+    onParentPhoneChanged: (String) -> Unit = {},
     onClickPairedUser: (String) -> Unit = {}
 ) {
     //LogCompositions(tag = "PairWithParentScreen", msg = "Called")
@@ -67,12 +67,12 @@ fun PairWithParentScreen(
                     )
             ) {
                 RelayOutlinedTextField(
-                    value = selectedParentEmailAddress.value,
-                    labelRes = R.string.pair_screen_parent_email_address,
-                    onValueChange = onParentEmailAddressChanged,
+                    value = selectedParentPhoneAddress.value,
+                    labelRes = R.string.pair_screen_parent_phone_number,
+                    onValueChange = onParentPhoneChanged,
                     errorMessage = getString(resId = errorMsgResId?.value),
                     supportingText = stringResource(
-                        R.string.pair_screen_parent_email_address_supporting_text
+                        R.string.pair_screen_parent_phone_number_supporting_text
                     )
                 )
 
@@ -98,7 +98,7 @@ fun PairWithParentScreen(
                         .padding(vertical = LocalDimens.current.itemPaddingVertical)
                     )
 
-                for (email in pairedUserEmailList.value) {
+                for (email in pairedUserPhoneList.value) {
                     Text(
                         text = email,
                         modifier = Modifier

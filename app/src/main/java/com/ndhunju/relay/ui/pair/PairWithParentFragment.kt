@@ -37,7 +37,7 @@ class PairWithParentFragment: Fragment() {
                         onUpPressed = { parentFragmentManager.popBackStack() },
                         onClickPairUnPair = viewModel::onClickPairUnpair,
                         onClickPairedUser = viewModel::onClickPairedUser,
-                        onParentEmailAddressChanged = viewModel::onSelectedParentEmailAddressChanged
+                        onParentPhoneChanged = viewModel::onSelectedParentPhoneChanged
                     )
                 }
             }

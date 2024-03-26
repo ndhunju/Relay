@@ -207,7 +207,8 @@ private fun ChildUserColumnItem(
         )
 
         Text(
-            text = childUser.email, modifier = Modifier
+            text = childUser.phone,
+            modifier = Modifier
                 .fillMaxWidth()
                 .align(Alignment.CenterVertically)
         )
@@ -224,4 +225,4 @@ private fun LoadingIndicator() {
     }
 }
 
-data class Child(val id: String, val email: String, val encKey: String? = null)
+data class Child(val id: String, val phone: String, val encKey: String? = null)

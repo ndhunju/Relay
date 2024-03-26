@@ -102,10 +102,10 @@
     <!-- PairWithParentScreen -->
     <!-- Title of the screen -->
     <string name="screen_title_pair">Pair</string>
-    <!-- Hint for TextField where user can enter email address -->
-    <string name="pair_screen_parent_email_address">Parent Email Address</string>
+    <!-- Hint for TextField where user can enter phone number -->
+    <string name="pair_screen_parent_phone_number">Parent Phone Number</string>
     <!-- Supporting text should underneath the TextField. -->
-    <string name="pair_screen_parent_email_address_supporting_text">Enter email address of the parent to pair with.</string>
+    <string name="pair_screen_parent_phone_number_supporting_text">Enter phone number of the parent to pair with.</string>
     <!-- Verb. Text in a button. When clicked, app starts the process of pairing -->
     <string name="pair_screen_pair">Pair</string>
     <!-- Verb. Text in a button. When clicked, app starts the process of unpairing -->

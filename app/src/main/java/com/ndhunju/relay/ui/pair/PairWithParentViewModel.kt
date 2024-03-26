@@ -34,7 +34,7 @@ class PairWithParentViewModel(
     private val _pairedUserPhoneList = MutableStateFlow(currentChildUser.user.getParentPhoneNumbers())
     val pairedUserPhoneList = _pairedUserPhoneList.asStateFlow()
 
-    fun onSelectedParentEmailAddressChanged(newValue: String) {
+    fun onSelectedParentPhoneChanged(newValue: String) {
         _selectedParentPhoneAddress.value = newValue
         _isSelectedParentPaired.value = evaluateIsPaired()
     }
@@ -146,7 +146,7 @@ class PairWithParentViewModel(
 
     fun onClickPairedUser(phone: String) {
         _selectedParentPhoneAddress.value = phone
-        onSelectedParentEmailAddressChanged(phone)
+        onSelectedParentPhoneChanged(phone)
     }
 
 }
