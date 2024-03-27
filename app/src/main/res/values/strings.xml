@@ -9,7 +9,7 @@
     <!-- Default error message shown whenever the app catches FirebaseFirestoreException-->
     <string name="default_firebase_ex_msg">There is an issue with Firebase</string>
     <!--  Shown in a dialog to the user when the device seems to be offline -->
-    <string name="default_network_not_found_msg">We can not reach the Network. Please make sure you are connected to the Internet</string>
+    <string name="default_network_not_found_msg">Not able to each the Network. Please make sure you are connected to the Internet</string>
 
 
     <!-- General Image Descriptions -->
@@ -132,7 +132,7 @@
     <!-- Header of the welcome screen. Shown in a Text/Label -->
     <string name="welcome_screen_header">Welcome to %1$s!</string>
     <!-- Body of the welcome screen.-->
-    <string name="welcome_screen_body">To get started with %1$s, just provide your phone in the next screen.
+    <string name="welcome_screen_body">To get started with %1$s, just provide your phone number in the next screen.
         \n\nWe\'ll send a one-time passcode to your number. Enter the code, and you\'re good to go!</string>
     <!-- Text shown inside a button -->
     <string name="welcome_screen_create_account_btn">Create Account</string>
@@ -164,4 +164,12 @@
     <string name="screen_add_child_enc_key_not_added">%1$s has not added you as parent</string>
     <!-- Content description for an icon that starts the process of adding encryption key -->
     <string name="content_description_add_encryption_key">Add encryption key</string>
+
+    <!-- App Update Screen -->
+    <!-- Title for the screen to update the app -->
+    <string name="screen_app_update_title">Update available</string>
+    <!-- Body for the screen to update the app -->
+    <string name="screen_app_update_body">To use this app, download the latest version.</string>
+    <!-- Text for positive button for the screen to update the app -->
+    <string name="screen_app_update_positive_btn">Update</string>
 </resources>
