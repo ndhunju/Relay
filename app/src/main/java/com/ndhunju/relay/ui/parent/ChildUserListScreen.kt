@@ -37,7 +37,8 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.ndhunju.relay.R
 import com.ndhunju.relay.ui.custom.RelayOutlinedTextField
-import com.ndhunju.relay.ui.custom.SimpleAlertDialog
+import com.ndhunju.relay.ui.custom.MessageAlertDialog
+import com.ndhunju.relay.ui.custom.CustomContentAlertDialog
 import com.ndhunju.relay.ui.custom.TopAppBarWithUpButton
 import com.ndhunju.relay.ui.mockChildUsers
 import com.ndhunju.relay.ui.theme.LocalDimens
@@ -120,7 +121,7 @@ fun ChildUserListScreen(
         }
 
         AnimatedVisibility(visible = showPostNotificationPermissionDialog.value) {
-            SimpleAlertDialog(
+            MessageAlertDialog(
                 stringResource(id = R.string.child_user_screen_notification_permission),
                 onClickAllowNotificationDialogBtnOk,
                 onClickAllowNotificationDialogBtnCancel
@@ -146,7 +147,7 @@ private fun EncryptionKeyInputAlertDialog(
 ) {
     val input = rememberSaveable { mutableStateOf("") }
 
-    SimpleAlertDialog(
+    CustomContentAlertDialog(
         onClickDialogBtnOk = { onClickChildEncKeyDialogBtnOk?.invoke(input.value) },
         onClickChildEncKeyDialogBtnCancel
     ) {

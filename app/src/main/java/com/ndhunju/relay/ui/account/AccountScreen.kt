@@ -5,7 +5,6 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.MaterialTheme
@@ -21,7 +20,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.ndhunju.relay.R
 import com.ndhunju.relay.ui.custom.RelayOutlinedTextField
-import com.ndhunju.relay.ui.custom.SimpleAlertDialog
+import com.ndhunju.relay.ui.custom.MessageAlertDialog
 import com.ndhunju.relay.ui.custom.TopAppBarWithUpButton
 import com.ndhunju.relay.ui.theme.LocalDimens
 import com.ndhunju.relay.util.wrapper.stringResource
@@ -114,7 +113,7 @@ fun AccountScreen(
                 )
 
                 if (accountScreenUiState.showDialog) {
-                    SimpleAlertDialog(
+                    MessageAlertDialog(
                         getString(
                             resId = accountScreenUiState.errorStrIdForGenericError
                         ) ?: "",

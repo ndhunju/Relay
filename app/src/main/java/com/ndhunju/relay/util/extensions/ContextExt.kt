@@ -13,9 +13,9 @@ val userColorRefs = arrayOf(
     R.color.user_color_green,
     R.color.user_color_pink,
     R.color.user_color_yellow,
-    R.color.user_color_sky_blue,
+    R.color.user_color_sky_blue
+)
 
-    )
 fun Context.getColorForId(uniqueId: Int): Color {
     return Color(getColor(userColorRefs[uniqueId.mod(userColorRefs.size)]))
 }
@@ -37,9 +37,9 @@ fun Context.getAppVersionCode(): Long {
 }
 
 /**
- * Opens [url] if it is correctly formatted URL
+ * Opens [url] if it is correctly formatted Uri
  */
-fun Context.openIfLink(url: String?) {
+fun Context.startActivityForUrl(url: String?) {
 
     try {
         startActivity(Intent(Intent.ACTION_VIEW, Uri.parse(url))

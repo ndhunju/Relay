@@ -38,6 +38,7 @@ class PersistableCurrentSettings(
     }
 
     override fun updateSettings(settings: Settings)  {
+        // Note: For data classes, == checks each property passed through the constructor
         if (settings == this.cachedSettings.value) {
             return
         }
