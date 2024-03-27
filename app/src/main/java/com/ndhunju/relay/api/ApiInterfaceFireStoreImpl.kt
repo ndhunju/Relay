@@ -9,6 +9,7 @@ import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.ktx.Firebase
 import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
+import com.ndhunju.relay.api.response.Settings
 import com.ndhunju.relay.data.ChildSmsInfo
 import com.ndhunju.relay.service.analyticsprovider.AnalyticsProvider
 import com.ndhunju.relay.ui.parent.Child
@@ -43,14 +44,32 @@ class ApiInterfaceFireStoreImpl(
     /**
      * Holds [CollectionReference] for "User" collection
      */
-    private val userCollection = Firebase.firestore.collection(Collections.User)
-    private val parentChildCollection = Firebase.firestore.collection(Collections.ParentChild)
-    private val messageCollection = Firebase.firestore.collection(Collections.Message)
-    private val messageFetcherCollection = Firebase.firestore.collection(Collections.MessageFetcher)
-    private val pushNotificationCollection = Firebase.firestore.collection(Collections.PushNotificationToken)
+    private val userCollection by lazy { Firebase.firestore.collection(Collections.User) }
+    private val settingsCollection by lazy { Firebase.firestore.collection(Collections.Settings) }
+    private val parentChildCollection by lazy { Firebase.firestore.collection(Collections.ParentChild) }
+    private val messageCollection by lazy { Firebase.firestore.collection(Collections.Message) }
+    private val messageFetcherCollection by lazy { Firebase.firestore.collection(Collections.MessageFetcher) }
+    private val pushNotificationCollection by lazy { Firebase.firestore.collection(Collections.PushNotificationToken) }
 
     // TypeToken used for parsing list
     private val listOfStringType = object : TypeToken<List<String>>(){}.type
+
+    override suspend fun getSettings(): Result<Settings> {
+
+        val exception = checkForCommonExceptions()
+        if (exception != null) return Result.Failure(exception)
+
+        return try {
+            val settings = settingsCollection.get().await().documents.firstOrNull()
+                ?.toObject(Settings::class.java)
+            Result.Success(settings)
+        } catch (ex: Exception) {
+            logIfFirebaseException(ex)
+            analyticsProvider.logEvent("didFailToGetSettings", ex.message)
+            Result.Failure(ex)
+        }
+
+    }
 
     /**
      * Creates user in the cloud database.
@@ -527,6 +546,7 @@ class ApiInterfaceFireStoreImpl(
         const val Message = "Message"
         const val MessageFetcher = "MessageFetcher"
         const val PushNotificationToken = "PushNotificationToken"
+        const val Settings = "Settings"
     }
 
     /**

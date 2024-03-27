@@ -31,7 +31,9 @@ import com.ndhunju.relay.util.gson.ResultSerializer
 import com.ndhunju.relay.service.UserSettingsPersistService
 import com.ndhunju.relay.service.UserSettingsPersistServiceSharedPreferenceImpl
 import com.ndhunju.relay.service.analyticsprovider.AnalyticsProvider
+import com.ndhunju.relay.util.CurrentSettings
 import com.ndhunju.relay.util.CurrentUser
+import com.ndhunju.relay.util.PersistableCurrentSettings
 import com.ndhunju.relay.util.PersistableCurrentUserImpl
 import com.ndhunju.relay.util.connectivity.LollipopNetworkConnectionChecker
 import com.ndhunju.relay.util.connectivity.NetworkConnectionChecker
@@ -50,14 +52,14 @@ import javax.inject.Singleton
 @Module
 class AppModule(private val application: Application) {
 
+    private val relayApplication by lazy { (application as RelayApplication) }
+
     /**
      * NOTE: Don't directly call provides fun here as that will create multiple instances
      * even if it is annotated with @Singleton. Instead use [appComponent] variable to
      * get the instance of the object you need
      */
-    private val appComponent by lazy {
-        (application as RelayApplication).appComponent
-    }
+    private val appComponent by lazy { relayApplication.appComponent }
 
     @Provides
     @Singleton
@@ -90,6 +92,14 @@ class AppModule(private val application: Application) {
     fun providesCurrentUser(): CurrentUser = PersistableCurrentUserImpl(
         appComponent.userSettingsPersistService(),
         appComponent.analyticsProvider()
+    )
+
+    @Provides
+    @Singleton
+    fun providesCurrentSettings(): CurrentSettings = PersistableCurrentSettings(
+        appComponent.simpleKeyValuePersistService(),
+        relayApplication.applicationScope,
+        appComponent.gson()
     )
 
     @Provides

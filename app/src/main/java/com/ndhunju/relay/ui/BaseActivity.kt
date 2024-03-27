@@ -1,12 +1,19 @@
 package com.ndhunju.relay.ui
 
+import android.content.Intent
+import android.net.Uri
+import android.os.Build
 import android.os.Bundle
 import android.widget.Toast
 import androidx.fragment.app.FragmentActivity
+import androidx.lifecycle.lifecycleScope
+import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.ndhunju.relay.R
 import com.ndhunju.relay.RelayApplication
 import com.ndhunju.relay.service.AppStateBroadcastService
 import com.ndhunju.relay.service.analyticsprovider.AnalyticsProvider
+import com.ndhunju.relay.util.CurrentSettings
+import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 abstract class BaseActivity: FragmentActivity() {
@@ -15,16 +22,17 @@ abstract class BaseActivity: FragmentActivity() {
      * Dagger will provide an instance of [AppStateBroadcastService] from the graph
      */
     @Inject lateinit var appStateBroadcastService: AppStateBroadcastService
-    @Inject lateinit var analyticsManager: AnalyticsProvider
-
+    @Inject lateinit var analyticsProvider: AnalyticsProvider
+    @Inject lateinit var currentSettings: CurrentSettings
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         injectFields()
-        observeDeviceOnlineState()
+        checkForDeviceOnlineState()
+        checkForMinimumVersionCode()
     }
 
-    private fun observeDeviceOnlineState() {
+    private fun checkForDeviceOnlineState() {
         appStateBroadcastService.isDeviceOnline.observe(this) { isOnline ->
             if (isOnline.not()) {
                 Toast.makeText(

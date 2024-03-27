@@ -1,5 +1,6 @@
 package com.ndhunju.relay.api
 
+import com.ndhunju.relay.api.response.Settings
 import com.ndhunju.relay.data.ChildSmsInfo
 import com.ndhunju.relay.ui.parent.Child
 import com.ndhunju.relay.util.User
@@ -8,6 +9,10 @@ import com.ndhunju.relay.util.User
  * Class with dummy implementation of [ApiInterface]
  */
 object ApiInterfaceDummyImpl : ApiInterface {
+
+    override suspend fun getSettings(): Result<Settings> {
+        return returnFailure()
+    }
 
     override suspend fun postUser(
         name: String?,

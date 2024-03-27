@@ -1,5 +1,6 @@
 package com.ndhunju.relay.api
 
+import com.ndhunju.relay.api.response.Settings
 import com.ndhunju.relay.data.ChildSmsInfo
 import com.ndhunju.relay.ui.messages.Message
 import com.ndhunju.relay.ui.parent.Child
@@ -9,6 +10,11 @@ import com.ndhunju.relay.util.User
  * Abstracts the API that allows interaction with some kind of BE server
  */
 interface ApiInterface {
+
+    /**
+     * Makes API request to get the [Settings] for the app
+     */
+    suspend fun getSettings(): Result<Settings>
 
     /**
      * Makes API request to create user.

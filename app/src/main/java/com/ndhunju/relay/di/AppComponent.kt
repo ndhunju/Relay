@@ -13,6 +13,7 @@ import com.ndhunju.relay.service.SimpleKeyValuePersistService
 import com.ndhunju.relay.service.UserSettingsPersistService
 import com.ndhunju.relay.service.analyticsprovider.AnalyticsProvider
 import com.ndhunju.relay.ui.BaseActivity
+import com.ndhunju.relay.util.CurrentSettings
 import com.ndhunju.relay.util.CurrentUser
 import com.ndhunju.relay.util.connectivity.NetworkConnectionChecker
 import dagger.Component
@@ -38,6 +39,8 @@ interface AppComponent {
     fun userSettingsPersistService(): UserSettingsPersistService
 
     fun currentUser(): CurrentUser
+
+    fun currentSettings(): CurrentSettings
 
     fun workManager(): WorkManager
 
