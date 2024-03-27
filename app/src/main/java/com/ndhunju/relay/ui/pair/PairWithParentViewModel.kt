@@ -89,7 +89,6 @@ class PairWithParentViewModel(
         }
 
         viewModelScope.launch {
-            // TODO: Handle the scenario where "Unpair" button text is shown
             _showProgress.value = true
             val result = apiInterface.postPairWithParent(
                 currentChildUser.user.id,
