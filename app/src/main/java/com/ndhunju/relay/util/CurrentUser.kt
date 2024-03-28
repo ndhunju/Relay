@@ -182,6 +182,16 @@ data class User(
         return null
     }
 
+    fun findChildUserById(id: String?): User? {
+        childUsers.forEach { childUser ->
+            if (childUser.id == id) {
+                return childUser
+            }
+        }
+
+        return null
+    }
+
     /**
      * Adds passed [encryptionKey] for child with [publicIdentifier] is present.
      * Otherwise, returns false

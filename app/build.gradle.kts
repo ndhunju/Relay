@@ -125,7 +125,7 @@ dependencies {
     implementation("com.google.dagger:dagger:2.51")
     ksp("com.google.dagger:dagger-compiler:2.51")
 
-    //Room
+    // Room
     implementation("androidx.room:room-runtime:${rootProject.extra["room_version"]}")
     ksp("androidx.room:room-compiler:${rootProject.extra["room_version"]}")
     implementation("androidx.room:room-ktx:${rootProject.extra["room_version"]}")

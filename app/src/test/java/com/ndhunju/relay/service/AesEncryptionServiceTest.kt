@@ -1,19 +1,19 @@
 package com.ndhunju.relay.service
 
-import com.ndhunju.relay.service.analyticsprovider.LocalAnalyticsProvider
+import com.ndhunju.relay.service.analyticsprovider.KotlinAnalyticsProvider
 import org.junit.Assert
 import org.junit.Before
 import org.junit.Test
 
 
-class AeSEncryptionServiceTest {
+class AesEncryptionServiceTest {
 
     private lateinit var aesEncryptionService: EncryptionService
     private val password = "test_password_123"
 
     @Before
     fun beforeTest() {
-        aesEncryptionService = AesEncryptionService(LocalAnalyticsProvider())
+        aesEncryptionService = AesEncryptionService(KotlinAnalyticsProvider())
     }
 
     @Test

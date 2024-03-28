@@ -12,9 +12,10 @@ class AesEncryptionService(
     private val analyticsProvider: AnalyticsProvider,
 ): EncryptionService {
 
-    private val defaultPassword = "custom_password"
+    // TODO: Either generate salt at run time along with encryption key
+    //  Or get it from the backend to make it safer
     private val salt = "QWlGNHNhMTJTQWZ2bGhpV3U="
-    private val iv = "bVQzNFNhRkQ1Njc4UUFaWA==" // base64 decode => mT34SaFD5678QAZX
+    private val iv = "bVQzNFNhRkQ1Njc4UUFaWA=="
 
     private val ivParameterSpec by lazy { IvParameterSpec(Base64.decode(iv, Base64.DEFAULT)) }
     private val factory by lazy { SecretKeyFactory.getInstance("PBKDF2WithHmacSHA1") }

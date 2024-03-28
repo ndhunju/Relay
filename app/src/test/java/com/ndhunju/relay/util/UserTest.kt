@@ -27,9 +27,12 @@ class UserTest {
         val existingEncKey = existingChildUser.encryptionKey
         val copyOfExistingChildUserWithOutEncKey = existingChildUser.copy(encryptionKey = null)
 
+        val oldChildUserIdThatIsNotInNewList = "id_child_2"
+        val newChildUserPhoneThatIsNotInOldList = "+1234567756"
+
         val newChildUsers = mutableListOf(
             copyOfExistingChildUserWithOutEncKey,
-            User("id_new_child_2", "+987654321"),
+            User(oldChildUserIdThatIsNotInNewList, newChildUserPhoneThatIsNotInOldList),
             User("id_new_child_3", "+123456789"),
         )
 
@@ -43,21 +46,16 @@ class UserTest {
             updateChildUser?.encryptionKey
         )
 
-
         Assert.assertEquals(
             "Encryption Key should match.",
             existingEncKey,
             updateChildUser?.encryptionKey
         )
 
-        val oldChildUserIdThatIsNotInNewList = "id_child_2"
-
-        Assert.assertNull(
+        Assert.assertNotNull(
             "Old Child User with id $oldChildUserIdThatIsNotInNewList should exits",
-            user.findChildUserByPhoneNumber(oldChildUserIdThatIsNotInNewList)
+            user.findChildUserById(oldChildUserIdThatIsNotInNewList)
         )
-
-        val newChildUserPhoneThatIsNotInOldList = "1234567756"
 
         Assert.assertNotNull(
             "New Child User with phone $newChildUserPhoneThatIsNotInOldList should be present",
