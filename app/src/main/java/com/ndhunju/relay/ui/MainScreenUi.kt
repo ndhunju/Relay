@@ -117,9 +117,7 @@ fun MainDrawerContent(
     onClickNavItem: (NavItem) -> Unit,
     onClickLauncherIcon: () -> Unit,
 ) {
-    ModalDrawerSheet(modifier = Modifier
-        .fillMaxWidth(0.7f)
-    ) {
+    ModalDrawerSheet {
         // Show big app icon
         DynamicLauncherIconImage(modifier = Modifier
             .size(112.dp)
