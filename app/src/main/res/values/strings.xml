@@ -94,6 +94,8 @@
     <string name="account_user_create_failed">Failed to create user at this time. Please try again later.</string>
     <!-- Error message show in a dialog when app fails to update -->
     <string name="account_user_update_failed">Failed to update at this time. Please try again later.</string>
+    <!-- Message shown in a dialog when the account is not verified -->
+    <string name="account_verification_dialog_message">We will verify your number shortly. You can continue to use the app until then.</string>
 
     <!-- PairWithParentScreen -->
     <!-- Title of the screen -->

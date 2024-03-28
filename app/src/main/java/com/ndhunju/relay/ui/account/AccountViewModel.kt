@@ -8,6 +8,7 @@ import com.ndhunju.relay.api.ApiInterface
 import com.ndhunju.relay.api.NetworkNotFoundException
 import com.ndhunju.relay.api.PhoneAlreadyRegisteredException
 import com.ndhunju.relay.api.Result
+import com.ndhunju.relay.api.response.Settings
 import com.ndhunju.relay.service.AppStateBroadcastService
 import com.ndhunju.relay.service.analyticsprovider.AnalyticsProvider
 import com.ndhunju.relay.util.CurrentUser
@@ -51,6 +52,10 @@ class AccountViewModel(
     private val errorStrIdGeneric = MutableStateFlow<Int?>(null)
     private val showProgress = MutableStateFlow(false)
 
+    private val _showAccountUnverifiedDialog = MutableStateFlow(false)
+    val showAccountUnverifiedDialog = _showAccountUnverifiedDialog.asStateFlow()
+    var onClickAccountUnverifiedDialogBtn: (() -> Unit)? = null
+
     val onNameChange: (String) -> Unit = {
         name.value = it
     }
@@ -82,7 +87,20 @@ class AccountViewModel(
 
     val onClickCreateUpdateUser: () -> Unit = {
         viewModelScope.launch(Dispatchers.IO) {
-            if (user.isRegistered) pushUserUpdatesToServer() else createNewUserInServer()
+            if (user.isRegistered) {
+                pushUserUpdatesToServer()
+            } else {
+                val isVerified = verifyThePhoneNumber()
+                if (isVerified.not()) {
+                    _showAccountUnverifiedDialog.value = true
+                    onClickAccountUnverifiedDialogBtn = {
+                        _showAccountUnverifiedDialog.value = false
+                        viewModelScope.launch { createNewUserInServer() }
+                    }
+                } else {
+                    createNewUserInServer()
+                }
+            }
         }
     }
 
@@ -127,6 +145,14 @@ class AccountViewModel(
                 _state.value = accountScreenUiState
             }
         }
+    }
+
+    /**
+     * Verifies if the entered phone number
+     */
+    private suspend fun verifyThePhoneNumber(): Boolean {
+        val settings = apiInterface.getSettings().getDataOrNull<Settings>()
+        return settings?.byPassAccountCreationNumber == phone.value
     }
 
     /**
