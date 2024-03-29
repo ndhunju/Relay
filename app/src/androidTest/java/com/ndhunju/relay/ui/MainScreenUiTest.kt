@@ -17,6 +17,7 @@ import com.ndhunju.relay.api.Result
 import com.ndhunju.relay.ui.custom.SyncStatusIcon
 import com.ndhunju.relay.ui.messages.Message
 import com.ndhunju.relay.ui.theme.Colors
+import com.ndhunju.relay.ui.theme.LocalColors
 import kotlinx.coroutines.flow.MutableStateFlow
 import org.junit.Assert
 import org.junit.Rule
@@ -34,10 +35,12 @@ class MainScreenUiTest {
 
     @Test
     fun givenTheSyncStatusOfTheMessageTheCorrespondingSyncStatusIconTintShouldBeUsed() {
+        var colorsForCurrentTheme = Colors()
         composeTestRule.setContent {
             // Initialize MainContent with fake messages
             val fakeMessages = remember { mutableStateListOf<Message>() }
             fakeMessages.addAll(com.ndhunju.relay.ui.fakeMessages)
+            colorsForCurrentTheme = LocalColors.current
             MainContent(
                 lastMessageList = fakeMessages,
                 showErrorMessageForPermissionDenied = MutableStateFlow(false).collectAsState()
@@ -45,12 +48,15 @@ class MainScreenUiTest {
         }
 
         fakeMessages.forEach { fakeMessage ->
-            assertSyncStatusIconMatchesForGivenMessage(fakeMessage)
+            assertSyncStatusIconMatchesForGivenMessage(fakeMessage, colorsForCurrentTheme)
         }
 
     }
 
-    private fun assertSyncStatusIconMatchesForGivenMessage(message: Message) {
+    private fun assertSyncStatusIconMatchesForGivenMessage(
+        message: Message,
+        colorsForCurrentTheme: Colors
+    ) {
         val imageBitmapOfSyncIcon = composeTestRule.onNode(
             /** This alone returns multiple nodes as same description is used for each item **/
             hasContentDescription(context.getString(R.string.image_description_sync_status_logo))
@@ -66,11 +72,15 @@ class MainScreenUiTest {
         )
 
         val expectedIconTintColor = if (message.syncStatus is Result.Success) {
-            Colors().success
+            colorsForCurrentTheme.success
         } else {
-            Colors().failure
+            colorsForCurrentTheme.failure
         }
 
-        Assert.assertEquals("Failed for $message",expectedIconTintColor.toArgb(), pixel)
+        Assert.assertEquals(
+            "Failed for ${message.syncStatus}",
+            expectedIconTintColor.toArgb(),
+            pixel
+        )
     }
 }
