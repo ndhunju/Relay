@@ -4,7 +4,9 @@ import com.ndhunju.relay.api.Result
 import com.ndhunju.relay.ui.messages.Message
 import com.ndhunju.relay.ui.parent.Child
 
-val mockMessages = listOf(
+/** See https://stackoverflow.com/questions/346372/whats-the-difference-between-faking-mocking-and-stubbing
+ * Fake might be not a right prefix here. Reconsider it later. May be can use dummyMessages **/
+val fakeMessages = listOf(
     Message(
         "0",
         "ThreadId1",

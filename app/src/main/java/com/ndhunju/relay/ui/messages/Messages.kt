@@ -20,7 +20,7 @@ import androidx.constraintlayout.compose.Dimension
 import com.ndhunju.relay.R
 import com.ndhunju.relay.api.Result
 import com.ndhunju.relay.ui.custom.SyncStatusIcon
-import com.ndhunju.relay.ui.mockMessages
+import com.ndhunju.relay.ui.fakeMessages
 import com.ndhunju.relay.ui.theme.LocalDimens
 import com.ndhunju.relay.util.dateFormat
 import com.ndhunju.relay.util.extensions.getColorForId
@@ -29,7 +29,7 @@ import com.ndhunju.relay.util.extensions.getColorForId
 @Composable
 fun MessageListItemPreview() {
     MessageListItem(
-        message = mockMessages.first().copy(syncStatus = Result.Success()),
+        message = fakeMessages.first().copy(syncStatus = Result.Success()),
         onClick = {}
     )
 }

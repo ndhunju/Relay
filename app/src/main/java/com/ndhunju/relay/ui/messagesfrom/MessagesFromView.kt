@@ -26,7 +26,7 @@ import com.ndhunju.relay.ui.custom.CenteredMessageWithButton
 import com.ndhunju.relay.ui.custom.SyncStatusIcon
 import com.ndhunju.relay.ui.custom.TopAppBarWithUpButton
 import com.ndhunju.relay.ui.messages.Message
-import com.ndhunju.relay.ui.mockMessages
+import com.ndhunju.relay.ui.fakeMessages
 import com.ndhunju.relay.ui.theme.LocalDimens
 import com.ndhunju.relay.ui.theme.RelayTheme
 
@@ -35,7 +35,7 @@ import com.ndhunju.relay.ui.theme.RelayTheme
 @Composable
 fun MessagesFromPreview() {
     RelayTheme {
-        MessagesFromView(mockMessages.first().from, messageList = mockMessages)
+        MessagesFromView(fakeMessages.first().from, messageList = fakeMessages)
     }
 }
 

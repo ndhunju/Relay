@@ -69,9 +69,9 @@ import kotlinx.coroutines.launch
 @Preview
 @Composable
 fun MainContentPreview() {
-    val mockedMessages = remember { mutableStateListOf<Message>().apply { addAll(mockMessages) } }
+    val dummyMessages = remember { mutableStateListOf<Message>().apply { addAll(fakeMessages) } }
     MainContent(
-        lastMessageList = mockedMessages,
+        lastMessageList = dummyMessages,
         showErrorMessageForPermissionDenied = MutableStateFlow(false).collectAsState()
     )
 }
