@@ -3,6 +3,7 @@ package com.ndhunju.relay.ui
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.remember
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.asAndroidBitmap
 import androidx.compose.ui.graphics.toArgb
 import androidx.compose.ui.test.captureToImage
@@ -34,15 +35,90 @@ class MainScreenUiTest {
     }
 
     @Test
+    fun whenThenSyncStatusIsSuccessThenTheSyncStatusIconShouldHaveGreenTint() {
+        var colorsForCurrentTheme = Colors()
+        val message = Message(
+            "id",
+            "threadId",
+            "from",
+            "body",
+            0L,
+            "type",
+            Result.Success()
+        )
+
+        composeTestRule.setContent {
+            // Initialize MainContent with fake messages
+            colorsForCurrentTheme = LocalColors.current
+            MainContent(
+                lastMessageList =  remember { mutableStateListOf(message) },
+                showErrorMessageForPermissionDenied = MutableStateFlow(false).collectAsState()
+            )
+        }
+
+        assertSyncStatusIconMatchesForGivenMessage(message, colorsForCurrentTheme)
+    }
+
+    @Test
+    fun whenTheSyncStatusIsFailureThenTheSyncStatusIconShouldHaveRedTint() {
+        var colorsForCurrentTheme = Colors()
+        val message = Message(
+            "id",
+            "threadId",
+            "from",
+            "body",
+            0L,
+            "type",
+            Result.Failure()
+        )
+
+        composeTestRule.setContent {
+            // Initialize MainContent with fake messages
+            colorsForCurrentTheme = LocalColors.current
+            MainContent(
+                lastMessageList =  remember { mutableStateListOf(message) },
+                showErrorMessageForPermissionDenied = MutableStateFlow(false).collectAsState()
+            )
+        }
+
+        assertSyncStatusIconMatchesForGivenMessage(message, colorsForCurrentTheme)
+    }
+
+    @Test
+    fun whenTheSyncStatusIsPendingThenTheSyncStatusIconShouldHaveGreyTint() {
+        var colorsForCurrentTheme = Colors()
+        val message = Message(
+            "id",
+            "threadId",
+            "from",
+            "body",
+            0L,
+            "type",
+            Result.Pending()
+        )
+
+        composeTestRule.setContent {
+            // Initialize MainContent with fake messages
+            colorsForCurrentTheme = LocalColors.current
+            MainContent(
+                lastMessageList =  remember { mutableStateListOf(message) },
+                showErrorMessageForPermissionDenied = MutableStateFlow(false).collectAsState()
+            )
+        }
+
+        assertSyncStatusIconMatchesForGivenMessage(message, colorsForCurrentTheme)
+    }
+
+    @Test
     fun givenTheSyncStatusOfTheMessageTheCorrespondingSyncStatusIconTintShouldBeUsed() {
         var colorsForCurrentTheme = Colors()
         composeTestRule.setContent {
             // Initialize MainContent with fake messages
-            val fakeMessages = remember { mutableStateListOf<Message>() }
-            fakeMessages.addAll(com.ndhunju.relay.ui.fakeMessages)
+            val rememberFakeMessages = remember { mutableStateListOf<Message>() }
+            rememberFakeMessages.addAll(fakeMessages)
             colorsForCurrentTheme = LocalColors.current
             MainContent(
-                lastMessageList = fakeMessages,
+                lastMessageList = rememberFakeMessages,
                 showErrorMessageForPermissionDenied = MutableStateFlow(false).collectAsState()
             )
         }
@@ -71,10 +147,16 @@ class MainScreenUiTest {
             imageBitmapOfSyncIcon.height / 3
         )
 
-        val expectedIconTintColor = if (message.syncStatus is Result.Success) {
-            colorsForCurrentTheme.success
-        } else {
-            colorsForCurrentTheme.failure
+        val expectedIconTintColor = when (message.syncStatus) {
+            is Result.Success -> {
+                colorsForCurrentTheme.success
+            }
+            is Result.Failure -> {
+                colorsForCurrentTheme.failure
+            }
+            else -> {
+                Color.LightGray
+            }
         }
 
         Assert.assertEquals(
