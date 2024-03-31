@@ -136,7 +136,9 @@ class AccountViewModel(
                     errorStrIdForPhoneField = errorStrIdForPhone,
                     errorStrResForEncKeyField = errorStrResForEncKey,
                     errorStrIdForGenericError = errorStrIdGeneric,
-                    showProgress = showProgress
+                    showProgress = showProgress,
+                    // Disable phone text field if user is already registered or async in progress
+                    isPhoneTextFieldEnabled = showProgress.not() && user.isRegistered.not()
                 )
             }.catch { throwable ->
                 analyticsProvider.logEvent(
