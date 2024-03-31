@@ -12,6 +12,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.FocusDirection
 import androidx.compose.ui.platform.LocalFocusManager
+import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardCapitalization
@@ -41,7 +42,7 @@ fun RelayOutlinedTextField(
             unfocusedContainerColor = MaterialTheme.colorScheme.secondaryContainer,
             disabledContainerColor = MaterialTheme.colorScheme.secondaryContainer,
         ),
-        modifier = Modifier.fillMaxWidth(),
+        modifier = Modifier.fillMaxWidth().testTag(stringResource(labelRes)),
         enabled = enabled,
         singleLine = true,
         isError = errorMessage != null,
