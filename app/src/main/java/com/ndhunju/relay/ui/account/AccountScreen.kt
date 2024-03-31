@@ -84,6 +84,15 @@ fun AccountScreen(
                     .padding(LocalDimens.current.contentPaddingHorizontal),
                 verticalArrangement = Arrangement.spacedBy(LocalDimens.current.itemPaddingVertical)
             ) {
+                RelayOutlinedTextField(
+                    value = accountScreenUiState.phone ?: "",
+                    labelRes = R.string.text_field_label_phone,
+                    enabled = accountScreenUiState.isPhoneTextFieldEnabled,
+                    errorMessage = getString(accountScreenUiState.errorStrIdForPhoneField),
+                    onValueChange = onPhoneChange,
+                    keyboardType = KeyboardType.Phone
+                )
+
                 // Do not show Name during account creation to simplify
                 if (accountScreenUiState.mode == Mode.Update) {
                     RelayOutlinedTextField(
@@ -95,14 +104,6 @@ fun AccountScreen(
                         capitalization = KeyboardCapitalization.Words
                     )
                 }
-                RelayOutlinedTextField(
-                    value = accountScreenUiState.phone ?: "",
-                    labelRes = R.string.text_field_label_phone,
-                    enabled = accountScreenUiState.isPhoneTextFieldEnabled,
-                    errorMessage = getString(accountScreenUiState.errorStrIdForPhoneField),
-                    onValueChange = onPhoneChange,
-                    keyboardType = KeyboardType.Phone
-                )
                 RelayOutlinedTextField(
                     value = accountScreenUiState.encKey ?: "",
                     labelRes = R.string.text_field_label_enc_key,
