@@ -9,6 +9,8 @@ import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.OutlinedTextFieldDefaults
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.FocusDirection
 import androidx.compose.ui.platform.LocalFocusManager
@@ -33,9 +35,14 @@ fun RelayOutlinedTextField(
     capitalization: KeyboardCapitalization = KeyboardCapitalization.None
     ) {
     val focusManager = LocalFocusManager.current
+    // Apparently, if I don't do this here, the performTextReplacement won't fill this text field
+    val localValue = rememberSaveable { mutableStateOf(value) }
     OutlinedTextField(
-        value = value,
-        onValueChange = onValueChange,
+        value = localValue.value,
+        onValueChange = {
+            localValue.value = it
+            onValueChange.invoke(it)
+        },
         label = { Text(stringResource(labelRes)) },
         colors = OutlinedTextFieldDefaults.colors(
             focusedContainerColor = MaterialTheme.colorScheme.secondaryContainer,

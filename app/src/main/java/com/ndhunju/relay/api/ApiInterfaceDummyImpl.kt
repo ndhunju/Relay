@@ -8,7 +8,7 @@ import com.ndhunju.relay.util.User
 /**
  * Class with dummy implementation of [ApiInterface]
  */
-object ApiInterfaceDummyImpl : ApiInterface {
+open class ApiInterfaceDummyImpl : ApiInterface {
 
     override suspend fun getSettings(): Result<Settings> {
         return returnFailure()
