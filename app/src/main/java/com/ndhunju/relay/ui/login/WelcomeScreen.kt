@@ -78,6 +78,7 @@ fun WelcomeScreen(
                         vertical = LocalDimens.current.itemPaddingVertical
                     )
                     .fillMaxSize(),
+                    //.verticalScroll(rememberScrollState()),
                 verticalArrangement = Arrangement.Top,
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
@@ -96,7 +97,8 @@ fun WelcomeScreen(
                     ),
                     style = MaterialTheme.typography.titleLarge,
                     fontWeight = FontWeight.Bold,
-                    fontSize = LocalDimens.current.welcomeHeaderTextSize
+                    fontSize = LocalDimens.current.welcomeHeaderTextSize,
+                    textAlign = TextAlign.Center
                 )
                 Spacer(modifier = Modifier.fillMaxHeight(0.15f))
                 Text(
@@ -111,7 +113,6 @@ fun WelcomeScreen(
                     color = MaterialTheme.typography.titleMedium.color.copy(
                         alpha = if (isSystemInDarkTheme()) 0F else 0.6F
                     ),
-                    modifier = Modifier.padding(LocalDimens.current.contentPaddingHorizontal)
                 )
             }
         }
