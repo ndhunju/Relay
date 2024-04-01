@@ -28,7 +28,7 @@ import com.ndhunju.relay.util.areSmsPermissionGranted
 import com.ndhunju.relay.util.checkIfSmsPermissionsGranted
 import com.ndhunju.relay.util.extensions.getAppVersionCode
 import com.ndhunju.relay.util.extensions.startActivityForUrl
-import com.ndhunju.relay.util.requestPermission
+import com.ndhunju.relay.util.requestSmsPermission
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 
@@ -67,8 +67,8 @@ class MainActivity : BaseActivity() {
 
         viewModel.setTitle(getString(R.string.app_name))
 
-        viewModel.doRequestPermission = {
-            requestPermission(requestPermissionLauncher)
+        viewModel.doRequestSmsPermission = {
+            requestSmsPermission(requestPermissionLauncher)
         }
 
         viewModel.doOpenPairWithParentFragment = {

@@ -45,7 +45,7 @@ fun checkIfSmsPermissionsGranted(context: Context): Boolean {
 /**
  * Request all the permissions needed by the app
  */
-fun requestPermission(requestPermissionLauncher: ActivityResultLauncher<Array<String>>) {
+fun requestAllPermission(requestPermissionLauncher: ActivityResultLauncher<Array<String>>) {
     val permissions = mutableListOf(
         Manifest.permission.RECEIVE_SMS,
         Manifest.permission.READ_SMS,
@@ -55,6 +55,19 @@ fun requestPermission(requestPermissionLauncher: ActivityResultLauncher<Array<St
     if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
         permissions.add(Manifest.permission.POST_NOTIFICATIONS)
     }
+
+    requestPermissionLauncher.launch(permissions.toTypedArray())
+}
+
+/**
+ * Request all the permissions needed by the app
+ */
+fun requestSmsPermission(requestPermissionLauncher: ActivityResultLauncher<Array<String>>) {
+    val permissions = mutableListOf(
+        Manifest.permission.RECEIVE_SMS,
+        Manifest.permission.READ_SMS,
+        Manifest.permission.SEND_SMS
+    )
 
     requestPermissionLauncher.launch(permissions.toTypedArray())
 }

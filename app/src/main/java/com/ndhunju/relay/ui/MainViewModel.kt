@@ -81,7 +81,7 @@ class MainViewModel(
     val onSearchTextChanged: (String) -> Unit = {}
     val onClickAccountIcon = { doOpenAccountFragment?.invoke() }
     val onClickMessage: (Message) -> Unit = { doOpenMessageFromFragment?.invoke(it) }
-    val onClickGrantPermission: () -> Unit = { doRequestPermission?.invoke() }
+    val onClickGrantPermission: () -> Unit = { doRequestSmsPermission?.invoke() }
 
     val onClickNavItem: (NavItem) -> Unit = { navItem ->
         when (navItem) {
@@ -135,7 +135,7 @@ class MainViewModel(
     /**
      * Invoked when app needs user permissions
      */
-    var doRequestPermission: (() -> Unit)? = null
+    var doRequestSmsPermission: (() -> Unit)? = null
 
     //endregion
 
