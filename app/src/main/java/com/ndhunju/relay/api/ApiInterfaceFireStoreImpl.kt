@@ -33,12 +33,9 @@ class ApiInterfaceFireStoreImpl(
 
     private val context by lazy { application }
 
-    private var userId: String
+    private val userId: String
         get() {
            return currentUser.user.id
-        }
-        set(value) {
-            currentUser.user = currentUser.user.copy(id = value)
         }
 
     /**
@@ -86,18 +83,22 @@ class ApiInterfaceFireStoreImpl(
         val newUser = makeMapForUserCollection(name, phone)
 
         return try {
-            val userWithPhoneNumberExits = userCollection
+            val userWithPhoneNumber = userCollection
                 .whereEqualTo(UserEntry.Phone, phone)
-                .get().await().documents.isNotEmpty()
+                .get().await().documents
 
-            if (userWithPhoneNumberExits) {
-                return Result.Failure(
-                    PhoneAlreadyRegisteredException("User with phone $phone already registered.")
-                )
+            return if (userWithPhoneNumber.isNotEmpty()) {
+                // Check if this number should be bypassed for duplication. This happens when Google
+                // Play store tests our app with the same number to login again and again
+                if (getSettings().getDataOrNull<Settings>()?.byPassAccountCreationNumber == phone) {
+                    Result.Success(userWithPhoneNumber.first().id)
+                } else {
+                    Result.Failure(PhoneAlreadyRegisteredException("$phone already registered."))
+                }
+            } else {
+                val newUserId = userCollection.add(newUser).await().id
+                Result.Success(newUserId)
             }
-
-            userId = userCollection.add(newUser).await().id
-            Result.Success(userId)
         } catch (ex: Exception) {
             logIfFirebaseException(ex)
             analyticsProvider.logEvent("didFailToCreateUser", ex.message)
