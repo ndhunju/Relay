@@ -4,23 +4,6 @@ Android app to relay calls (WIP) and messages from child device to parent device
 This comes in handy when you are traveling to a different country but want 
 to be able to receive calls and messages from your country's number.
 
-This app uses best practices for Android and uses the following libraries:
-
-✅ **Firestore Database**: For temporarily storing data in cloud </br>
-✅ **Firebase Analytics**: For logging key app events and logs for better debugging</br>
-✅ **Firebase Crashlytics**: For getting crash reports</br>
-✅ **Firebase Messaging**: For sending push notification to the user</br>
-✅ **Jetpack Compose**: For building modern and declarative UIs.</br>
-✅ **WorkManager**: For syncing server data to local database periodically.</br>
-✅ **DateStore**: For storing simple key value persistently on device.</br>
-✅ **Barcode Generator**: For generating QR codes.</br>
-✅ **Barcode Scanner**: For scanning QR codes.</br>
-✅ **Gson**: For serializing and deserializing.</br>
-✅ **Room**: To store persistent data offline</br>
-✅ **Dagger**: For dependency injection.</br>
-✅ **JUnit**: For unit testing.</br>
-✅ **Mockito**: To mock behavior during testing.</br>
-
 ### Icons
 
 <table>
@@ -61,3 +44,20 @@ Scroll horizontally to see more ➡️
     <td width="256"><p>Messages Screen that shows all messages in the thread.</p></td>
   </tr>
 </table>
+
+This app uses best practices for Android and uses the following libraries:
+
+✅ **Firestore Database**: For temporarily storing data in cloud </br>
+✅ **Firebase Analytics**: For logging key app events and logs for better debugging</br>
+✅ **Firebase Crashlytics**: For getting crash reports</br>
+✅ **Firebase Messaging**: For sending push notification to the user</br>
+✅ **Jetpack Compose**: For building modern and declarative UIs.</br>
+✅ **WorkManager**: For syncing server data to local database periodically.</br>
+✅ **DateStore**: For storing simple key value persistently on device.</br>
+✅ **Barcode Generator**: For generating QR codes.</br>
+✅ **Barcode Scanner**: For scanning QR codes.</br>
+✅ **Gson**: For serializing and deserializing.</br>
+✅ **Room**: To store persistent data offline</br>
+✅ **Dagger**: For dependency injection.</br>
+✅ **JUnit**: For unit testing.</br>
+✅ **Mockito**: To mock behavior during testing.</br>
