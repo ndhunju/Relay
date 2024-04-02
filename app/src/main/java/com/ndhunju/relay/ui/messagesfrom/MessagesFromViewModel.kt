@@ -10,6 +10,7 @@ import androidx.lifecycle.viewModelScope
 import com.ndhunju.relay.data.SmsInfoRepository
 import com.ndhunju.relay.service.DeviceSmsReaderService
 import com.ndhunju.relay.ui.messages.Message
+import com.ndhunju.relay.util.extensions.asState
 import kotlinx.coroutines.launch
 
 class MessagesFromViewModel(
@@ -27,6 +28,13 @@ class MessagesFromViewModel(
      */
     var isLoading by mutableStateOf(true)
         private set
+
+    private var _textMessage = mutableStateOf("")
+    var textMessage = _textMessage.asState()
+
+    var onTextMessageChange: ((String) -> Unit) = {
+        _textMessage.value = it
+    }
 
     /**
      * Returns list of message for passed [threadId]
@@ -47,5 +55,10 @@ class MessagesFromViewModel(
             _messagesInThread.addAll(messages)
             isLoading = false
         }
+    }
+
+    fun sendTextMessage() {
+        // TODO: Send text message
+
     }
 }

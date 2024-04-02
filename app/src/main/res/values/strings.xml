@@ -55,6 +55,12 @@
     <!-- Click label that describes what clicking on the particular item does. Used for accessibility -->
     <string name="click_label_thread">Opens the thread to see all messages</string>
 
+    <!-- MessagesFrom Screen -->
+    <!-- Content description for icon or image that when user clicks sends messages -->
+    <string name="description_send_message">Send Message</string>
+    <!-- Click label for accessibility purposes. The accessibility service would read this aloud -->
+    <string name="click_label_sends_message">Sends message</string>
+
     <!-- Navigation Item -->
     <!-- Noun. Show in side navigation drawer -->
     <string name="nav_item_account">Account</string>

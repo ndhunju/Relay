@@ -1,21 +1,33 @@
 package com.ndhunju.relay.ui.messagesfrom
 
+import android.annotation.SuppressLint
 import android.content.res.Configuration
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.imePadding
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.text.BasicTextField
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.filled.Send
+import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.State
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
@@ -25,10 +37,12 @@ import com.ndhunju.relay.R
 import com.ndhunju.relay.ui.custom.CenteredMessageWithButton
 import com.ndhunju.relay.ui.custom.SyncStatusIcon
 import com.ndhunju.relay.ui.custom.TopAppBarWithUpButton
-import com.ndhunju.relay.ui.messages.Message
 import com.ndhunju.relay.ui.fakeMessages
+import com.ndhunju.relay.ui.messages.Message
+import com.ndhunju.relay.ui.theme.LocalColors
 import com.ndhunju.relay.ui.theme.LocalDimens
 import com.ndhunju.relay.ui.theme.RelayTheme
+import com.ndhunju.relay.util.extensions.bounceOnClick
 
 @Preview
 @Preview(uiMode = Configuration.UI_MODE_NIGHT_YES)
@@ -43,6 +57,9 @@ fun MessagesFromPreview() {
 fun MessagesFromView(
     senderAddress: String?,
     messageList: List<Message>,
+    text: State<String>? = null,
+    onTextMessageChanged: ((String) -> Unit)? = null,
+    onClickSend: (() -> Unit)? = null,
     onBackPressed: (() -> Unit)? = null
 ) {
     // If for some reason no sender is passed, show error message
@@ -60,7 +77,8 @@ fun MessagesFromView(
         // Using a separate Scaffold so that the error message could be centered on the screen
         Scaffold(
             modifier = Modifier.fillMaxSize(),
-            topBar = { TopAppBarWithUpButton(senderAddress, onBackPressed) }
+            topBar = { TopAppBarWithUpButton(senderAddress, onBackPressed) },
+            bottomBar = { SendMessageBar(text, onTextMessageChanged, onClickSend) }
         ) { internalPadding ->
             LazyColumn(
                 contentPadding = internalPadding,
@@ -172,4 +190,73 @@ fun ChatBubbleView(
         }
     }
 
+}
+
+@Preview
+@Composable
+@SuppressLint("UnrememberedMutableState")
+fun SendMessageBarPreviewLong() {
+    RelayTheme {
+        SendMessageBar(
+            text = mutableStateOf(
+                "This is a test message with a long message extending to second paragraph."
+            )
+        )
+    }
+}
+
+@Composable
+fun SendMessageBar(
+    text: State<String>? = null,
+    onTextMessageChanged: ((String) -> Unit)? = null,
+    onClickSend: (() -> Unit)? = null,
+) {
+    val currentText = remember { mutableStateOf(text?.value) }
+
+    Row(
+        modifier = Modifier
+            .fillMaxWidth()
+            .background(MaterialTheme.colorScheme.background.copy(alpha = 0.9f))
+            .padding(
+                horizontal = LocalDimens.current.contentPaddingHorizontal,
+                vertical = LocalDimens.current.itemPaddingVertical
+            )
+            .imePadding() // Not working as intended though
+    ) {
+        BasicTextField(
+            value = currentText.value ?: "",
+            modifier = Modifier
+                .weight(1f) // Make this field fill the remaining space
+                .align(Alignment.CenterVertically)
+                .background(
+                    LocalColors.current.textFieldBackground,
+                    shape = RoundedCornerShape(16.dp)
+                )
+                .padding(12.dp),
+            onValueChange = {
+                onTextMessageChanged?.invoke(it)
+                currentText.value = it
+            },
+        )
+
+        Spacer(
+            modifier = Modifier.size(
+                width = LocalDimens.current.contentPaddingHorizontal.div(2),
+                height = 1.dp
+            )
+        )
+
+        Icon(
+            imageVector = Icons.AutoMirrored.Default.Send,
+            contentDescription = stringResource(R.string.description_send_message),
+            tint = MaterialTheme.colorScheme.primary,
+            modifier = Modifier
+                .align(Alignment.CenterVertically)
+                .clickable(
+                    onClickLabel = stringResource(R.string.click_label_sends_message),
+                    onClick = { onClickSend?.invoke() }
+                )
+                .bounceOnClick()
+        )
+    }
 }

@@ -17,11 +17,13 @@ val RedOrange70 = Color(0xffe26d5c)
 
 data class Colors(
     val success: Color = Green60,
-    val failure: Color = RedOrange70
+    val failure: Color = RedOrange70,
+    val textFieldBackground: Color = Color.LightGray,
 )
 
 val ColorsForDarkTheme = Colors(
-    success = GreenYellow80
+    success = GreenYellow80,
+    textFieldBackground = Color.Gray
 )
 val ColorsForLightTheme = Colors(
     success = Green60
