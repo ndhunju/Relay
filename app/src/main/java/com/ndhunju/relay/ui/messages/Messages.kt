@@ -28,14 +28,14 @@ import com.ndhunju.relay.util.extensions.getColorForId
 @Preview(showBackground = true)
 @Composable
 fun MessageListItemPreview() {
-    MessageListItem(
+    ThreadListItem(
         message = fakeMessages.first().copy(syncStatus = Result.Success()),
         onClick = {}
     )
 }
 
 @Composable
-fun MessageListItem(
+fun ThreadListItem(
     modifier: Modifier = Modifier,
     message: Message,
     onClick: ((Message) -> Unit)? = null

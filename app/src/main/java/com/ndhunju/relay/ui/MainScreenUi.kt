@@ -61,7 +61,7 @@ import com.ndhunju.relay.R
 import com.ndhunju.relay.ui.custom.CenteredMessageWithButton
 import com.ndhunju.relay.ui.custom.SearchTextField
 import com.ndhunju.relay.ui.messages.Message
-import com.ndhunju.relay.ui.messages.MessageListItem
+import com.ndhunju.relay.ui.messages.ThreadListItem
 import com.ndhunju.relay.util.composibles.DynamicLauncherIconImage
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.launch
@@ -255,7 +255,7 @@ fun MainContent(
                 enter = fadeIn(),
                 exit = fadeOut()
             ) {
-                MessageList(
+                ThreadList(
                     Modifier.padding(innerPadding),
                     listState,
                     lastMessageList,
@@ -282,7 +282,7 @@ fun MainContent(
 
 @Composable
 @OptIn(ExperimentalFoundationApi::class)
-private fun MessageList(
+private fun ThreadList(
     modifier: Modifier,
     lazyListState: LazyListState,
     lastMessageList: SnapshotStateList<Message>?,
@@ -297,7 +297,7 @@ private fun MessageList(
                 // Pass key for better performance like setHasStableIds
                 key = { _, item -> item.threadId },
             ) { _: Int, message: Message ->
-                MessageListItem(
+                ThreadListItem(
                     Modifier.animateItemPlacement(tween(durationMillis = 250)),
                     message,
                     onClickMessage
