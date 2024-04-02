@@ -14,6 +14,8 @@ import androidx.compose.runtime.State
 import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.semantics.heading
+import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import com.ndhunju.relay.R
@@ -96,6 +98,9 @@ fun PairWithParentScreen(
                     modifier = Modifier
                         .fillMaxWidth()
                         .padding(vertical = LocalDimens.current.itemPaddingVertical)
+                        // In Compose, you indicate that a composable is a
+                        // heading by defining its semantics property:
+                        .semantics { heading() }
                     )
 
                 for (phoneNumber in pairedUserPhoneList.value) {

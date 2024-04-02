@@ -33,6 +33,8 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.semantics.contentDescription
+import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.ndhunju.relay.R
@@ -186,6 +188,10 @@ private fun ChildUserColumnItem(
             horizontal = LocalDimens.current.contentPaddingHorizontal
         )
         .clickable { onClickChildUser?.invoke(childUser) }
+        // Tell Compose to merge these elements. This way, accessibility services will select only
+        // the merged element, and all semantics properties of the descendants are merged.
+        // Accessibility services will focus on the whole container at once, merging their contents
+        .semantics(mergeDescendants = true) {}
     ) {
         Icon(
             imageVector = Icons.Default.AccountCircle,
@@ -197,10 +203,19 @@ private fun ChildUserColumnItem(
                 .padding(end = 6.dp)
         )
 
+        val isChildKeyAdded = rememberSaveable(key = childUser.encKey) { childUser.encKey == null }
+        val iconDescription = stringResource(
+            if (isChildKeyAdded) {
+                R.string.content_description_add_encryption_key
+            } else {
+                R.string.content_description_encryption_key_added
+            }
+        )
+
         Icon(
             painter = painterResource(id = R.drawable.baseline_key_24),
-            contentDescription = stringResource(R.string.content_description_add_encryption_key),
-            tint = colorResource(if (childUser.encKey == null) R.color.failure else R.color.success),
+            contentDescription = iconDescription,
+            tint = colorResource(if (isChildKeyAdded) R.color.failure else R.color.success),
             modifier = Modifier
                 .align(Alignment.CenterVertically)
                 .padding(end = 6.dp)
@@ -220,7 +235,9 @@ private fun ChildUserColumnItem(
 private fun LoadingIndicator() {
     Box(modifier = Modifier.fillMaxSize()) {
         CircularProgressIndicator(
-            modifier = Modifier.align(Alignment.Center).size(32.dp),
+            modifier = Modifier
+                .align(Alignment.Center)
+                .size(32.dp),
             color = MaterialTheme.colorScheme.onBackground
         )
     }

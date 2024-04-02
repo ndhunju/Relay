@@ -41,7 +41,11 @@ fun MessageListItem(
     onClick: ((Message) -> Unit)? = null
 ) {
     ConstraintLayout(modifier = modifier
-        .clickable { onClick?.invoke(message) }
+        .clickable (
+            // Click labels describe what happens when the user interacts with the composable.
+            onClickLabel = stringResource(R.string.click_label_thread),
+            onClick = { onClick?.invoke(message) }
+        )
     ) {
         val (divider, profilePic, from, body, date, status) = createRefs()
         val itemVerticalPadding = LocalDimens.current.itemPaddingVertical

@@ -27,7 +27,8 @@ fun DynamicLauncherIconImage(
 ) {
     Image(
         bitmap = dynamicLauncherIconBitmap(),
-        contentDescription = stringResource(id = R.string.image_description_app_logo),
+        // Specify that this image has no semantic meaning
+        contentDescription = null,
         modifier = modifier
     )
 }
