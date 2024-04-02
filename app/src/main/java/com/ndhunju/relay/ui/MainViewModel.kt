@@ -53,18 +53,8 @@ class MainViewModel(
     private val _showSearchTextField = mutableStateOf(false)
     var showSearchTextField: State<Boolean> = _showSearchTextField
 
-
-    // TODO: Nikesh - Remove this as well
-    private var _messageFromUiState = MutableStateFlow(MessageFromUiState())
-
     private val _showSplashScreen = MutableStateFlow(true)
     val showSplashScreen = _showSplashScreen.asStateFlow()
-
-    /**
-     * Represents UI state of [MessagesFromFragment]
-     */
-    val messageFromUiState: StateFlow<MessageFromUiState>
-        get() {return _messageFromUiState}
 
     //region UI Events
     val onRefreshByUser = {
@@ -203,29 +193,6 @@ class MainViewModel(
 
     fun setTitle(title: String) {
         _title.value = title
-    }
-
-    /**
-     * Returns list of message for passed [threadId]
-     */
-    fun getSmsByThreadId(threadId: String) {
-        viewModelScope.launch {
-            _messageFromUiState.value.isLoading.value = true
-            val messages = deviceSmsReaderService.getSmsByThreadId(threadId)
-            // Populate the syncStatus of each message based on info stored in local database
-            smsInfoRepository.getSmsInfoForEachIdInAndroidDb(
-                messages.map { message -> message.idInAndroidDb }
-            ).forEachIndexed { i, smsInfo ->
-                messages[i].syncStatus = smsInfo?.syncStatus
-            }
-
-            // Since we are using same instance of this model, clear the messages
-            // in case it stored messages from another thread in previous use
-            _messageFromUiState.value.messagesInThread.clear()
-            // Update the state with the messages.
-            _messageFromUiState.value.messagesInThread.addAll(messages)
-            _messageFromUiState.value.isLoading.value = false
-        }
     }
 
     /**

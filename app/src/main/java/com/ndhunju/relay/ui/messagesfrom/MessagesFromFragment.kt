@@ -20,8 +20,6 @@ import androidx.compose.ui.platform.ComposeView
 import androidx.compose.ui.unit.dp
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
-import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import com.ndhunju.relay.ui.MainViewModel
 import com.ndhunju.relay.RelayViewModelFactory
 import com.ndhunju.relay.ui.theme.RelayTheme
 
@@ -37,7 +35,9 @@ class MessagesFromFragment : Fragment() {
 
     private var threadId: String? = null
     private var senderAddress: String? = null
-    private val mainViewModel: MainViewModel by activityViewModels { RelayViewModelFactory }
+    private val viewModel: MessagesFromViewModel by activityViewModels {
+        RelayViewModelFactory
+    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -47,7 +47,7 @@ class MessagesFromFragment : Fragment() {
         }
 
         // Make async call to get the data here
-        threadId?.let { mainViewModel.getSmsByThreadId(it) }
+        threadId?.let { viewModel.getSmsByThreadId(it) }
     }
 
     override fun onCreateView(
@@ -58,10 +58,9 @@ class MessagesFromFragment : Fragment() {
         return ComposeView(requireContext()).apply {
             setContent {
                 RelayTheme {
-                    val uiState = mainViewModel.messageFromUiState.collectAsStateWithLifecycle()
                     // This coroutine is bound to the lifecycle of the enclosing compose
                     //val composeCoroutine = rememberCoroutineScope()
-                    if (uiState.value.isLoading.value) {
+                    if (viewModel.isLoading) {
                         Box(modifier = Modifier
                             .wrapContentSize(align = Alignment.Center)
                         ) {
@@ -73,7 +72,7 @@ class MessagesFromFragment : Fragment() {
                     }
 
                     AnimatedVisibility(
-                        visible = uiState.value.isLoading.value.not(),
+                        visible = viewModel.isLoading.not(),
                         enter = slideInHorizontally(
                             initialOffsetX = { fullWidth -> fullWidth },
                             animationSpec = tween(
@@ -91,7 +90,7 @@ class MessagesFromFragment : Fragment() {
                     ) {
                         MessagesFromView(
                             senderAddress,
-                            uiState.value.messagesInThread,
+                            viewModel.messagesInThread,
                             // TODO: Nikesh - Implement proper nav controller
                             onBackPressed = { parentFragmentManager.popBackStack() }
                         )

@@ -7,6 +7,7 @@ import androidx.lifecycle.viewmodel.CreationExtras
 import com.ndhunju.relay.ui.MainViewModel
 import com.ndhunju.relay.ui.account.AccountViewModel
 import com.ndhunju.relay.ui.debug.DebugViewModel
+import com.ndhunju.relay.ui.messagesfrom.MessagesFromViewModel
 import com.ndhunju.relay.ui.pair.AddChildEncryptionKeyFromQrCodeViewModel
 import com.ndhunju.relay.ui.pair.PairWithParentViewModel
 import com.ndhunju.relay.ui.pair.PairWithQrCodeViewModel
@@ -42,6 +43,12 @@ val RelayViewModelFactory: ViewModelProvider.Factory = object : ViewModelProvide
                         deviceSmsReaderService,
                         smsInfoRepository,
                         appStateBroadcasterService
+                    ) as T
+                }
+                isAssignableFrom(MessagesFromViewModel::class.java) -> {
+                    MessagesFromViewModel(
+                        deviceSmsReaderService,
+                        smsInfoRepository
                     ) as T
                 }
                 isAssignableFrom(AccountViewModel::class.java) -> {
