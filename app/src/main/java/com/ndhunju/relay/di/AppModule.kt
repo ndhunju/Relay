@@ -4,6 +4,7 @@ import android.annotation.SuppressLint
 import android.app.Application
 import android.content.Context
 import android.os.Build
+import android.telephony.SmsManager
 import androidx.security.crypto.EncryptedSharedPreferences
 import androidx.work.WorkManager
 import com.google.gson.Gson
@@ -25,7 +26,9 @@ import com.ndhunju.relay.service.DataStoreKeyValuePersistService
 import com.ndhunju.relay.service.DeviceSmsReaderService
 import com.ndhunju.relay.service.DeviceSmsReaderServiceImpl
 import com.ndhunju.relay.service.EncryptionService
+import com.ndhunju.relay.service.MessagingService
 import com.ndhunju.relay.service.SimpleKeyValuePersistService
+import com.ndhunju.relay.service.SmsMessagingService
 import com.ndhunju.relay.util.gson.ResultDeserializer
 import com.ndhunju.relay.util.gson.ResultSerializer
 import com.ndhunju.relay.service.UserSettingsPersistService
@@ -177,6 +180,13 @@ class AppModule(private val application: Application) {
     @Singleton
     fun provideEncryptionService(): EncryptionService {
         return AesEncryptionService(appComponent.analyticsProvider())
+    }
+
+    @Provides
+    @Singleton
+    fun provideMessagingService(): MessagingService {
+        val smsManager = application.getSystemService(SmsManager::class.java)
+        return SmsMessagingService(smsManager)
     }
 }
 

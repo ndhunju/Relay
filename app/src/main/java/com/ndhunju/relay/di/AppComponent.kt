@@ -8,6 +8,7 @@ import com.ndhunju.relay.api.ApiInterface
 import com.ndhunju.relay.data.ChildSmsInfoRepository
 import com.ndhunju.relay.service.AppStateBroadcastService
 import com.ndhunju.relay.service.EncryptionService
+import com.ndhunju.relay.service.MessagingService
 import com.ndhunju.relay.service.NotificationManager
 import com.ndhunju.relay.service.SimpleKeyValuePersistService
 import com.ndhunju.relay.service.UserSettingsPersistService
@@ -43,6 +44,8 @@ interface AppComponent {
     fun currentSettings(): CurrentSettings
 
     fun workManager(): WorkManager
+
+    fun messagingService(): MessagingService
 
     fun appStateBroadcastService(): AppStateBroadcastService
 

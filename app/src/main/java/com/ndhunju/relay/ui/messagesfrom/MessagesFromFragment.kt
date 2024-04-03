@@ -96,7 +96,7 @@ class MessagesFromFragment : Fragment() {
                             viewModel.messagesInThread,
                             viewModel.textMessage,
                             viewModel.onTextMessageChange,
-                            viewModel::sendTextMessage,
+                            viewModel::sendMessage,
                             // TODO: Nikesh - Implement proper nav controller
                             onBackPressed = { parentFragmentManager.popBackStack() }
                         )

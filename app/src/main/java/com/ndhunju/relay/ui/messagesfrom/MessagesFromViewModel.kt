@@ -1,6 +1,5 @@
 package com.ndhunju.relay.ui.messagesfrom
 
-import android.telephony.SmsManager
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
@@ -13,6 +12,7 @@ import com.ndhunju.relay.api.Result
 import com.ndhunju.relay.data.SmsInfoRepository
 import com.ndhunju.relay.service.AppStateBroadcastService
 import com.ndhunju.relay.service.DeviceSmsReaderService
+import com.ndhunju.relay.service.MessagingService
 import com.ndhunju.relay.ui.messages.Message
 import com.ndhunju.relay.util.extensions.asState
 import kotlinx.coroutines.Dispatchers
@@ -22,6 +22,7 @@ class MessagesFromViewModel(
     private val appStateBroadcastService: AppStateBroadcastService,
     private val deviceSmsReaderService: DeviceSmsReaderService,
     private val smsInfoRepository: SmsInfoRepository,
+    private val messagingService: MessagingService
 ): ViewModel() {
 
     lateinit var senderAddress: String
@@ -52,7 +53,7 @@ class MessagesFromViewModel(
             val newMessages = deviceSmsReaderService.getMessagesSince(latestNewMessageTimeStamp)
             latestNewMessageTimeStamp = newMessageTimeStamp
             newMessages.filter { it.threadId == threadId }
-                .forEach(onNewSmsReceived)
+                .forEach(onNewMessage)
         }
     }
 
@@ -71,11 +72,15 @@ class MessagesFromViewModel(
         super.onCleared()
     }
 
-    private val onNewSmsReceived: (Message) -> Unit = { messageFromAndroidDb ->
+    private val onNewMessage: (Message) -> Unit = { newMessage ->
         // Update the UI to the the latest SMS
         viewModelScope.launch {
             // NOTE: Since the layout is reversed, add new item to the top
-            _messagesInThread.add(0, messageFromAndroidDb)
+            _messagesInThread.add(0, newMessage)
+            // If the text message was sent, clear the typed message
+            if (newMessage.body == _textMessage.value) {
+                _textMessage.value = ""
+            }
         }
     }
 
@@ -143,8 +148,13 @@ class MessagesFromViewModel(
         }
     }
 
-    fun sendTextMessage() {
-        // TODO: Send text message
-
+    /**
+     * Sends the messages currently in [textMessage].
+     * If the message sending is successful, it is notified via [onNewMessage] callback
+     */
+    fun sendMessage() {
+        if (_textMessage.value.isNotEmpty()) {
+            messagingService.sendMessage(senderAddress, textMessage.value)
+        }
     }
 }
