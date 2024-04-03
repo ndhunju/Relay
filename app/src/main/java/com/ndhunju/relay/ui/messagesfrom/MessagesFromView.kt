@@ -26,8 +26,10 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.State
+import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.snapshots.SnapshotStateList
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
@@ -44,12 +46,16 @@ import com.ndhunju.relay.ui.theme.LocalDimens
 import com.ndhunju.relay.ui.theme.RelayTheme
 import com.ndhunju.relay.util.extensions.bounceOnClick
 
+@SuppressLint("UnrememberedMutableState")
 @Preview
 @Preview(uiMode = Configuration.UI_MODE_NIGHT_YES)
 @Composable
 fun MessagesFromPreview() {
     RelayTheme {
-        MessagesFromView(fakeMessages.first().from, messageList = fakeMessages)
+        MessagesFromView(
+            fakeMessages.first().from,
+            messageList = mutableStateListOf<Message>().apply { addAll(fakeMessages) }
+        )
     }
 }
 
@@ -87,7 +93,11 @@ fun MessagesFromView(
                 modifier = Modifier.fillMaxSize(),
                 content = {
                     // Show list of messages for the given thread
-                    itemsIndexed(messageList) { i: Int, message: Message ->
+                    itemsIndexed(
+                        messageList,
+                        // Pass key for better performance like setHasStableIds
+                        key = { _, message -> message.idInAndroidDb }
+                    ) { i: Int, message: Message ->
                         ChatBubbleView(
                             message = message,
                             previous = messageList.getOrNull(i - 1),
@@ -252,11 +262,11 @@ fun SendMessageBar(
             tint = MaterialTheme.colorScheme.primary,
             modifier = Modifier
                 .align(Alignment.CenterVertically)
+                .bounceOnClick()
                 .clickable(
                     onClickLabel = stringResource(R.string.click_label_sends_message),
-                    onClick = { onClickSend?.invoke() }
+                    onClick = { onClickSend?.invoke() },
                 )
-                .bounceOnClick()
         )
     }
 }

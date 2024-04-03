@@ -47,6 +47,7 @@ val RelayViewModelFactory: ViewModelProvider.Factory = object : ViewModelProvide
                 }
                 isAssignableFrom(MessagesFromViewModel::class.java) -> {
                     MessagesFromViewModel(
+                        appStateBroadcasterService,
                         deviceSmsReaderService,
                         smsInfoRepository
                     ) as T

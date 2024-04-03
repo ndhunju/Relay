@@ -46,6 +46,9 @@ class MessagesFromFragment : Fragment() {
             senderAddress = it.getString(SENDER_ADDRESS)
         }
 
+        viewModel.threadId = threadId ?: return
+        viewModel.senderAddress = senderAddress ?: return
+
         // Make async call to get the data here
         threadId?.let { viewModel.getSmsByThreadId(it) }
     }
