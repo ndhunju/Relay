@@ -42,7 +42,7 @@ class MessagesFromChildFragment : Fragment() {
                         message.from
                     )
                 )
-                .addToBackStack(MessagesFromFragment.TAG)
+                .addToBackStack(MessagesInThreadFromChildFragment.TAG)
                 .commit()
         }
 

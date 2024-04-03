@@ -16,6 +16,7 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.itemsIndexed
+import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.BasicTextField
 import androidx.compose.material.icons.Icons
@@ -29,13 +30,13 @@ import androidx.compose.runtime.State
 import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.snapshots.SnapshotStateList
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.ndhunju.relay.R
+import com.ndhunju.relay.ui.custom.ScrollToTopLaunchedEffect
 import com.ndhunju.relay.ui.custom.CenteredMessageWithButton
 import com.ndhunju.relay.ui.custom.SyncStatusIcon
 import com.ndhunju.relay.ui.custom.TopAppBarWithUpButton
@@ -86,7 +87,12 @@ fun MessagesFromView(
             topBar = { TopAppBarWithUpButton(senderAddress, onBackPressed) },
             bottomBar = { SendMessageBar(text, onTextMessageChanged, onClickSend) }
         ) { internalPadding ->
+
+            val listState = rememberLazyListState()
+            ScrollToTopLaunchedEffect(messageList, listState)
+
             LazyColumn(
+                state = listState,
                 contentPadding = internalPadding,
                 reverseLayout = true,
                 verticalArrangement = Arrangement.spacedBy(1.dp),

@@ -59,6 +59,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.ndhunju.relay.R
 import com.ndhunju.relay.ui.custom.CenteredMessageWithButton
+import com.ndhunju.relay.ui.custom.ScrollToTopLaunchedEffect
 import com.ndhunju.relay.ui.custom.SearchTextField
 import com.ndhunju.relay.ui.messages.Message
 import com.ndhunju.relay.ui.messages.ThreadListItem
@@ -197,6 +198,8 @@ fun MainContent(
     // That is everytime [state.firstVisibleItemIndex] changes instead
     // of the specific condition we are interested in.
     val showScrollToTopButton by remember { derivedStateOf { listState.firstVisibleItemIndex > 0 } }
+    ScrollToTopLaunchedEffect(lastMessageList, listState)
+
     Scaffold(
         topBar = {
             MainScreenAppBar(
