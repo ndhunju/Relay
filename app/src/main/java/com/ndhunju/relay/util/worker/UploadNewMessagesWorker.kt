@@ -133,8 +133,8 @@ class UploadNewMessagesWorker(
         return if (result is Success) {
             // Save last upload start time
             keyValuePersistService.save(KEY_LAST_UPLOAD_TIME, uploadStartTime.toString())
-            // Notify that new messages has been processed
-            appStateBroadcastService.updateNewProcessedMessages(processedMessages)
+            // Notify that new messages has been processed/synced
+            appStateBroadcastService.updateNewSyncedMessages(processedMessages)
             analyticsProvider.d(TAG, "doWork: Success")
             Result.success()
         } else {

@@ -27,7 +27,7 @@ interface AppStateBroadcastService {
      * Stores new processed [Message]s.
      * UI can make use of this to update their state.
      */
-    val newProcessedMessages: LiveData<List<Message>>
+    val newSyncedMessages: LiveData<List<Message>>
 
     /**
      * Stores the time stamp of when the new messages where received
@@ -45,9 +45,9 @@ interface AppStateBroadcastService {
     fun updateIsDeviceOnline(newValue: Boolean)
 
     /**
-     * Updates [newProcessedMessages] and notifies observer
+     * Updates [newSyncedMessages] and notifies observer
      */
-    fun updateNewProcessedMessages(newValue: List<Message>)
+    fun updateNewSyncedMessages(newValue: List<Message>)
 
     /**
      * Updates [newMessagesReceivedTime] and notifies observer
@@ -70,8 +70,8 @@ class AppStateBroadcastServiceImpl(
     private val _isOnline = networkConnectionChecker
     override val isDeviceOnline = _isOnline
 
-    private val _newProcessedMessages = MutableLiveData<List<Message>>()
-    override val newProcessedMessages = _newProcessedMessages
+    private val _newSyncedMessages = MutableLiveData<List<Message>>()
+    override val newSyncedMessages = _newSyncedMessages
 
     private val _newMessagesReceivedTime = MutableLiveData<Long>()
     override val newMessagesReceivedTime = _newMessagesReceivedTime
@@ -90,10 +90,10 @@ class AppStateBroadcastServiceImpl(
         _isOnline.postValue(newValue)
     }
 
-    override fun updateNewProcessedMessages(newValue: List<Message>) {
+    override fun updateNewSyncedMessages(newValue: List<Message>) {
         // Log who made the update request
-        Log.d(TAG, "updateNewProcessedMessages: ${Throwable().stackTrace.first()}")
-        _newProcessedMessages.postValue(newValue)
+        Log.d(TAG, "updateNewSyncedMessages: ${Throwable().stackTrace.first()}")
+        _newSyncedMessages.postValue(newValue)
     }
 
     override fun updateNewMessagesReceivedTime(newTime: Long) {

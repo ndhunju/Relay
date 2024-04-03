@@ -8,6 +8,7 @@ import androidx.compose.runtime.snapshots.SnapshotStateList
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.ndhunju.relay.api.Result
 import com.ndhunju.relay.service.DeviceSmsReaderService
 import com.ndhunju.relay.data.SmsInfo
 import com.ndhunju.relay.data.SmsInfoRepository
@@ -150,54 +151,96 @@ class MainViewModel(
             val newMessages = deviceSmsReaderService.getMessagesSince(latestNewMessageTimeStamp)
             latestNewMessageTimeStamp = newMessageTimeStamp
             newMessages.forEach { message ->
-                onNewSmsReceived(message)
+                onNewMessageReceived(message)
             }
+        }
+    }
+
+    private val newSyncedMessageObserver = Observer<List<Message>> { newSyncedMessages ->
+        newSyncedMessages.forEach { message ->
+            onNewSyncedMessage(message)
         }
     }
 
     init {
         appStateBroadcastService.newMessagesReceivedTime.observeForever(newMessageObserver)
+        appStateBroadcastService.newSyncedMessages.observeForever(newSyncedMessageObserver)
     }
 
     override fun onCleared() {
         appStateBroadcastService.newMessagesReceivedTime.removeObserver(newMessageObserver)
+        appStateBroadcastService.newSyncedMessages.removeObserver(newSyncedMessageObserver)
         super.onCleared()
     }
 
-    val onNewSmsReceived: (Message) -> Unit = { messageFromAndroidDb ->
-
+    val onNewMessageReceived: (Message) -> Unit = { newMessage ->
         // Update the UI to the the latest SMS
         viewModelScope.launch {
-
-            // Update the UI by thread Id instead of address
-            var oldLastMessageIndex = -1
-            // Find the thread in which the message is sent to
-            _lastMessageForEachThread.forEachIndexed { index, lastMessage ->
-                if (lastMessage.threadId == messageFromAndroidDb.threadId) {
-                    oldLastMessageIndex = index
-                    return@forEachIndexed
-                }
-            }
-
+            // Update the UI
+            val oldLastMessageIndex = findIndexOfMessage(newMessage)
             if (oldLastMessageIndex > -1) {
                 // Update last message shown with the new message
-                _lastMessageForEachThread[oldLastMessageIndex].copy(
-                    body = messageFromAndroidDb.body,
-                    date = messageFromAndroidDb.date
-                ).let { _lastMessageForEachThread[oldLastMessageIndex] = it }
-
-                // Update the icon based on update call status
-                _lastMessageForEachThread[oldLastMessageIndex].copy(
-                    syncStatus = messageFromAndroidDb.syncStatus
-                ).let { _lastMessageForEachThread[oldLastMessageIndex] = it }
-
-                // Show this message at the top TODO: Auto scroll to the top
-                val updatedThread = _lastMessageForEachThread.removeAt(oldLastMessageIndex)
-                _lastMessageForEachThread.add(0, updatedThread)
+                updateMessageAt(oldLastMessageIndex, body = newMessage.body, date = newMessage.date)
+                // Show this message at the top
+                moveMessageToTopFrom(oldLastMessageIndex)
             } else {
                 // Update the entire list since matching thread wasn't found
                 updateLastMessagesWithCorrectSyncStatus()
             }
+        }
+    }
+
+    private fun moveMessageToTopFrom(currentIndex: Int) {
+        // TODO: Auto scroll the UI to the top
+        if (currentIndex != 0) {
+            val updatedThread = _lastMessageForEachThread.removeAt(currentIndex)
+            _lastMessageForEachThread.add(0, updatedThread)
+        }
+    }
+
+    val onNewSyncedMessage: (Message) -> Unit = { newSyncedMessage ->
+        viewModelScope.launch {
+            // Update the UI
+            val oldLastMessageIndex = findIndexOfMessage(newSyncedMessage)
+            if (oldLastMessageIndex > -1) {
+                // Update the icon based on update call status
+                updateMessageAt(oldLastMessageIndex, syncStatus = newSyncedMessage.syncStatus)
+            } else {
+                // Update the entire list since matching thread wasn't found
+                updateLastMessagesWithCorrectSyncStatus()
+            }
+        }
+    }
+
+    /**
+     * Finds the index of [message] in [_lastMessageForEachThread]
+     */
+    private fun findIndexOfMessage(message: Message): Int {
+        // Find the thread in which the message is sent to
+        _lastMessageForEachThread.forEachIndexed { index, lastMessage ->
+            if (lastMessage.threadId == message.threadId) {
+                return index
+            }
+        }
+        return -1
+    }
+
+    /**
+     * Updates the [Message] at [index] with passed non null values
+     */
+    private fun updateMessageAt(
+        index: Int,
+        body: String? = null,
+        date: Long? = null,
+        syncStatus: Result<Void>? = null
+    ) {
+        val exitingCopy = _lastMessageForEachThread[index]
+        _lastMessageForEachThread[index].copy(
+            body = body ?: exitingCopy.body,
+            date = date ?: exitingCopy.date,
+            syncStatus = syncStatus ?: exitingCopy.syncStatus
+        ).let {
+            _lastMessageForEachThread[index] = it
         }
     }
 
