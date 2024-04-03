@@ -227,7 +227,10 @@ fun SendMessageBar(
     onTextMessageChanged: ((String) -> Unit)? = null,
     onClickSend: (() -> Unit)? = null,
 ) {
-    val currentText = remember { mutableStateOf(text?.value) }
+    // Add text?.value as the key, so that remember is re-executed when that key changes
+    // Ideally, we could have just use text?.value directly but if we don't do this
+    // the performTextReplacement won't fill this text field during ui test
+    val currentText = remember(text?.value) { mutableStateOf(text?.value) }
 
     Row(
         modifier = Modifier
