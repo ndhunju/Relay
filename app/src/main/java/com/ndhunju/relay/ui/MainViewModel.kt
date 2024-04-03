@@ -20,8 +20,8 @@ import com.ndhunju.relay.ui.pair.PairWithChildByScanningQrCodeActivity
 import com.ndhunju.relay.ui.pair.PairWithParentFragment
 import com.ndhunju.relay.ui.parent.ChildUserListFragment
 import com.ndhunju.relay.util.extensions.asState
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
 
@@ -143,18 +143,24 @@ class MainViewModel(
         _showSplashScreen.value = false
     }
 
-    private val newMessageObserver = Observer<List<Message>> { newMessages ->
-        newMessages.forEach { message ->
-            onNewSmsReceived(message)
+    private var latestNewMessageTimeStamp: Long = System.currentTimeMillis()
+
+    private val newMessageObserver = Observer<Long> { newMessageTimeStamp ->
+        viewModelScope.launch(Dispatchers.IO) {
+            val newMessages = deviceSmsReaderService.getMessagesSince(latestNewMessageTimeStamp)
+            latestNewMessageTimeStamp = newMessageTimeStamp
+            newMessages.forEach { message ->
+                onNewSmsReceived(message)
+            }
         }
     }
 
     init {
-        appStateBroadcastService.newProcessedMessages.observeForever(newMessageObserver)
+        appStateBroadcastService.newMessagesReceivedTime.observeForever(newMessageObserver)
     }
 
     override fun onCleared() {
-        appStateBroadcastService.newProcessedMessages.removeObserver(newMessageObserver)
+        appStateBroadcastService.newMessagesReceivedTime.removeObserver(newMessageObserver)
         super.onCleared()
     }
 
@@ -184,6 +190,10 @@ class MainViewModel(
                 _lastMessageForEachThread[oldLastMessageIndex].copy(
                     syncStatus = messageFromAndroidDb.syncStatus
                 ).let { _lastMessageForEachThread[oldLastMessageIndex] = it }
+
+                // Show this message at the top TODO: Auto scroll to the top
+                val updatedThread = _lastMessageForEachThread.removeAt(oldLastMessageIndex)
+                _lastMessageForEachThread.add(0, updatedThread)
             } else {
                 // Update the entire list since matching thread wasn't found
                 updateLastMessagesWithCorrectSyncStatus()

@@ -5,6 +5,7 @@ import android.content.Context
 import android.content.Intent
 import android.provider.Telephony
 import com.ndhunju.relay.RelayApplication
+import com.ndhunju.relay.util.worker.NewMessageNotifierWorker
 import com.ndhunju.relay.util.worker.UploadNewMessagesWorker
 
 /**
@@ -22,6 +23,7 @@ object SmsBroadcastReceiver : BroadcastReceiver() {
 
     private fun doEnqueueWorkerToUploadNewMessages(context: Context) {
         val appComponent = (context.applicationContext as RelayApplication).appComponent
+        NewMessageNotifierWorker.doEnqueueWorker(appComponent.workManager())
         UploadNewMessagesWorker.doEnqueueWorkerToUploadNewMessages(appComponent.workManager())
     }
 

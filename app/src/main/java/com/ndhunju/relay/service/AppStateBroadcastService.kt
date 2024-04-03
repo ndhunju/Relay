@@ -30,6 +30,11 @@ interface AppStateBroadcastService {
     val newProcessedMessages: LiveData<List<Message>>
 
     /**
+     * Stores the time stamp of when the new messages where received
+     */
+    val newMessagesReceivedTime: LiveData<Long>
+
+    /**
      * Updates [isUserSignedIn] if different and notifies observer
      */
     fun updateIsUserSignedIn(newValue: Boolean)
@@ -43,6 +48,11 @@ interface AppStateBroadcastService {
      * Updates [newProcessedMessages] and notifies observer
      */
     fun updateNewProcessedMessages(newValue: List<Message>)
+
+    /**
+     * Updates [newMessagesReceivedTime] and notifies observer
+     */
+    fun updateNewMessagesReceivedTime(newTime: Long)
 }
 
 
@@ -63,6 +73,9 @@ class AppStateBroadcastServiceImpl(
     private val _newProcessedMessages = MutableLiveData<List<Message>>()
     override val newProcessedMessages = _newProcessedMessages
 
+    private val _newMessagesReceivedTime = MutableLiveData<Long>()
+    override val newMessagesReceivedTime = _newMessagesReceivedTime
+
     override fun updateIsUserSignedIn(newValue: Boolean) {
         if (newValue == _isUserSignedIn.value) return
         // Log who made the update request
@@ -81,6 +94,12 @@ class AppStateBroadcastServiceImpl(
         // Log who made the update request
         Log.d(TAG, "updateNewProcessedMessages: ${Throwable().stackTrace.first()}")
         _newProcessedMessages.postValue(newValue)
+    }
+
+    override fun updateNewMessagesReceivedTime(newTime: Long) {
+        // Log who made the update request
+        Log.d(TAG, "updateNewMessagesReceivedTime: ${Throwable().stackTrace.first()}")
+        _newMessagesReceivedTime.postValue(newTime)
     }
 
     companion object {

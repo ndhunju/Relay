@@ -38,6 +38,7 @@ class SecondaryAppStartTasksWorker(
         saveAppInstallTime()
         // UriTriggerWorker.enqueue(this)
         GetLatestSettingsWorker.doEnqueueWorker(appComponent.workManager())
+        NewMessageNotifierWorker.doEnqueueWorker(appComponent.workManager())
         UploadNewMessagesWorker.doEnqueueWorkerToUploadNewMessages(appComponent.workManager())
         analyticsProvider.d(TAG, "doWork() finish")
         return Result.success()
