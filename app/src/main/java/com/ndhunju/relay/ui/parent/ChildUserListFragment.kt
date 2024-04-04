@@ -9,6 +9,7 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.ui.platform.ComposeView
+import androidx.fragment.app.FragmentManager
 import androidx.fragment.app.viewModels
 import com.ndhunju.relay.RelayViewModelFactory
 import com.ndhunju.relay.ui.pair.AddChildEncryptionKeyFromQrCodeActivity
@@ -95,5 +96,15 @@ class ChildUserListFragment : Fragment() {
          */
         @JvmStatic
         fun newInstance() = ChildUserListFragment()
+
+        /**
+         * Adds this fragment to [android.R.id.content]
+         */
+        fun addToContent(fm: FragmentManager) {
+            fm.beginTransaction()
+                .add(android.R.id.content, newInstance(), TAG)
+                .addToBackStack(TAG)
+                .commit()
+        }
     }
 }

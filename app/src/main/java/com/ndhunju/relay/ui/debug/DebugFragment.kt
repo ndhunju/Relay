@@ -6,6 +6,7 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.compose.ui.platform.ComposeView
 import androidx.fragment.app.Fragment
+import androidx.fragment.app.FragmentManager
 import androidx.fragment.app.viewModels
 import com.ndhunju.relay.RelayViewModelFactory
 
@@ -36,6 +37,16 @@ class DebugFragment: Fragment() {
 
         fun newFragment(): DebugFragment {
             return DebugFragment()
+        }
+
+        /**
+         * Adds this fragment to [android.R.id.content]
+         */
+        fun addToContent(fm: FragmentManager) {
+            fm.beginTransaction()
+                .add(android.R.id.content, newFragment(), TAG)
+                .addToBackStack(TAG)
+                .commit()
         }
     }
 }

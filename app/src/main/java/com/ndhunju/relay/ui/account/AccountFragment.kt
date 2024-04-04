@@ -11,6 +11,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.platform.ComposeView
 import androidx.compose.ui.res.stringResource
 import androidx.fragment.app.Fragment
+import androidx.fragment.app.FragmentManager
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.lifecycleScope
@@ -90,6 +91,16 @@ class AccountFragment: Fragment() {
          * @return A new instance of fragment [AccountFragment].
          */
         fun newInstance() = AccountFragment()
+
+        /**
+         * Adds this fragment to [android.R.id.content]
+         */
+        fun addToContent(fm: FragmentManager) {
+            fm.beginTransaction()
+                .add(android.R.id.content, newInstance(), TAG)
+                .addToBackStack(TAG)
+                .commit()
+        }
     }
 
     @Composable

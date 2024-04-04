@@ -7,6 +7,7 @@ import android.view.ViewGroup
 import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.platform.ComposeView
 import androidx.fragment.app.Fragment
+import androidx.fragment.app.FragmentManager
 import androidx.fragment.app.viewModels
 import com.ndhunju.relay.RelayViewModelFactory
 import com.ndhunju.relay.ui.theme.RelayTheme
@@ -53,5 +54,15 @@ class PairWithParentFragment: Fragment() {
          * this fragment
          */
         fun newInstance() = PairWithParentFragment()
+
+        /**
+         * Adds this fragment to [android.R.id.content]
+         */
+        fun addToContent(fm: FragmentManager) {
+            fm.beginTransaction()
+                .add(android.R.id.content, newInstance(), TAG)
+                .addToBackStack(TAG)
+                .commit()
+        }
     }
 }

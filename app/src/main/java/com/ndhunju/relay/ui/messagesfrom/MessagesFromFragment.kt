@@ -19,8 +19,10 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.ComposeView
 import androidx.compose.ui.unit.dp
 import androidx.fragment.app.Fragment
+import androidx.fragment.app.FragmentManager
 import androidx.fragment.app.activityViewModels
 import com.ndhunju.relay.RelayViewModelFactory
+import com.ndhunju.relay.ui.messages.Message
 import com.ndhunju.relay.ui.theme.RelayTheme
 
 private const val THREAD_ID = "THREAD_ID"
@@ -124,6 +126,16 @@ class MessagesFromFragment : Fragment() {
                     putString(SENDER_ADDRESS, senderAddress)
                 }
             }
+
+        /**
+         * Adds this fragment to [android.R.id.content]
+         */
+        fun addToContent(fm: FragmentManager, message: Message) {
+            fm.beginTransaction()
+                .add(android.R.id.content, newInstance(message.threadId, message.from), TAG)
+                .addToBackStack(TAG)
+                .commit()
+        }
     }
 }
 

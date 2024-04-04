@@ -72,14 +72,7 @@ class MainActivity : BaseActivity() {
         }
 
         viewModel.doOpenPairWithParentFragment = {
-            supportFragmentManager.beginTransaction()
-                .add(
-                    android.R.id.content,
-                    PairWithParentFragment.newInstance(),
-                    PairWithParentFragment.TAG
-                )
-                .addToBackStack(PairWithParentFragment.TAG)
-                .commit()
+            PairWithParentFragment.addToContent(supportFragmentManager)
         }
 
         //viewModel.doOpenPairWithChild = {
@@ -96,47 +89,19 @@ class MainActivity : BaseActivity() {
 
         viewModel.doOpenMessageFromFragment = { message ->
             // Open MessagesFromFragment
-            supportFragmentManager.beginTransaction()
-                .add(
-                    android.R.id.content,
-                    MessagesFromFragment.newInstance(message.threadId, message.from),
-                    MessagesFromFragment.TAG
-                    )
-                .addToBackStack(MessagesFromFragment.TAG)
-                .commit()
+            MessagesFromFragment.addToContent(supportFragmentManager, message)
         }
 
         viewModel.doOpenAccountFragment = {
-            supportFragmentManager.beginTransaction()
-                .add(
-                    android.R.id.content,
-                    AccountFragment.newInstance(),
-                    AccountFragment.TAG
-                )
-                .addToBackStack(AccountFragment.TAG)
-                .commit()
+            AccountFragment.addToContent(supportFragmentManager)
         }
 
         viewModel.doOpenChildUserFragment = {
-            supportFragmentManager.beginTransaction()
-                .add(
-                    android.R.id.content,
-                    ChildUserListFragment.newInstance(),
-                    ChildUserListFragment.TAG
-                )
-                .addToBackStack(ChildUserListFragment.TAG)
-                .commit()
+            ChildUserListFragment.addToContent(supportFragmentManager)
         }
 
         viewModel.doOpenDebugFragment = {
-            supportFragmentManager.beginTransaction()
-                .add(
-                    android.R.id.content,
-                    DebugFragment.newFragment(),
-                    DebugFragment.TAG
-                )
-                .addToBackStack(DebugFragment.TAG)
-                .commit()
+            DebugFragment.addToContent(supportFragmentManager)
         }
 
         // Check if SMS read and send permissions are granted
