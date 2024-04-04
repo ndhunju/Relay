@@ -34,7 +34,6 @@ abstract class BaseActivity: FragmentActivity() {
 
     override fun onPostCreate(savedInstanceState: Bundle?) {
         super.onPostCreate(savedInstanceState)
-        checkForDeviceOnlineState()
         checkForMinimumVersionCode()
     }
 
@@ -44,18 +43,6 @@ abstract class BaseActivity: FragmentActivity() {
     private fun injectFields() {
         // Make Dagger instantiate @Inject fields in this activity
         (applicationContext as RelayApplication).appComponent.inject(this)
-    }
-
-    private fun checkForDeviceOnlineState() {
-        appStateBroadcastService.isDeviceOnline.observe(this) { isOnline ->
-            if (isOnline.not()) {
-                Toast.makeText(
-                    this,
-                    getString(R.string.alert_offline_body),
-                    Toast.LENGTH_SHORT
-                ).show()
-            }
-        }
     }
 
     private fun checkForMinimumVersionCode() {

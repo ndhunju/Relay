@@ -22,6 +22,7 @@ import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentManager
 import androidx.fragment.app.activityViewModels
 import com.ndhunju.relay.RelayViewModelFactory
+import com.ndhunju.relay.ui.BaseFragment
 import com.ndhunju.relay.ui.messages.Message
 import com.ndhunju.relay.ui.theme.RelayTheme
 
@@ -33,7 +34,7 @@ private const val SENDER_ADDRESS = "SENDER_ADDRESS"
  * Use the [MessagesFromFragment.newInstance] factory method to
  * create an instance of this fragment.
  */
-class MessagesFromFragment : Fragment() {
+class MessagesFromFragment : BaseFragment() {
 
     private var threadId: String? = null
     private var senderAddress: String? = null

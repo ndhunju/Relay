@@ -22,6 +22,7 @@ import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.ndhunju.relay.RelayViewModelFactory
+import com.ndhunju.relay.ui.BaseFragment
 import com.ndhunju.relay.ui.messagesfrom.MessagesFromFragment
 import com.ndhunju.relay.ui.messagesfrom.MessagesFromView
 import com.ndhunju.relay.ui.theme.RelayTheme
@@ -37,7 +38,7 @@ private const val SENDER_ADDRESS = "SENDER_ADDRESS"
  * create an instance of this fragment.
  */
 
-class MessagesInThreadFromChildFragment: Fragment() {
+class MessagesInThreadFromChildFragment: BaseFragment() {
 
     private val viewModel: MessagesInThreadFromChildVM by viewModels { RelayViewModelFactory }
 

@@ -7,6 +7,7 @@ import androidx.compose.animation.fadeOut
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -59,6 +60,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.ndhunju.relay.R
 import com.ndhunju.relay.ui.custom.CenteredMessageWithButton
+import com.ndhunju.relay.ui.custom.CriticalMessageBar
 import com.ndhunju.relay.ui.custom.ScrollToTopLaunchedEffect
 import com.ndhunju.relay.ui.custom.SearchTextField
 import com.ndhunju.relay.ui.messages.Message
@@ -316,58 +318,61 @@ fun MainScreenAppBar(
     title: State<String>? = mutableStateOf(""),
     showUpIcon: State<Boolean>? = mutableStateOf(false),
     showSearchTextField: State<Boolean>? = mutableStateOf(false),
-    onClickSearchIcon: (() -> Unit)? = {},
-    onSearchTextChanged: ((String) -> Unit)? = {},
-    onClickMenuOrUpIcon: (() -> Unit)? = {}
+    onClickSearchIcon: (() -> Unit)? = null,
+    onSearchTextChanged: ((String) -> Unit)? = null,
+    onClickMenuOrUpIcon: (() -> Unit)? = null,
 ) {
-    TopAppBar(
-        modifier = Modifier
-            .fillMaxWidth()
-            .wrapContentHeight(align = Alignment.Top),
-        navigationIcon = {
-            if (showUpIcon?.value == true) {
-                IconButton(onClick = onClickMenuOrUpIcon ?: {}) {
-                    Icon(
-                        imageVector = Icons.AutoMirrored.Filled.ArrowBack,
-                        contentDescription = stringResource(id = R.string.image_description_go_back)
-                    )
-                }
-            } else {
-                IconButton(onClick = onClickMenuOrUpIcon ?: {}) {
-                    Icon(
-                        imageVector = Icons.Default.Menu,
-                        contentDescription = stringResource(
-                            androidx.compose.ui.R.string.navigation_menu
+    Column {
+        TopAppBar(
+            modifier = Modifier
+                .fillMaxWidth()
+                .wrapContentHeight(align = Alignment.Top),
+            navigationIcon = {
+                if (showUpIcon?.value == true) {
+                    IconButton(onClick = onClickMenuOrUpIcon ?: {}) {
+                        Icon(
+                            imageVector = Icons.AutoMirrored.Filled.ArrowBack,
+                            contentDescription = stringResource(id = R.string.image_description_go_back)
                         )
-                    )
-                }
-            }
-        },
-        title = {
-            Row (verticalAlignment = Alignment.CenterVertically) {
-                if (showSearchTextField?.value == true) {
-                    SearchTextField(onSearchTextChanged = onSearchTextChanged)
+                    }
                 } else {
-                    Text(text = title?.value ?: "")
+                    IconButton(onClick = onClickMenuOrUpIcon ?: {}) {
+                        Icon(
+                            imageVector = Icons.Default.Menu,
+                            contentDescription = stringResource(
+                                androidx.compose.ui.R.string.navigation_menu
+                            )
+                        )
+                    }
+                }
+            },
+            title = {
+                Row(verticalAlignment = Alignment.CenterVertically) {
+                    if (showSearchTextField?.value == true) {
+                        SearchTextField(onSearchTextChanged = onSearchTextChanged)
+                    } else {
+                        Text(text = title?.value ?: "")
+                    }
+                }
+            },
+            actions = {
+                IconButton(onClick = onClickSearchIcon ?: {}) {
+                    if (showSearchTextField?.value != true) {
+                        Icon(
+                            imageVector = Icons.Rounded.Search,
+                            contentDescription = stringResource(id = R.string.image_description_search)
+                        )
+                    } else {
+                        Icon(
+                            imageVector = Icons.Rounded.Close,
+                            contentDescription = stringResource(id = R.string.image_description_go_back)
+                        )
+                    }
                 }
             }
-        },
-        actions = {
-            IconButton(onClick = onClickSearchIcon ?: {} ) {
-                if (showSearchTextField?.value != true) {
-                    Icon(
-                        imageVector = Icons.Rounded.Search,
-                        contentDescription = stringResource(id = R.string.image_description_search)
-                    )
-                } else {
-                    Icon(
-                        imageVector = Icons.Rounded.Close,
-                        contentDescription = stringResource(id = R.string.image_description_go_back)
-                    )
-                }
-            }
-        }
-    )
+        )
+        CriticalMessageBar()
+    }
 }
 
 val navigationItems = listOf(

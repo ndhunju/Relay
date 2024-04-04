@@ -1,6 +1,9 @@
 package com.ndhunju.relay.ui.custom
 
 import android.content.res.Configuration
+import android.view.View.GONE
+import android.view.View.TEXT_ALIGNMENT_CENTER
+import android.widget.TextView
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -8,6 +11,7 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.BasicTextField
 import androidx.compose.material.icons.Icons
@@ -33,12 +37,14 @@ import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.toArgb
 import androidx.compose.ui.layout.onGloballyPositioned
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.viewinterop.AndroidView
 import com.ndhunju.relay.R
 import com.ndhunju.relay.api.Result
 import com.ndhunju.relay.ui.theme.LocalColors
@@ -110,32 +116,61 @@ fun SyncStatusIcon(modifier: Modifier = Modifier, syncStatus: Result<Void>? = Re
     )
 }
 
+@Preview
 @Composable
 @OptIn(ExperimentalMaterial3Api::class)
 fun TopAppBarWithUpButton(
-    title: String?,
-    onUpPressed: (() -> Unit)?,
+    title: String? = null,
+    onUpPressed: (() -> Unit)? = null,
     showUpButton: Boolean = true
 ) {
-    TopAppBar(
-        modifier = Modifier
-            .background(MaterialTheme.colorScheme.background)
-            .shadow(6.dp),
-        title = {
-            Text(
-                text = title ?: "",
-                color = MaterialTheme.colorScheme.primary
-            )
-        },
-        navigationIcon = {
-            if (showUpButton) {
-                IconButton(onClick = { onUpPressed?.invoke() }) {
-                    Icon(
-                        modifier = Modifier.padding(4.dp),
-                        imageVector = Icons.AutoMirrored.Filled.ArrowBack,
-                        contentDescription = stringResource(R.string.image_description_go_back)
-                    )
+    Column {
+        TopAppBar(
+            modifier = Modifier
+                .background(MaterialTheme.colorScheme.background)
+                .shadow(6.dp),
+            title = {
+                Text(
+                    text = title ?: "",
+                    color = MaterialTheme.colorScheme.primary
+                )
+            },
+            navigationIcon = {
+                if (showUpButton) {
+                    IconButton(onClick = { onUpPressed?.invoke() }) {
+                        Icon(
+                            modifier = Modifier.padding(4.dp),
+                            imageVector = Icons.AutoMirrored.Filled.ArrowBack,
+                            contentDescription = stringResource(R.string.image_description_go_back)
+                        )
+                    }
                 }
+            }
+        )
+
+        CriticalMessageBar()
+    }
+}
+
+/**
+ * Shows a critical message with had to miss visual.
+ * One can update this view by find it by id [R.id.critical_message_text_view]
+ */
+@Composable
+fun CriticalMessageBar() {
+    AndroidView(
+        modifier = Modifier
+            .fillMaxWidth()
+            .wrapContentHeight(),
+        factory = { context ->
+            TextView(context).apply {
+                // Set ID so that it could updated from activity or fragment
+                // whenever there is a broadcast of critical message
+                id = R.id.critical_message_text_view
+                textAlignment = TEXT_ALIGNMENT_CENTER
+                setBackgroundColor(context.getColor(R.color.failure))
+                setTextColor(Color.White.toArgb())
+                visibility = GONE
             }
         }
     )

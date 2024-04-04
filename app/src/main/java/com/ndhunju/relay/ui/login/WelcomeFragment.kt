@@ -5,12 +5,12 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.compose.ui.platform.ComposeView
-import androidx.fragment.app.Fragment
 import com.ndhunju.relay.R
+import com.ndhunju.relay.ui.BaseFragment
 import com.ndhunju.relay.ui.account.AccountFragment
 import com.ndhunju.relay.ui.theme.RelayTheme
 
-class WelcomeFragment: Fragment() {
+class WelcomeFragment: BaseFragment() {
 
     override fun onCreateView(
         inflater: LayoutInflater,

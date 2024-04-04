@@ -10,19 +10,19 @@ import android.widget.FrameLayout
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.platform.ComposeView
 import androidx.compose.ui.res.stringResource
-import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentManager
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.lifecycleScope
 import com.ndhunju.relay.R
 import com.ndhunju.relay.RelayViewModelFactory
+import com.ndhunju.relay.ui.BaseFragment
 import com.ndhunju.relay.ui.custom.MessageAlertDialog
 import com.ndhunju.relay.ui.theme.RelayTheme
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 
-class AccountFragment: Fragment() {
+class AccountFragment: BaseFragment() {
 
     private val accountViewModel: AccountViewModel by viewModels { RelayViewModelFactory }
 

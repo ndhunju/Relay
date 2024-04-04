@@ -6,17 +6,17 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.platform.ComposeView
-import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentManager
 import androidx.fragment.app.viewModels
 import com.ndhunju.relay.RelayViewModelFactory
+import com.ndhunju.relay.ui.BaseFragment
 import com.ndhunju.relay.ui.theme.RelayTheme
 
 /**
  * Fragment that holds the view for letting user pair this app with a parent user.
  * Once paired with a parent user, app will start sending new messages to that parent user.
  */
-class PairWithParentFragment: Fragment() {
+class PairWithParentFragment: BaseFragment() {
 
     private val viewModel: PairWithParentViewModel by viewModels { RelayViewModelFactory }
 

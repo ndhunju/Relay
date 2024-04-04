@@ -14,6 +14,7 @@ import com.ndhunju.relay.service.SimpleKeyValuePersistService
 import com.ndhunju.relay.service.UserSettingsPersistService
 import com.ndhunju.relay.service.analyticsprovider.AnalyticsProvider
 import com.ndhunju.relay.ui.BaseActivity
+import com.ndhunju.relay.ui.BaseFragment
 import com.ndhunju.relay.util.CurrentSettings
 import com.ndhunju.relay.util.CurrentUser
 import com.ndhunju.relay.util.connectivity.NetworkConnectionChecker
@@ -66,5 +67,7 @@ interface AppComponent {
      * satisfy all the dependencies of the fields that it is requesting.
      */
     fun inject(activity: BaseActivity)
+
+    fun inject(fragment: BaseFragment)
 
 }

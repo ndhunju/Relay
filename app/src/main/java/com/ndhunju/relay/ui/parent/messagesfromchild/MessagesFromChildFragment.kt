@@ -8,8 +8,8 @@ import android.view.ViewGroup
 import androidx.compose.ui.platform.ComposeView
 import androidx.fragment.app.viewModels
 import com.ndhunju.relay.RelayViewModelFactory
+import com.ndhunju.relay.ui.BaseFragment
 import com.ndhunju.relay.ui.MainContent
-import com.ndhunju.relay.ui.messagesfrom.MessagesFromFragment
 import com.ndhunju.relay.ui.parent.messagesinthreadfromchild.MessagesInThreadFromChildFragment
 import com.ndhunju.relay.ui.theme.RelayTheme
 
@@ -21,7 +21,7 @@ private const val ARG_CHILD_USER_PHONE = "ARG_CHILD_USER_PHONE"
  * Use the [MessagesFromChildFragment.newInstance] factory method to
  * create an instance of this fragment.
  */
-class MessagesFromChildFragment : Fragment() {
+class MessagesFromChildFragment : BaseFragment() {
 
     private val viewModel: MessagesFromChildViewModel by viewModels { RelayViewModelFactory }
 

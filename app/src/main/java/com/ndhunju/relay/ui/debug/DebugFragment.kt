@@ -5,15 +5,15 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.compose.ui.platform.ComposeView
-import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentManager
 import androidx.fragment.app.viewModels
 import com.ndhunju.relay.RelayViewModelFactory
+import com.ndhunju.relay.ui.BaseFragment
 
 /**
  * Fragment that will hold settings that would help with debugging issues, if any, in the app
  */
-class DebugFragment: Fragment() {
+class DebugFragment: BaseFragment() {
 
     private val debugViewModel: DebugViewModel by viewModels { RelayViewModelFactory }
 

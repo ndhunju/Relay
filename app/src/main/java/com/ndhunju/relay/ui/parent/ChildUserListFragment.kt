@@ -12,6 +12,7 @@ import androidx.compose.ui.platform.ComposeView
 import androidx.fragment.app.FragmentManager
 import androidx.fragment.app.viewModels
 import com.ndhunju.relay.RelayViewModelFactory
+import com.ndhunju.relay.ui.BaseFragment
 import com.ndhunju.relay.ui.pair.AddChildEncryptionKeyFromQrCodeActivity
 import com.ndhunju.relay.ui.parent.messagesfromchild.MessagesFromChildFragment
 import com.ndhunju.relay.ui.theme.RelayTheme
@@ -23,7 +24,7 @@ import com.ndhunju.relay.util.requestNotificationPermission
  * Use the [ChildUserListFragment.newInstance] factory method to
  * create an instance of this fragment.
  */
-class ChildUserListFragment : Fragment() {
+class ChildUserListFragment : BaseFragment() {
 
     private val viewModel: ChildUserListViewModel by viewModels { RelayViewModelFactory }
 
