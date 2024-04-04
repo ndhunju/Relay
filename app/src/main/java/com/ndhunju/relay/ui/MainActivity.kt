@@ -90,25 +90,4 @@ class MainActivity : BaseActivity() {
         )
     }
 
-    private fun checkForMinimumVersionCode() {
-        lifecycleScope.launch {
-            currentSettings.settings.collectLatest { settings ->
-                val currentVersionCode = getAppVersionCode()
-                if (currentVersionCode < settings.minimumVersionCode) {
-                    showAppUpdateDialog(settings.androidAppLink)
-                    analyticsProvider.logEvent("didShowAppUpdateDialog", "$currentVersionCode")
-                }
-            }
-        }
-    }
-
-    private fun showAppUpdateDialog(androidAppLink: String?) {
-        addContentView(
-            ComposeView(this@MainActivity).apply { setContent { AppUpdateDialog {
-                startActivityForUrl(androidAppLink)
-            } } },
-            LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.MATCH_PARENT)
-        )
-    }
-
 }
