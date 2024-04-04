@@ -228,7 +228,6 @@ class ApiInterfaceFireStoreImpl(
         val exception = checkForCommonExceptions()
         if (exception != null) return Result.Failure(exception)
 
-        // TODO: Nikesh - check if user has already paired with 3 parents
         return try {
             val queryByPhoneNumber = userCollection
                 .whereEqualTo(UserEntry.Phone, childPhoneNumber)

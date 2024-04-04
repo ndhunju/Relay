@@ -58,11 +58,12 @@ class MainViewModel(
     val showSplashScreen = _showSplashScreen.asStateFlow()
 
     //region UI Events
-    val onRefreshByUser = {
-       // TODO: Refresh the data in the UI
-        // Once the data is refreshed, call
-        _isRefreshing.value = false
-        _showProgress.value = false
+    val onRefreshByUser: () -> Unit = {
+        viewModelScope.launch {
+            updateLastMessagesWithCorrectSyncStatus()
+            _isRefreshing.value = false
+            _showProgress.value = false
+        }
     }
 
     val onClickSearchIcon = {
@@ -191,7 +192,6 @@ class MainViewModel(
     }
 
     private fun moveMessageToTopFrom(currentIndex: Int) {
-        // TODO: Auto scroll the UI to the top
         if (currentIndex != 0) {
             val updatedThread = _lastMessageForEachThread.removeAt(currentIndex)
             _lastMessageForEachThread.add(0, updatedThread)
