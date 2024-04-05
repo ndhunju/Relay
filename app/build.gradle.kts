@@ -159,7 +159,7 @@ dependencies {
 
     // Baseline profile
     implementation("androidx.profileinstaller:profileinstaller:1.3.1")
-    "baselineProfile"(project(":baselineprofile"))
+    "baselineProfile"(project(":baselineprof"))
 
     testImplementation("junit:junit:4.13.2")
     androidTestImplementation("androidx.test.ext:junit:1.1.5")

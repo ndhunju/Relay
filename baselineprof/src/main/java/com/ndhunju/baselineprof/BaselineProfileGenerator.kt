@@ -1,4 +1,4 @@
-package com.ndhunju.baselineprofile
+package com.ndhunju.baselineprof
 
 import androidx.benchmark.macro.junit4.BaselineProfileRule
 import androidx.test.ext.junit.runners.AndroidJUnit4
@@ -55,7 +55,7 @@ class BaselineProfileGenerator {
             pressHome()
             startActivityAndWait()
 
-            // TODO: Nikesh Write more interactions to optimize advanced journeys of your app.
+            // TODO Write more interactions to optimize advanced journeys of your app.
             // For example:
             // 1. Wait until the content is asynchronously loaded
             // 2. Scroll the feed content

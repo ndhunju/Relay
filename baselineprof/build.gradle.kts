@@ -7,12 +7,12 @@ plugins {
 }
 
 android {
-    namespace = "com.ndhunju.baselineprofile"
+    namespace = "com.ndhunju.baselineprof"
     compileSdk = 34
 
     compileOptions {
-        sourceCompatibility = JavaVersion.VERSION_17
-        targetCompatibility = JavaVersion.VERSION_17
+        sourceCompatibility = JavaVersion.VERSION_1_8
+        targetCompatibility = JavaVersion.VERSION_1_8
     }
 
     kotlinOptions {
@@ -53,7 +53,7 @@ baselineProfile {
 dependencies {
     implementation("androidx.test.ext:junit:1.1.5")
     implementation("androidx.test.espresso:espresso-core:3.5.1")
-    implementation("androidx.test.uiautomator:uiautomator:2.2.0")
+    implementation("androidx.test.uiautomator:uiautomator:2.3.0")
     implementation("androidx.benchmark:benchmark-macro-junit4:1.2.3")
 }
 
