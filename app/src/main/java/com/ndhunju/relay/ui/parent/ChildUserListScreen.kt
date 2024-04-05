@@ -33,7 +33,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -203,19 +202,23 @@ private fun ChildUserColumnItem(
                 .padding(end = 6.dp)
         )
 
-        val isChildKeyAdded = rememberSaveable(key = childUser.encKey) { childUser.encKey == null }
+        // NOTE: the parameter key in rememberSaveable has different
+        // purpose that the parameter key1 in remember function!!
+        val isChildKeyAdded = rememberSaveable(inputs = arrayOf(childUser.encKey)) {
+            childUser.encKey != null
+        }
         val iconDescription = stringResource(
             if (isChildKeyAdded) {
-                R.string.content_description_add_encryption_key
-            } else {
                 R.string.content_description_encryption_key_added
+            } else {
+                R.string.content_description_add_encryption_key
             }
         )
 
         Icon(
             painter = painterResource(id = R.drawable.baseline_key_24),
             contentDescription = iconDescription,
-            tint = colorResource(if (isChildKeyAdded) R.color.failure else R.color.success),
+            tint = colorResource(if (isChildKeyAdded) R.color.success else R.color.failure),
             modifier = Modifier
                 .align(Alignment.CenterVertically)
                 .padding(end = 6.dp)
@@ -243,4 +246,8 @@ private fun LoadingIndicator() {
     }
 }
 
-data class Child(val id: String, val phone: String, val encKey: String? = null)
+data class Child(val id: String, val phone: String, val encKey: String? = null) {
+    fun getPublicIdentifier(): String {
+        return phone
+    }
+}

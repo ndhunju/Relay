@@ -63,10 +63,12 @@ class ChildUserListViewModel(
     }
 
     fun onClickChildEncKeyDialogBtnOk(encryptionKey: String) {
-        val isAdded = currentUser.user.addEncryptionKeyOfChild(currentChild?.phone, encryptionKey)
-        if (isAdded) {
-            invalidateChildUsers()
-        }
+        val isAdded = currentUser.user.addEncryptionKeyOfChild(
+            currentChild?.getPublicIdentifier(),
+            encryptionKey
+        )
+
+        if (isAdded) { invalidateChildUsers() }
         // Dismiss the dialog
         _showAddChildEncKeyDialog.value = false
     }
