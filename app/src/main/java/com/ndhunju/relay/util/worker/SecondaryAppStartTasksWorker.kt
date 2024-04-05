@@ -9,6 +9,7 @@ import androidx.work.WorkManager
 import androidx.work.WorkerParameters
 import com.ndhunju.relay.RelayApplication
 import com.ndhunju.relay.di.AppComponent
+import com.ndhunju.relay.service.SimpleKeyValuePersistService
 import com.ndhunju.relay.service.analyticsprovider.AnalyticsProvider
 import com.ndhunju.relay.service.analyticsprovider.d
 import kotlinx.coroutines.CoroutineScope
@@ -33,6 +34,10 @@ class SecondaryAppStartTasksWorker(
         appComponent.analyticsProvider()
     }
 
+    private val simpleKeyValuePersistService: SimpleKeyValuePersistService by lazy {
+        appComponent.simpleKeyValuePersistService()
+    }
+
     override suspend fun doWork(): Result {
         analyticsProvider.d(TAG, "doWork() start")
         saveAppInstallTime()
@@ -49,8 +54,8 @@ class SecondaryAppStartTasksWorker(
      */
     private suspend fun saveAppInstallTime() {
         analyticsProvider.d(TAG, "saveAppInstallTime()")
-        appComponent.simpleKeyValuePersistService().saveFirstTime(
-            "appInstallTime",
+        simpleKeyValuePersistService.saveFirstTime(
+            KEY_APP_INSTALL_TIME,
             System.currentTimeMillis().toString()
         )
     }
@@ -86,3 +91,8 @@ class SecondaryAppStartTasksWorker(
         }
     }
 }
+
+/**
+ * Key used for storing app install time in [SimpleKeyValuePersistService]
+ */
+const val KEY_APP_INSTALL_TIME = "appInstallTime"

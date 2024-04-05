@@ -53,12 +53,12 @@ class MessagesFromViewModel(
             val newMessages = deviceSmsReaderService.getMessagesSince(latestNewMessageTimeStamp)
             latestNewMessageTimeStamp = newMessageTimeStamp
             newMessages.filter { it.threadId == threadId }
-                .forEach(onNewMessage)
+                .forEach(this@MessagesFromViewModel::onNewMessage)
         }
     }
 
     private val newSyncedMessageObserver = Observer<List<Message>> { newMessages ->
-        newMessages.forEach(onNewSyncedMessage)
+        newMessages.forEach(this::onNewSyncedMessage)
     }
 
     init {
@@ -72,7 +72,8 @@ class MessagesFromViewModel(
         super.onCleared()
     }
 
-    private val onNewMessage: (Message) -> Unit = { newMessage ->
+    private fun onNewMessage(newMessage: Message?) {
+        if (newMessage == null) return
         // Update the UI to the the latest SMS
         viewModelScope.launch {
             // NOTE: Since the layout is reversed, add new item to the top
@@ -84,7 +85,8 @@ class MessagesFromViewModel(
         }
     }
 
-    private val onNewSyncedMessage: (Message) -> Unit = { newSyncedMessage ->
+    private fun onNewSyncedMessage(newSyncedMessage: Message?) {
+        if (newSyncedMessage == null) return
         viewModelScope.launch {
             // Update the UI
             val oldLastMessageIndex = findIndexOfMessage(newSyncedMessage)

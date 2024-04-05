@@ -114,9 +114,7 @@ class UploadNewMessagesWorker(
         var result: RelayResult<Void> = Success()
         val uploadStartTime = System.currentTimeMillis()
         // Retrieve previously saved uploadStartTime
-        val lastUploadStartTime = keyValuePersistService.retrieve(
-            KEY_LAST_UPLOAD_TIME
-        ).firstOrNull()?.toLong() ?: uploadStartTime
+        val lastUploadStartTime = getLastUploadStartTime(uploadStartTime)
 
         val processedMessages = mutableListOf<Message>()
 
@@ -132,7 +130,7 @@ class UploadNewMessagesWorker(
 
         return if (result is Success) {
             // Save last upload start time
-            keyValuePersistService.save(KEY_LAST_UPLOAD_TIME, uploadStartTime.toString())
+            saveLastUploadStartTime(uploadStartTime)
             // Notify that new messages has been processed/synced
             appStateBroadcastService.updateNewSyncedMessages(processedMessages)
             analyticsProvider.d(TAG, "doWork: Success")
@@ -142,6 +140,19 @@ class UploadNewMessagesWorker(
             Result.failure()
         }
 
+    }
+
+    private suspend fun saveLastUploadStartTime(uploadStartTime: Long) {
+        keyValuePersistService.save(KEY_LAST_UPLOAD_TIME, uploadStartTime.toString())
+    }
+
+    private suspend fun getLastUploadStartTime(uploadStartTime: Long): Long {
+        return (keyValuePersistService.retrieve(KEY_LAST_UPLOAD_TIME).firstOrNull()?.toLong()
+            // If last upload time wasn't saved before, use app install time
+            ?: (keyValuePersistService.retrieve(KEY_APP_INSTALL_TIME).firstOrNull()?.toLong()
+                // If app install time wasn't saved before,
+                // use upload start time - time it took to start this worker
+                ?: (uploadStartTime - MAX_DELAY_IN_SEC * 1_000)))
     }
 
     private suspend fun processMessage(messageFromAndroidDb: Message): RelayResult<Void> {
@@ -178,13 +189,14 @@ class UploadNewMessagesWorker(
     companion object {
 
         val TAG: String = UploadNewMessagesWorker::class.java.simpleName
+        private const val MAX_DELAY_IN_SEC: Long = 3
 
         private val constraints: Constraints by lazy {
             Constraints.Builder()
                 .addContentUriTrigger(Sms.CONTENT_URI, true)
                 .setRequiredNetworkType(NetworkType.CONNECTED)
-                .setTriggerContentMaxDelay(3, TimeUnit.SECONDS)
-                .setTriggerContentUpdateDelay(3, TimeUnit.SECONDS)
+                .setTriggerContentMaxDelay(MAX_DELAY_IN_SEC, TimeUnit.SECONDS)
+                .setTriggerContentUpdateDelay(MAX_DELAY_IN_SEC, TimeUnit.SECONDS)
                 .build()
         }
 
