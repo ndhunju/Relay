@@ -9,6 +9,7 @@ plugins {
     id("com.google.devtools.ksp") version "1.9.0-1.0.12"
     // Add the Crashlytics Gradle plugin
     id("com.google.firebase.crashlytics")
+    id("androidx.baselineprofile")
 
 }
 
@@ -155,6 +156,10 @@ dependencies {
     implementation("com.google.firebase:firebase-appcheck-playintegrity")
     // Add the dependencies for the App Check libraries to be used for debug build type
     debugImplementation("com.google.firebase:firebase-appcheck-debug")
+
+    // Baseline profile
+    implementation("androidx.profileinstaller:profileinstaller:1.3.1")
+    "baselineProfile"(project(":baselineprofile"))
 
     testImplementation("junit:junit:4.13.2")
     androidTestImplementation("androidx.test.ext:junit:1.1.5")

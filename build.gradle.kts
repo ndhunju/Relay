@@ -22,5 +22,7 @@ plugins {
     // Add the dependency for the Crashlytics Gradle plugin
     id("com.google.firebase.crashlytics") version "2.9.9" apply false
     id("com.android.library") version "8.3.1" apply false
+    id("com.android.test") version "8.3.1" apply false
+    id("androidx.baselineprofile") version "1.2.3" apply false
 
 }
