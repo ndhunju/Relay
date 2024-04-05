@@ -156,7 +156,9 @@ class AccountViewModel(
      * Verifies if the entered phone number
      */
     private suspend fun verifyThePhoneNumber(): Boolean {
+        showProgress.value = true
         val settings = apiInterface.getSettings().getDataOrNull<Settings>()
+        showProgress.value = false
         return settings?.byPassAccountCreationNumber == phone.value
     }
 
