@@ -53,9 +53,13 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.snapshots.SnapshotStateList
 import androidx.compose.ui.Alignment
+import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.semantics.semantics
+import androidx.compose.ui.semantics.testTagsAsResourceId
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.ndhunju.relay.R
@@ -286,7 +290,7 @@ fun MainContent(
 }
 
 @Composable
-@OptIn(ExperimentalFoundationApi::class)
+@OptIn(ExperimentalFoundationApi::class, ExperimentalComposeUiApi::class)
 private fun ThreadList(
     modifier: Modifier,
     lazyListState: LazyListState,
@@ -294,7 +298,12 @@ private fun ThreadList(
     onClickMessage: ((Message) -> Unit)?
 ) {
     LazyColumn(
-        modifier = modifier.fillMaxSize(),
+        modifier = modifier
+            .fillMaxSize()
+            .testTag("threadList")
+            // Add this to use threadList as id for UiAutomation
+            // Search for "threadList" to find where
+            .semantics { testTagsAsResourceId = true },
         state = lazyListState,
         content = {
             itemsIndexed(

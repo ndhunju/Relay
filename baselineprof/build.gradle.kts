@@ -35,6 +35,7 @@ android {
     }
 
     testOptions.managedDevices.devices {
+        @Suppress("UnstableApiUsage")
         create<ManagedVirtualDevice>("pixel6Api34") {
             device = "Pixel 6"
             apiLevel = 34
@@ -55,6 +56,7 @@ dependencies {
     implementation("androidx.test.espresso:espresso-core:3.5.1")
     implementation("androidx.test.uiautomator:uiautomator:2.3.0")
     implementation("androidx.benchmark:benchmark-macro-junit4:1.2.3")
+    implementation("androidx.test:rules:1.5.0")
 }
 
 androidComponents {

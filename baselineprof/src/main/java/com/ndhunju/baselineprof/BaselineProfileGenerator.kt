@@ -1,9 +1,16 @@
 package com.ndhunju.baselineprof
 
+import android.Manifest
+import androidx.benchmark.macro.MacrobenchmarkScope
 import androidx.benchmark.macro.junit4.BaselineProfileRule
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import androidx.test.filters.LargeTest
 import androidx.test.platform.app.InstrumentationRegistry
+import androidx.test.rule.GrantPermissionRule
+import androidx.test.uiautomator.By
+import androidx.test.uiautomator.Direction
+import androidx.test.uiautomator.UiDevice
+import androidx.test.uiautomator.Until
 import org.junit.Rule
 import org.junit.Test
 import org.junit.runner.RunWith
@@ -35,6 +42,13 @@ import org.junit.runner.RunWith
 @LargeTest
 class BaselineProfileGenerator {
 
+    @get:Rule // These aren't granting permission to the app, neither in device or emulator
+    val grantSmsPermission: GrantPermissionRule = GrantPermissionRule.grant(
+        Manifest.permission.RECEIVE_SMS,
+        Manifest.permission.READ_SMS,
+        Manifest.permission.SEND_SMS
+    )
+
     @get:Rule
     val rule = BaselineProfileRule()
 
@@ -55,14 +69,60 @@ class BaselineProfileGenerator {
             pressHome()
             startActivityAndWait()
 
-            // TODO Write more interactions to optimize advanced journeys of your app.
-            // For example:
-            // 1. Wait until the content is asynchronously loaded
-            // 2. Scroll the feed content
-            // 3. Navigate to detail screen
+            createAccountIfNeeded()
+            grantPermissionIfNeeded()
+            scrollThreadListUpAndDown()
 
             // Check UiAutomator documentation for more information how to interact with the app.
             // https://d.android.com/training/testing/other-components/ui-automator
+
+        }
+
+    }
+
+    private fun createAccountIfNeeded() {
+        val device = UiDevice.getInstance(InstrumentationRegistry.getInstrumentation())
+        val createAccountBtn = device.findObject(By.text("Create Account"))
+
+        if (createAccountBtn != null) {
+            createAccountBtn.click()
+            device.waitForIdle()
+
+            // Enter phone number
+            val phoneTextField = device.findObject(By.res("Phone"))
+            phoneTextField.text = "2546709494"
+
+            // Click Create
+            device.findObject(By.text("Create")).click()
+            device.waitForWindowUpdate(null, 3_000L)
         }
     }
+
+    private fun MacrobenchmarkScope.grantPermissionIfNeeded() {
+        val grantSmsPermissionBtn = device.findObject(By.text("Grant Permission"))
+        if (grantSmsPermissionBtn != null) {
+            // These aren't granting permission to the app, neither in device or emulator
+            val cmd = "pm grant " + device.currentPackageName
+            device.executeShellCommand(cmd+ Manifest.permission.RECEIVE_SMS)
+            device.executeShellCommand(cmd + Manifest.permission.READ_SMS)
+            device.executeShellCommand(cmd + Manifest.permission.SEND_SMS)
+            //grantSmsPermissionBtn.click()
+        }
+    }
+
+    private fun MacrobenchmarkScope.scrollThreadListUpAndDown() {
+        // Wait until content is asynchronously loaded.
+        device.wait(Until.hasObject(By.res("threadList")), 3_000)
+        // We find element with resource-id
+        val threadList = device.findObject(By.res("threadList")) ?: return
+
+        // Set some margin to prevent triggering system navigation
+        threadList.setGestureMargin(device.displayWidth / 5)
+
+        // Scroll up and down
+        threadList.fling(Direction.DOWN)
+        device.waitForIdle()
+        threadList.fling(Direction.UP)
+    }
+
 }
