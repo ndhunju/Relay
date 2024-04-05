@@ -36,8 +36,8 @@ android {
         release {
             isMinifyEnabled = false
             proguardFiles(
-                getDefaultProguardFile("proguard-android-optimize.txt"),
-                "proguard-rules.pro"
+                "proguard/proguard-rules.pro",
+                "proguard/proguard-rules-gson.pro"
             )
 
             if (releaseSigningConfig != null) {
