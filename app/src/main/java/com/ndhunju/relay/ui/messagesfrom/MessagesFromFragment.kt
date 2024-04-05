@@ -56,7 +56,7 @@ class MessagesFromFragment : BaseFragment() {
         threadId?.let { viewModel.getSmsByThreadId(it) }
     }
 
-    override fun onCreateView(
+    override fun onCreateChildView(
         inflater: LayoutInflater,
         container: ViewGroup?,
         savedInstanceState: Bundle?

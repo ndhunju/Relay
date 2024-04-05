@@ -1,14 +1,20 @@
 package com.ndhunju.relay.ui
 
 import android.os.Bundle
+import android.view.LayoutInflater
 import android.view.View
+import android.view.ViewGroup
+import android.view.ViewGroup.LayoutParams
+import android.widget.FrameLayout
 import android.widget.TextView
+import androidx.compose.ui.platform.ComposeView
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.lifecycleScope
 import com.ndhunju.relay.R
 import com.ndhunju.relay.RelayApplication
 import com.ndhunju.relay.service.AppStateBroadcastService
 import com.ndhunju.relay.service.analyticsprovider.AnalyticsProvider
+import com.ndhunju.relay.ui.custom.MessageAlertDialog
 import com.ndhunju.relay.util.extensions.setTextAndVisibility
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
@@ -17,7 +23,7 @@ import javax.inject.Inject
 /**
  * Base fragment to isolate features common to all fragments
  */
-open class BaseFragment: Fragment() {
+abstract class BaseFragment: Fragment() {
 
     /**
      * Dagger will provide an instance of [AppStateBroadcastService] from the graph
@@ -30,6 +36,25 @@ open class BaseFragment: Fragment() {
         injectFields()
         checkForDeviceOnlineState()
     }
+
+    override fun onCreateView(
+        inflater: LayoutInflater,
+        container: ViewGroup?,
+        savedInstanceState: Bundle?
+    ): View? {
+        super.onCreateView(inflater, container, savedInstanceState)
+        /** Wrap view created by Fragment inside FrameLayout
+         * so that we can conveniently show a dialog with [showDialog] **/
+        return FrameLayout(requireContext()).apply {
+            addView(onCreateChildView(inflater, this, savedInstanceState))
+        }
+    }
+
+    abstract fun onCreateChildView(
+        inflater: LayoutInflater,
+        container: ViewGroup?,
+        savedInstanceState: Bundle?
+    ): View
 
     private fun injectFields() {
         (context?.applicationContext as? RelayApplication)?.appComponent?.inject(this)
@@ -63,6 +88,23 @@ open class BaseFragment: Fragment() {
         totalAttempts = 0
         // Show the message
         textView?.setTextAndVisibility(message)
+    }
+
+    /**
+     * Convenient method to show messages on screen that can be dismissed
+     */
+    fun showDialog(message: String) {
+        val viewGroup = view as? ViewGroup ?: return
+        viewGroup.addView(
+            ComposeView(viewGroup.context).apply { setContent {
+                MessageAlertDialog(
+                    message,
+                    onClickDialogBtnOk = { viewGroup.removeView(this) },
+                    onClickDialogBtnCancel = { viewGroup.removeView(this) }
+                )
+            } },
+            LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.MATCH_PARENT)
+        )
     }
 
 }

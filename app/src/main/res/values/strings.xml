@@ -10,7 +10,8 @@
     <string name="default_firebase_ex_msg">There is an issue with Firebase</string>
     <!--  Shown in a dialog to the user when the device seems to be offline -->
     <string name="default_network_not_found_msg">Not able to each the Network. Please make sure you are connected to the Internet</string>
-
+    <!-- Text inside a dialog that-->
+    <string name="unsupported_action_sending_message">Sending messages from the child device\'s number will be supported in the upcoming version. Stay tuned!</string>
 
     <!-- General Image Descriptions -->
     <!-- Image description for search icon -->

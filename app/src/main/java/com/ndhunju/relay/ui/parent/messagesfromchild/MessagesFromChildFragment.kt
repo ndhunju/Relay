@@ -48,7 +48,7 @@ class MessagesFromChildFragment : BaseFragment() {
 
     }
 
-    override fun onCreateView(
+    override fun onCreateChildView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {

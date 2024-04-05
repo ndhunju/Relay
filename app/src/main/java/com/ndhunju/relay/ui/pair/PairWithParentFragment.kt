@@ -20,12 +20,11 @@ class PairWithParentFragment: BaseFragment() {
 
     private val viewModel: PairWithParentViewModel by viewModels { RelayViewModelFactory }
 
-    override fun onCreateView(
+    override fun onCreateChildView(
         inflater: LayoutInflater,
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
-        super.onCreateView(inflater, container, savedInstanceState)
         return ComposeView(requireContext()).apply {
             setContent {
                 RelayTheme {

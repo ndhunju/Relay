@@ -26,12 +26,11 @@ class AccountFragment: BaseFragment() {
 
     private val accountViewModel: AccountViewModel by viewModels { RelayViewModelFactory }
 
-    override fun onCreateView(
+    override fun onCreateChildView(
         inflater: LayoutInflater,
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
-        super.onCreateView(inflater, container, savedInstanceState)
         return FrameLayout(requireContext()).apply {
             addView(ComposeView(requireContext()).apply {
                 setContent {

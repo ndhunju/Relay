@@ -21,6 +21,7 @@ import androidx.compose.ui.unit.dp
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import com.ndhunju.relay.R
 import com.ndhunju.relay.RelayViewModelFactory
 import com.ndhunju.relay.ui.BaseFragment
 import com.ndhunju.relay.ui.messagesfrom.MessagesFromFragment
@@ -52,7 +53,7 @@ class MessagesInThreadFromChildFragment: BaseFragment() {
         viewModel.loadMessagesForChildAndThread(childUserId, threadId)
     }
 
-    override fun onCreateView(
+    override fun onCreateChildView(
         inflater: LayoutInflater,
         container: ViewGroup?,
         savedInstanceState: Bundle?
@@ -93,6 +94,12 @@ class MessagesInThreadFromChildFragment: BaseFragment() {
                         MessagesFromView(
                             viewModel.senderAddress,
                             uiState.value.messagesInThread,
+                            onClickSend = {
+                                showDialog(context.getString(
+                                    R.string.unsupported_action_sending_message
+                                ))
+                                analyticsProvider.logEvent("didClickOnSendMessageToChild")
+                                          },
                             onBackPressed = { parentFragmentManager.popBackStack() }
                         )
                     }

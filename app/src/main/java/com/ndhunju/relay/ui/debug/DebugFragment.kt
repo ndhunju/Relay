@@ -17,12 +17,11 @@ class DebugFragment: BaseFragment() {
 
     private val debugViewModel: DebugViewModel by viewModels { RelayViewModelFactory }
 
-    override fun onCreateView(
+    override fun onCreateChildView(
         inflater: LayoutInflater,
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
-        super.onCreateView(inflater, container, savedInstanceState)
         return ComposeView(requireContext()).apply {
             setContent {
                 DebugScreen(debugViewModel.onClickForceCrashItem) {
