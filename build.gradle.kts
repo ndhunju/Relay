@@ -24,5 +24,6 @@ plugins {
     id("com.android.library") version "8.3.1" apply false
     id("com.android.test") version "8.3.1" apply false
     id("androidx.baselineprofile") version "1.2.3" apply false
+    id("androidx.benchmark") version "1.2.3" apply false
 
 }

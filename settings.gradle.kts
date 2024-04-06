@@ -18,3 +18,4 @@ dependencyResolutionManagement {
 rootProject.name = "Relay"
 include(":app")
 include(":baselineprof")
+include(":benchmark")
