@@ -1,16 +1,10 @@
 package com.ndhunju.baselineprof
 
 import android.Manifest
-import androidx.benchmark.macro.MacrobenchmarkScope
 import androidx.benchmark.macro.junit4.BaselineProfileRule
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import androidx.test.filters.LargeTest
-import androidx.test.platform.app.InstrumentationRegistry
 import androidx.test.rule.GrantPermissionRule
-import androidx.test.uiautomator.By
-import androidx.test.uiautomator.Direction
-import androidx.test.uiautomator.UiDevice
-import androidx.test.uiautomator.Until
 import org.junit.Rule
 import org.junit.Test
 import org.junit.runner.RunWith
@@ -56,14 +50,17 @@ class BaselineProfileGenerator {
     fun generate() {
         // The application id for the running build variant is read from the instrumentation arguments.
         rule.collect(
-            packageName = InstrumentationRegistry.getArguments().getString("targetAppId")
-                ?: throw Exception("targetAppId not passed as instrumentation runner arg"),
-
+            packageName = getTargetAppPackageName(),
             // See: https://d.android.com/topic/performance/baselineprofiles/dex-layout-optimizations
+            // Startup Profiles are a subset of Baseline Profiles. Startup Profiles are used by the
+            // build system to further optimize the classes and methods they contain by improving
+            // the layout of code in your APK's DEX files. With Startup Profiles, your app startup
+            // is at least 15% faster than with Baseline Profiles alone.
             includeInStartupProfile = true
         ) {
             // This block defines the app's critical user journey. Here we are interested in
-            // optimizing for app startup. But you can also navigate and scroll through your most important UI.
+            // optimizing for app startup. But you can also navigate and scroll through
+            // your most important UI.
 
             // Start default activity for your app
             pressHome()
@@ -78,51 +75,6 @@ class BaselineProfileGenerator {
 
         }
 
-    }
-
-    private fun createAccountIfNeeded() {
-        val device = UiDevice.getInstance(InstrumentationRegistry.getInstrumentation())
-        val createAccountBtn = device.findObject(By.text("Create Account"))
-
-        if (createAccountBtn != null) {
-            createAccountBtn.click()
-            device.waitForIdle()
-
-            // Enter phone number
-            val phoneTextField = device.findObject(By.res("Phone"))
-            phoneTextField.text = "2546709494"
-
-            // Click Create
-            device.findObject(By.text("Create")).click()
-            device.waitForWindowUpdate(null, 3_000L)
-        }
-    }
-
-    private fun MacrobenchmarkScope.grantPermissionIfNeeded() {
-        val grantSmsPermissionBtn = device.findObject(By.text("Grant Permission"))
-        if (grantSmsPermissionBtn != null) {
-            // These aren't granting permission to the app, neither in device or emulator
-            val cmd = "pm grant " + device.currentPackageName
-            device.executeShellCommand(cmd+ Manifest.permission.RECEIVE_SMS)
-            device.executeShellCommand(cmd + Manifest.permission.READ_SMS)
-            device.executeShellCommand(cmd + Manifest.permission.SEND_SMS)
-            //grantSmsPermissionBtn.click()
-        }
-    }
-
-    private fun MacrobenchmarkScope.scrollThreadListUpAndDown() {
-        // Wait until content is asynchronously loaded.
-        device.wait(Until.hasObject(By.res("threadList")), 3_000)
-        // We find element with resource-id
-        val threadList = device.findObject(By.res("threadList")) ?: return
-
-        // Set some margin to prevent triggering system navigation
-        threadList.setGestureMargin(device.displayWidth / 5)
-
-        // Scroll up and down
-        threadList.fling(Direction.DOWN)
-        device.waitForIdle()
-        threadList.fling(Direction.UP)
     }
 
 }

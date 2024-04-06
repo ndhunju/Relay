@@ -11,12 +11,12 @@ android {
     compileSdk = 34
 
     compileOptions {
-        sourceCompatibility = JavaVersion.VERSION_1_8
-        targetCompatibility = JavaVersion.VERSION_1_8
+        sourceCompatibility = JavaVersion.VERSION_17
+        targetCompatibility = JavaVersion.VERSION_17
     }
 
     kotlinOptions {
-        jvmTarget = "1.8"
+        jvmTarget = "17"
     }
 
     defaultConfig {
@@ -59,6 +59,7 @@ dependencies {
     implementation("androidx.test:rules:1.5.0")
 }
 
+@Suppress("UnstableApiUsage")
 androidComponents {
     onVariants { v ->
         val artifactsLoader = v.artifacts.getBuiltArtifactsLoader()
