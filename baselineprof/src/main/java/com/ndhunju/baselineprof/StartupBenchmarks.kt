@@ -62,8 +62,10 @@ class StartupBenchmarks {
             },
             measureBlock = {
                 startActivityAndWait(getLoginActivityLaunchIntent())
-
-                // TODO Add interactions to wait for when your app is fully drawn.
+                /**
+                 * Additional benchmark testing will be in new class like [ScrollBenchmarks]
+                 * and will be added to [BenchmarkSuite]
+                 */
                 // The app is fully drawn when Activity.reportFullyDrawn is called.
                 // For Jetpack Compose, you can use ReportDrawn, ReportDrawnWhen and ReportDrawnAfter
                 // from the AndroidX Activity library.
