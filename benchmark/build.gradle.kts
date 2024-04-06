@@ -50,5 +50,9 @@ dependencies {
     // in an app module this way - you will need to move any code you
     // want to benchmark to a library module:
     // https://developer.android.com/studio/projects/android-library#Convert
+    // androidTestImplementation(project(":app")) // App code can't be microbenchmarked
+    // Nothing that can be benchmarked is public in this library
+    // androidTestImplementation("com.github.ndhunju:BarcodeGenerator:1.0.0")
+
 
 }
