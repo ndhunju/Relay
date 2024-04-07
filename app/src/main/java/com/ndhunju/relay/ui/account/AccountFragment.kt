@@ -24,7 +24,7 @@ import kotlinx.coroutines.launch
 
 class AccountFragment: BaseFragment() {
 
-    private val accountViewModel: AccountViewModel by viewModels { RelayViewModelFactory }
+    private val accountViewModel: AccountAndroidViewModel by viewModels { RelayViewModelFactory }
 
     override fun onCreateChildView(
         inflater: LayoutInflater,
@@ -35,17 +35,17 @@ class AccountFragment: BaseFragment() {
             addView(ComposeView(requireContext()).apply {
                 setContent {
                     RelayTheme {
-                        val uiState = accountViewModel.state.collectAsStateWithLifecycle()
+                        val uiState = accountViewModel.instance.state.collectAsStateWithLifecycle()
                         AccountScreen(
                             accountScreenUiState = uiState.value,
                             // Show UP button only when there are other fragments in the backstack
                             showUpButton = parentFragmentManager.backStackEntryCount > 0,
-                            onNameChange = accountViewModel.onNameChange,
-                            onPhoneChange = accountViewModel.onPhoneChange,
-                            onEncKeyChange = accountViewModel.onEncKeyChange,
-                            onClickCreateUpdate = accountViewModel.onClickCreateUpdateUser,
+                            onNameChange = accountViewModel.instance.onNameChange,
+                            onPhoneChange = accountViewModel.instance.onPhoneChange,
+                            onEncKeyChange = accountViewModel.instance.onEncKeyChange,
+                            onClickCreateUpdate = accountViewModel.instance.onClickCreateUpdateUser,
                             onUpPressed = { parentFragmentManager.popBackStack() },
-                            onClickDialogBtnOk = accountViewModel.onClickDialogBtnOk
+                            onClickDialogBtnOk = accountViewModel.instance.onClickDialogBtnOk
                         )
                     }
                 }
@@ -63,7 +63,7 @@ class AccountFragment: BaseFragment() {
     private fun showAccountUnverifiedDialogIfNotified() {
         lifecycleScope.launch {
             var dialog: View? = null
-            accountViewModel.showAccountUnverifiedDialog.collectLatest { show ->
+            accountViewModel.instance.showAccountUnverifiedDialog.collectLatest { show ->
                 if (show) {
                     (view as ViewGroup).apply {
                         dialog = ComposeView(requireContext()).apply {
@@ -107,8 +107,8 @@ class AccountFragment: BaseFragment() {
         RelayTheme {
             MessageAlertDialog(
                 stringResource(R.string.account_verification_dialog_message),
-                onClickDialogBtnCancel = accountViewModel.onClickAccountUnverifiedDialogBtn,
-                onClickDialogBtnOk = accountViewModel.onClickAccountUnverifiedDialogBtn
+                onClickDialogBtnCancel = accountViewModel.instance.onClickAccountUnverifiedDialogBtn,
+                onClickDialogBtnOk = accountViewModel.instance.onClickAccountUnverifiedDialogBtn
             )
         }
     }

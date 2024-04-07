@@ -18,6 +18,7 @@ import com.ndhunju.relay.util.extensions.combine
 import com.ndhunju.relay.util.isValidEncryptionKey
 import com.ndhunju.relay.util.isValidPhoneNumber
 import com.ndhunju.relay.util.wrapper.StringResource
+import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -27,14 +28,35 @@ import kotlinx.coroutines.launch
 import java.lang.RuntimeException
 import java.util.UUID
 
+class AccountAndroidViewModel(
+    appStateBroadcastService: AppStateBroadcastService,
+    analyticsProvider: AnalyticsProvider,
+    apiInterface: ApiInterface,
+    currentUser: CurrentUser,
+    user: User
+): ViewModel() {
+   val instance = AccountViewModel(
+       viewModelScope,
+       appStateBroadcastService,
+       analyticsProvider,
+       apiInterface,
+       currentUser,
+       user
+   )
+}
+
+/**
+ * Making this view model not depend on any android specific library so that it could be reused
+ * for iOS platform as well in case we use Kotlin Multi Platform structure
+ */
 class AccountViewModel(
+    private val viewModelScope: CoroutineScope = CoroutineScope(Dispatchers.IO),
     private val appStateBroadcastService: AppStateBroadcastService,
     private var analyticsProvider: AnalyticsProvider,
     private val apiInterface: ApiInterface,
     private var currentUser: CurrentUser,
     private var user: User
-): ViewModel() {
-
+) {
     private val _state = MutableStateFlow(AccountScreenUiState())
     val state: StateFlow<AccountScreenUiState>
         get() { return _state.asStateFlow() }

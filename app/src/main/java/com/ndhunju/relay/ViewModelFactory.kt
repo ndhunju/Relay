@@ -5,7 +5,7 @@ import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.ViewModelProvider.AndroidViewModelFactory.Companion.APPLICATION_KEY
 import androidx.lifecycle.viewmodel.CreationExtras
 import com.ndhunju.relay.ui.MainViewModel
-import com.ndhunju.relay.ui.account.AccountViewModel
+import com.ndhunju.relay.ui.account.AccountAndroidViewModel
 import com.ndhunju.relay.ui.debug.DebugViewModel
 import com.ndhunju.relay.ui.messagesfrom.MessagesFromViewModel
 import com.ndhunju.relay.ui.pair.AddChildEncryptionKeyFromQrCodeViewModel
@@ -53,8 +53,8 @@ val RelayViewModelFactory: ViewModelProvider.Factory = object : ViewModelProvide
                         appComponent.messagingService()
                     ) as T
                 }
-                isAssignableFrom(AccountViewModel::class.java) -> {
-                    AccountViewModel(
+                isAssignableFrom(AccountAndroidViewModel::class.java) -> {
+                    AccountAndroidViewModel(
                         appStateBroadcasterService,
                         analyticsManager,
                         apiInterface,
