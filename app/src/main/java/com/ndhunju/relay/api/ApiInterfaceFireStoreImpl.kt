@@ -3,6 +3,7 @@ package com.ndhunju.relay.api
 import android.app.Application
 import com.google.firebase.firestore.CollectionReference
 import com.google.firebase.firestore.FieldPath
+import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.FirebaseFirestoreException
 import com.google.firebase.firestore.Transaction
 import com.google.firebase.firestore.ktx.firestore
@@ -26,6 +27,7 @@ private val TAG = ApiInterfaceFireStoreImpl::class.simpleName
  */
 class ApiInterfaceFireStoreImpl(
     private val application: Application,
+    private val fireStore: FirebaseFirestore,
     private val gson: Gson,
     private val currentUser: CurrentUser,
     private val analyticsProvider: AnalyticsProvider
@@ -41,12 +43,12 @@ class ApiInterfaceFireStoreImpl(
     /**
      * Holds [CollectionReference] for "User" collection
      */
-    private val userCollection by lazy { Firebase.firestore.collection(Collections.User) }
-    private val settingsCollection by lazy { Firebase.firestore.collection(Collections.Settings) }
-    private val parentChildCollection by lazy { Firebase.firestore.collection(Collections.ParentChild) }
-    private val messageCollection by lazy { Firebase.firestore.collection(Collections.Message) }
-    private val messageFetcherCollection by lazy { Firebase.firestore.collection(Collections.MessageFetcher) }
-    private val pushNotificationCollection by lazy { Firebase.firestore.collection(Collections.PushNotificationToken) }
+    private val userCollection by lazy { fireStore.collection(Collections.User) }
+    private val settingsCollection by lazy { fireStore.collection(Collections.Settings) }
+    private val parentChildCollection by lazy { fireStore.collection(Collections.ParentChild) }
+    private val messageCollection by lazy { fireStore.collection(Collections.Message) }
+    private val messageFetcherCollection by lazy { fireStore.collection(Collections.MessageFetcher) }
+    private val pushNotificationCollection by lazy { fireStore.collection(Collections.PushNotificationToken) }
 
     // TypeToken used for parsing list
     private val listOfStringType = object : TypeToken<List<String>>(){}.type
@@ -389,7 +391,7 @@ class ApiInterfaceFireStoreImpl(
      */
     private suspend fun removeCurrentUserFromFetcherList(childSmsInfo: ChildSmsInfo): Boolean {
         return try {
-            Firebase.firestore.runTransaction { tx ->
+            fireStore.runTransaction { tx ->
                 runBlocking {
                     removeCurrentUserFromFetcherListHelper(childSmsInfo, tx)
                 }

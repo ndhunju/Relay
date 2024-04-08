@@ -7,6 +7,8 @@ import android.os.Build
 import android.telephony.SmsManager
 import androidx.security.crypto.EncryptedSharedPreferences
 import androidx.work.WorkManager
+import com.google.firebase.firestore.ktx.firestore
+import com.google.firebase.ktx.Firebase
 import com.google.gson.Gson
 import com.google.gson.GsonBuilder
 import com.ndhunju.relay.RelayApplication
@@ -110,6 +112,7 @@ class AppModule(private val application: Application) {
     fun providesApiInterface(): ApiInterface {
         return ApiInterfaceFireStoreImpl(
             application,
+            Firebase.firestore,
             appComponent.gson(),
             appComponent.currentUser(),
             appComponent.analyticsProvider()
