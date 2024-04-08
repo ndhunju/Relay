@@ -6,7 +6,7 @@ import com.ndhunju.relay.api.Result
 object TypeConverters {
 
     @TypeConverter
-    fun fromCustomType(value: Result<Void>): String {
+    fun fromCustomType(value: Result<Nothing>): String {
         return when(value) {
             is Result.Success -> "Success"
             is Result.Failure -> "Failure"
@@ -15,7 +15,7 @@ object TypeConverters {
     }
 
     @TypeConverter
-    fun toCustomType(value: String): Result<Void> {
+    fun toCustomType(value: String): Result<Nothing> {
         return when (value) {
             "Success" -> Result.Success()
             "Failure" -> Result.Failure()

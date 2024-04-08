@@ -145,7 +145,7 @@ data class Message(
      * Null means this instance of the Message/Sms was sent before our app was installed.
      * So we never pushed is to the cloud database. In terms of UI, we should hide the sync icon.
      * **/
-    var syncStatus: Result<Void>? = null,
+    var syncStatus: Result<Nothing>? = null,
     val extra: String? = null
 ) {
     fun getFormattedTime(): String {

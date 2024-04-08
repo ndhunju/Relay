@@ -117,7 +117,7 @@ class MessagesFromViewModel(
         index: Int,
         body: String? = null,
         date: Long? = null,
-        syncStatus: Result<Void>? = null
+        syncStatus: Result<Nothing>? = null
     ) {
         val exitingCopy = _messagesInThread[index]
         _messagesInThread[index].copy(

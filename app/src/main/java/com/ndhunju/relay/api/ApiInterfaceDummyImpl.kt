@@ -21,7 +21,7 @@ open class ApiInterfaceDummyImpl : ApiInterface {
         return returnFailure()
     }
 
-    override suspend fun putUser(name: String?): Result<Void> {
+    override suspend fun putUser(name: String?): Result<Nothing> {
         return returnFailure()
     }
 
@@ -59,15 +59,15 @@ open class ApiInterfaceDummyImpl : ApiInterface {
         return returnFailure()
     }
 
-    override suspend fun postDidSaveFetchedMessages(childSmsInfoList: List<ChildSmsInfo>): Result<Void> {
+    override suspend fun postDidSaveFetchedMessages(childSmsInfoList: List<ChildSmsInfo>): Result<Nothing> {
         return returnFailure()
     }
 
-    override suspend fun postMessage(message: MessageEntry): Result<Void> {
+    override suspend fun postMessage(message: MessageEntry): Result<Nothing> {
         return returnFailure()
     }
 
-    override suspend fun postUserPushNotificationToken(token: String): Result<Void> {
+    override suspend fun postUserPushNotificationToken(token: String): Result<Nothing> {
         return returnFailure()
     }
 

@@ -111,7 +111,7 @@ class ApiInterfaceFireStoreImpl(
      */
     override suspend fun putUser(
         name: String?,
-    ): Result<Void> {
+    ): Result<Nothing> {
 
         val exception = checkForCommonExceptions()
         if (exception != null) return Result.Failure(exception)
@@ -350,7 +350,7 @@ class ApiInterfaceFireStoreImpl(
 
     override suspend fun postDidSaveFetchedMessages(
         childSmsInfoList: List<ChildSmsInfo>
-    ): Result<Void> {
+    ): Result<Nothing> {
 
         val exception = checkForCommonExceptions()
         if (exception != null) return Result.Failure(exception)
@@ -450,7 +450,7 @@ class ApiInterfaceFireStoreImpl(
     /**
      * Pushes [message] to the cloud database.
      */
-    override suspend fun postMessage(message: MessageEntry): Result<Void> {
+    override suspend fun postMessage(message: MessageEntry): Result<Nothing> {
 
         val exception = checkForCommonExceptions()
         if (exception != null) return Result.Failure(exception)
@@ -484,7 +484,7 @@ class ApiInterfaceFireStoreImpl(
         }
     }
 
-    override suspend fun postUserPushNotificationToken(token: String): Result<Void> {
+    override suspend fun postUserPushNotificationToken(token: String): Result<Nothing> {
 
         val exception = checkForCommonExceptions()
         if (exception != null) return Result.Failure(exception)

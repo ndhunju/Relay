@@ -98,7 +98,7 @@ fun SyncStatusIconPreview() {
 
 
 @Composable
-fun SyncStatusIcon(modifier: Modifier = Modifier, syncStatus: Result<Void>? = Result.Success()) {
+fun SyncStatusIcon(modifier: Modifier = Modifier, syncStatus: Result<Nothing>? = Result.Success()) {
     Icon(
         painter = painterResource(R.drawable.baseline_sync_status_24),
         contentDescription = stringResource(R.string.image_description_sync_status_logo),

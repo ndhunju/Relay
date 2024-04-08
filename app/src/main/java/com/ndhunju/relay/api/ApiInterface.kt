@@ -28,7 +28,7 @@ interface ApiInterface {
      * Makes API request to update the user. If null is passed, don't update that value.
      * Only the non-null value must be updated in the server
      */
-    suspend fun putUser(name: String? = null): Result<Void>
+    suspend fun putUser(name: String? = null): Result<Nothing>
 
 
     /**
@@ -72,16 +72,16 @@ interface ApiInterface {
      * Makes API request to notify the back end that this client did save the messages
      * with id in [childSmsInfoList]
      */
-    suspend fun postDidSaveFetchedMessages(childSmsInfoList: List<ChildSmsInfo>): Result<Void>
+    suspend fun postDidSaveFetchedMessages(childSmsInfoList: List<ChildSmsInfo>): Result<Nothing>
 
     /**
      * Pushes [message] to the server.
      */
-    suspend fun postMessage(message: MessageEntry): Result<Void>
+    suspend fun postMessage(message: MessageEntry): Result<Nothing>
 
     /**
      * Posts [token] to the server
      */
-    suspend fun postUserPushNotificationToken(token: String): Result<Void>
+    suspend fun postUserPushNotificationToken(token: String): Result<Nothing>
 
 }

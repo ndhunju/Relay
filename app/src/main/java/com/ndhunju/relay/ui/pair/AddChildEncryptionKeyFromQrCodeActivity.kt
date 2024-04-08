@@ -85,7 +85,7 @@ class AddChildEncryptionKeyFromQrCodeActivity: BarcodeScannerActivity() {
         }
     }
 
-    private suspend fun onAddChildEncryptionKey(result: Result<Void>) {
+    private suspend fun onAddChildEncryptionKey(result: Result<Nothing>) {
         when (result) {
             is Result.Failure -> {
                 when (result.throwable) {

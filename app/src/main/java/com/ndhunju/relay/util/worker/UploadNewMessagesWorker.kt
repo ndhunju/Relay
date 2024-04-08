@@ -111,7 +111,7 @@ class UploadNewMessagesWorker(
             return Result.success()
         }
 
-        var result: RelayResult<Void> = Success()
+        var result: RelayResult<Nothing> = Success()
         val uploadStartTime = System.currentTimeMillis()
         // Retrieve previously saved uploadStartTime
         val lastUploadStartTime = getLastUploadStartTime(uploadStartTime)
@@ -155,7 +155,7 @@ class UploadNewMessagesWorker(
                 ?: (uploadStartTime - MAX_DELAY_IN_SEC * 1_000)))
     }
 
-    private suspend fun processMessage(messageFromAndroidDb: Message): RelayResult<Void> {
+    private suspend fun processMessage(messageFromAndroidDb: Message): RelayResult<Nothing> {
         // Store the message on local database in case uploading fails
         val smsInfoToInsert = messageFromAndroidDb.toSmsInfo()
         val idOfInsertedSmsInfo = smsInfoRepository.insertSmsInfo(smsInfoToInsert)
