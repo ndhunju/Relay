@@ -1,5 +1,6 @@
 package com.ndhunju.relay.ui.messages
 
+import android.icu.text.DateFormat
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
 import androidx.compose.material.icons.Icons
@@ -22,8 +23,8 @@ import com.ndhunju.relay.api.Result
 import com.ndhunju.relay.ui.custom.SyncStatusIcon
 import com.ndhunju.relay.ui.fakeMessages
 import com.ndhunju.relay.ui.theme.LocalDimens
-import com.ndhunju.relay.util.dateFormat
 import com.ndhunju.relay.util.extensions.getColorForId
+import com.ndhunju.relay.util.shortDateFormat
 
 @Preview(showBackground = true)
 @Composable
@@ -148,9 +149,8 @@ data class Message(
     var syncStatus: Result<Nothing>? = null,
     val extra: String? = null
 ) {
-    fun getFormattedTime(): String {
-        val dateAsLong = date
-        return dateFormat.format(dateAsLong)
+    fun getFormattedTime(dateFormat: DateFormat = shortDateFormat): String {
+        return dateFormat.format(date)
     }
 
     fun isSentByUser(): Boolean {
