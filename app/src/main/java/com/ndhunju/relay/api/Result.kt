@@ -4,7 +4,7 @@ package com.ndhunju.relay.api
  * Encapsulates different results that an async fun can have.
  */
 sealed class Result<T> {
-    class Pending<T>(val percentage: Float = 0f): Result<T>()
+    data class Pending<T>(val percentage: Float = 0f): Result<T>()
     data class Success<T>(val data: T? = null): Result<T>()
     data class Failure<T>(val throwable: Throwable? = null): Result<T>()
 
