@@ -2,6 +2,8 @@
      https://www.vectorpea.com/
      Used this online vector editor tool to
         1. copy parts of svg image icon into new layer
+           a. You can svg file from material icon in a tab. it will create a layer.
+           b. Then you can drag that layer to a new .ai project to combine different svg
         2. then color each copied objects
         3. then transform the objects into starting position
 

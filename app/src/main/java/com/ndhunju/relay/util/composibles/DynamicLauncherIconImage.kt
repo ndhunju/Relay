@@ -13,6 +13,7 @@ import androidx.compose.ui.graphics.asImageBitmap
 import androidx.compose.ui.graphics.toArgb
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
+import androidx.core.content.ContextCompat
 import androidx.core.graphics.drawable.toBitmap
 import com.ndhunju.relay.R
 
@@ -64,11 +65,11 @@ fun dynamicLauncherIconBitmap(
 
     val dynamicLauncherBitmap = remember(key1 = primary, key2 = secondary, key3 = tertiary) {
 
-        val outer = context.getDrawable(R.drawable.ic_launcher_foreground_outer)
+        val outer = ContextCompat.getDrawable(context, R.drawable.ic_launcher_foreground_outer)
         outer?.setTint(primary.toArgb())
-        val innerTop = context.getDrawable(R.drawable.ic_launcher_foreground_inner_top)
+        val innerTop = ContextCompat.getDrawable(context, R.drawable.ic_launcher_foreground_inner_top)
         innerTop?.setTint(secondary.toArgb())
-        val innerBottom = context.getDrawable(R.drawable.ic_launcher_foreground_inner_bottom)
+        val innerBottom = ContextCompat.getDrawable(context, R.drawable.ic_launcher_foreground_inner_bottom)
         innerBottom?.setTint(tertiary.toArgb())
 
         //Log.d("TAG", "dynamicLauncherIconBitmap: called")

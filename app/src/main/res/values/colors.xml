@@ -18,11 +18,11 @@
     <color name="failure">#e26d5c</color>
 
     <!-- Collection of colors that can be mapped to a unique ID-->
-    <color name="user_color_red">#ff6b6b</color>
-    <color name="user_color_green">#57cc99</color>
-    <color name="user_color_blue">#5fa8d3</color>
-    <color name="user_color_pink">#f15bb5</color>
-    <color name="user_color_yellow">#ffd000</color>
+    <color name="user_color_red">     #ff6b6b</color>
+    <color name="user_color_green">   #57cc99</color>
+    <color name="user_color_blue">    #5fa8d3</color>
+    <color name="user_color_pink">    #f15bb5</color>
+    <color name="user_color_yellow">  #ffd000</color>
     <color name="user_color_sky_blue">#00bbf9</color>
 
 

@@ -98,7 +98,7 @@ class MessagesFromViewModel(
     }
 
     /**
-     * Finds the index of [message] in [_lastMessageForEachThread]
+     * Finds the index of [message] in [_messagesInThread]
      */
     private fun findIndexOfMessage(message: Message): Int {
         // Find the thread in which the message is sent to

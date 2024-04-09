@@ -149,7 +149,7 @@ dependencies {
     implementation("com.github.ndhunju:BarcodeGenerator:1.0.0")
 
     // Pull Down To Refresh
-    implementation("androidx.compose.material:material:1.6.4")
+    implementation("androidx.compose.material:material:1.6.5")
 
     // Add the dependencies for the App Check libraries. This library
     // sends App Check tokens along with every request the app makes to Firebase
