@@ -2,7 +2,9 @@ package com.ndhunju.relay.ui.pair
 
 import androidx.lifecycle.ViewModel
 import com.google.gson.Gson
+import com.ndhunju.relay.R
 import com.ndhunju.relay.util.CurrentUser
+import com.ndhunju.relay.util.wrapper.StringResource
 
 class ShareEncryptionKeyWithQrCodeViewModel(
     private val currentUser: CurrentUser,
@@ -18,8 +20,9 @@ class ShareEncryptionKeyWithQrCodeViewModel(
         )
     }
 
-    fun getBodyText(): String {
-        return currentUser.user.phone ?: ""
+    fun getBodyText(): StringResource? {
+        val phone = currentUser.user.phone ?: return null
+        return StringResource(R.string.share_enc_key_screen_body, phone)
     }
 
 }

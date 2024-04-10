@@ -10,8 +10,9 @@ import androidx.compose.ui.res.stringResource
  */
 class StringResource(@StringRes val id: Int, vararg val formatArgs: Any)
 
-fun Context.getString(stringResource: StringResource): String {
-    return getString(stringResource.id, stringResource.formatArgs)
+fun Context.getString(stringResource: StringResource?): String? {
+    if (stringResource == null) return null
+    return getString(stringResource.id, *stringResource.formatArgs)
 }
 
 @Composable

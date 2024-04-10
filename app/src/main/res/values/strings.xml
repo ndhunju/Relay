@@ -190,4 +190,8 @@
     <string name="screen_app_update_body">To use this app, download the latest version.</string>
     <!-- Text for positive button for the screen to update the app -->
     <string name="screen_app_update_positive_btn">Update</string>
+
+    <!-- Share Encryption Key Screen-->
+    <!-- Body text shown in the screen-->
+    <string name="share_enc_key_screen_body">Phone: %1$s \n\n</string>
 </resources>
