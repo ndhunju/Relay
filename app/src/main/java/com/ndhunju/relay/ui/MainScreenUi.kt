@@ -364,21 +364,22 @@ fun MainScreenAppBar(
                     }
                 }
             },
-            actions = {
-                IconButton(onClick = onClickSearchIcon ?: {}) {
-                    if (showSearchTextField?.value != true) {
-                        Icon(
-                            imageVector = Icons.Rounded.Search,
-                            contentDescription = stringResource(id = R.string.image_description_search)
-                        )
-                    } else {
-                        Icon(
-                            imageVector = Icons.Rounded.Close,
-                            contentDescription = stringResource(id = R.string.image_description_go_back)
-                        )
-                    }
-                }
-            }
+            // Don't show search icon until we implement the searching feature
+            //actions = {
+            //    IconButton(onClick = onClickSearchIcon ?: {}) {
+            //        if (showSearchTextField?.value != true) {
+            //            Icon(
+            //                imageVector = Icons.Rounded.Search,
+            //                contentDescription = stringResource(id = R.string.image_description_search)
+            //            )
+            //        } else {
+            //            Icon(
+            //                imageVector = Icons.Rounded.Close,
+            //                contentDescription = stringResource(id = R.string.image_description_go_back)
+            //            )
+            //        }
+            //    }
+            //}
         )
         CriticalMessageBar()
     }
