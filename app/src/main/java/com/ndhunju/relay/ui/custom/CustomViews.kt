@@ -37,8 +37,10 @@ import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.graphics.toArgb
 import androidx.compose.ui.layout.onGloballyPositioned
+import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
@@ -191,11 +193,12 @@ private fun CenteredTextPreview() {
 }
 
 /**
- * Centers the [message] and [buttonText] on the screen
+ * Centers the [painter], [message] and [buttonText] on the screen
  */
 @Composable
 fun CenteredMessageWithButton(
     modifier: Modifier,
+    painter: Painter? = null,
     message: String? = null,
     buttonText: String? = null,
     onClickButton: (() -> Unit)? = null,
@@ -207,6 +210,15 @@ fun CenteredMessageWithButton(
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.Center
     ) {
+        if (painter != null) {
+            Icon(
+                painter = painter,
+                contentDescription = "",
+                tint = colorResource(id = R.color.disabled),
+                modifier = Modifier.padding(bottom = 6.dp)
+            )
+        }
+
         if (message != null) {
             Text(
                 text = message,

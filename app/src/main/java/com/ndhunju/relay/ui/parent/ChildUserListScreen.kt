@@ -37,6 +37,7 @@ import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.ndhunju.relay.R
+import com.ndhunju.relay.ui.custom.CenteredMessageWithButton
 import com.ndhunju.relay.ui.custom.RelayOutlinedTextField
 import com.ndhunju.relay.ui.custom.MessageAlertDialog
 import com.ndhunju.relay.ui.custom.CustomContentAlertDialog
@@ -104,6 +105,18 @@ fun ChildUserListScreen(
 
         if (showProgress.value) {
             LoadingIndicator()
+        }
+        
+        AnimatedVisibility(
+            // Show a message when there are no child users
+            visible = showProgress.value.not() && childUsers.value.isEmpty(),
+            enter = fadeIn()
+        ) {
+            CenteredMessageWithButton(
+                modifier = Modifier.padding(innerPadding),
+                painter = painterResource(id = R.drawable.baseline_no_child_users_24),
+                message = stringResource(R.string.child_user_screen_no_child_message)
+            )
         }
 
         AnimatedVisibility(visible = showProgress.value.not(), enter = fadeIn()) {

@@ -140,6 +140,9 @@
         This way, you get notified whenever there are new messages from the Child User.</string>
     <!-- Text shown in a button. -->
     <string name="child_user_screen_scan_qr_code">Scan QR code</string>
+    <!-- Message shown in the screen when there is not child users-->
+    <string name="child_user_screen_no_child_message">You don\'t have any child users.
+        \n\nPlease pair yourself as a parent user from child user\'s device to see them here.</string>
 
     <!-- WelcomeScreen-->
     <!-- Header of the welcome screen. Shown in a Text/Label -->

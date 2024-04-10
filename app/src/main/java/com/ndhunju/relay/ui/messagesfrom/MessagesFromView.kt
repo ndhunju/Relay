@@ -77,7 +77,7 @@ fun MessagesFromView(
         ) { innerPadding ->
             CenteredMessageWithButton(
                 Modifier.padding(innerPadding),
-                stringResource(R.string.msg_no_sender)
+                message = stringResource(R.string.msg_no_sender)
             )
         }
     } else {

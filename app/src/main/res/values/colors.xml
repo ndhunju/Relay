@@ -16,6 +16,7 @@
 
     <color name="success">#ccff33</color>
     <color name="failure">#e26d5c</color>
+    <color name="disabled">#d3d3d3</color>
 
     <!-- Collection of colors that can be mapped to a unique ID-->
     <color name="user_color_red">     #ff6b6b</color>
