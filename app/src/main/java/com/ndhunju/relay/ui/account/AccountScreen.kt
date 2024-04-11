@@ -1,12 +1,16 @@
 package com.ndhunju.relay.ui.account
 
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material3.Button
 import androidx.compose.material3.CircularProgressIndicator
+import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Surface
@@ -41,14 +45,24 @@ fun AccountScreen(
     onEncKeyChange: (String) -> Unit = {},
     onClickCreateUpdate: () -> Unit = {},
     onClickDialogBtnOk: () -> Unit = {},
+    onclickDeleteAccount: () -> Unit = {}
 ) {
     Surface {
         Scaffold(
-            topBar = { TopAppBarWithUpButton(
-                title = stringResource(R.string.screen_title_account),
-                onUpPressed = onUpPressed,
-                showUpButton = showUpButton
-            )},
+            topBar = {
+                TopAppBarWithUpButton(
+                    title = stringResource(R.string.screen_title_account),
+                    onUpPressed = onUpPressed,
+                    showUpButton = showUpButton,
+                    actions = { Icon(
+                        imageVector = Icons.Default.Delete,
+                        contentDescription = stringResource(
+                            R.string.account_image_description_delete
+                        ),
+                        Modifier.clickable { onclickDeleteAccount() }
+                    )}
+                )
+                     },
             bottomBar = {
                 Button(
                     modifier = Modifier

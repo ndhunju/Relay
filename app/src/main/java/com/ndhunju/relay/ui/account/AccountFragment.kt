@@ -45,7 +45,11 @@ class AccountFragment: BaseFragment() {
                             onEncKeyChange = accountViewModel.instance.onEncKeyChange,
                             onClickCreateUpdate = accountViewModel.instance.onClickCreateUpdateUser,
                             onUpPressed = { parentFragmentManager.popBackStack() },
-                            onClickDialogBtnOk = accountViewModel.instance.onClickDialogBtnOk
+                            onClickDialogBtnOk = accountViewModel.instance.onClickDialogBtnOk,
+                            onclickDeleteAccount = {
+                                showDialog(context.getString(R.string.account_message_deletion_feature))
+                                accountViewModel.instance.onClickDeleteAccount
+                            }
                         )
                     }
                 }

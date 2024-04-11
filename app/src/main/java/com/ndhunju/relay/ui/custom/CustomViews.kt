@@ -7,6 +7,7 @@ import android.widget.TextView
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.RowScope
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
@@ -124,7 +125,8 @@ fun SyncStatusIcon(modifier: Modifier = Modifier, syncStatus: Result<Nothing>? =
 fun TopAppBarWithUpButton(
     title: String? = null,
     onUpPressed: (() -> Unit)? = null,
-    showUpButton: Boolean = true
+    showUpButton: Boolean = true,
+    actions: @Composable RowScope.() -> Unit = {}
 ) {
     Column {
         TopAppBar(
@@ -147,7 +149,8 @@ fun TopAppBarWithUpButton(
                         )
                     }
                 }
-            }
+            },
+            actions = actions
         )
 
         CriticalMessageBar()

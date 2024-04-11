@@ -107,6 +107,13 @@ class AccountViewModel(
         errorStrIdGeneric.value = null
     }
 
+    /**
+     * Delete account was clicked
+     */
+    val onClickDeleteAccount = {
+        // TODO: Make API call to delete the account
+    }
+
     val onClickCreateUpdateUser: () -> Unit = {
         viewModelScope.launch(Dispatchers.IO) {
             if (user.isRegistered) {

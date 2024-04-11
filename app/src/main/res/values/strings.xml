@@ -107,6 +107,10 @@
     <string name="account_user_update_failed">Failed to update at this time. Please try again later.</string>
     <!-- Message shown in a dialog when the account is not verified -->
     <string name="account_verification_dialog_message">We will verify your number shortly. You can continue to use the app until then.</string>
+    <!-- Image description for delete button icon. Clicking on this deletes user account -->
+    <string name="account_image_description_delete">Delete Account</string>
+    <!-- Message shown in a dialog when user clicks on the delete icon -->
+    <string name="account_message_deletion_feature">Support for account deletion will be added soon.</string>
 
     <!-- PairWithParentScreen -->
     <!-- Title of the screen -->
