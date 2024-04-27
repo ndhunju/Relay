@@ -25,8 +25,13 @@ class MessagesFromViewModel(
     private val messagingService: MessagingService
 ): ViewModel() {
 
-    lateinit var senderAddress: String
-    lateinit var threadId: String
+    var senderAddress: String = ""
+    var threadId: String? = null
+        set(value) {
+            if (value == null || value == field) return
+            field = value
+            invalidateSenderAddress()
+        }
 
     private var _messagesInThread: SnapshotStateList<Message> = mutableStateListOf()
     var messagesInThread: List<Message> = _messagesInThread
@@ -70,6 +75,11 @@ class MessagesFromViewModel(
         appStateBroadcastService.newMessagesReceivedTime.removeObserver(newMessageObserver)
         appStateBroadcastService.newSyncedMessages.removeObserver(newSyncedMessageObserver)
         super.onCleared()
+    }
+
+    private fun invalidateSenderAddress() {
+        val threadId = threadId ?: return
+        senderAddress = deviceSmsReaderService.getSmsByThreadId(threadId).firstOrNull()?.from ?: ""
     }
 
     private fun onNewMessage(newMessage: Message?) {

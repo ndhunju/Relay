@@ -90,7 +90,7 @@ android {
 
 dependencies {
 
-    implementation("androidx.core:core-ktx:1.12.0")
+    implementation("androidx.core:core-ktx:1.13.0")
     implementation("androidx.lifecycle:lifecycle-runtime-ktx:2.7.0")
 
     implementation("com.google.android.material:material:1.11.0")
@@ -126,6 +126,9 @@ dependencies {
     implementation("com.google.dagger:dagger:2.51")
     ksp("com.google.dagger:dagger-compiler:2.51")
 
+    // Navigation
+    implementation("androidx.navigation:navigation-compose:2.7.7")
+
     // Room
     implementation("androidx.room:room-runtime:${rootProject.extra["room_version"]}")
     ksp("androidx.room:room-compiler:${rootProject.extra["room_version"]}")
@@ -149,7 +152,7 @@ dependencies {
     implementation("com.github.ndhunju:BarcodeGenerator:1.0.0")
 
     // Pull Down To Refresh
-    implementation("androidx.compose.material:material:1.6.5")
+    implementation("androidx.compose.material:material:1.6.6")
 
     // Add the dependencies for the App Check libraries. This library
     // sends App Check tokens along with every request the app makes to Firebase

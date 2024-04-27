@@ -13,12 +13,8 @@ import com.ndhunju.relay.service.DeviceSmsReaderService
 import com.ndhunju.relay.data.SmsInfo
 import com.ndhunju.relay.data.SmsInfoRepository
 import com.ndhunju.relay.service.AppStateBroadcastService
-import com.ndhunju.relay.ui.account.AccountFragment
-import com.ndhunju.relay.ui.debug.DebugFragment
 import com.ndhunju.relay.ui.messages.Message
-import com.ndhunju.relay.ui.messagesfrom.MessagesFromFragment
 import com.ndhunju.relay.ui.pair.PairWithChildByScanningQrCodeActivity
-import com.ndhunju.relay.ui.pair.PairWithParentFragment
 import com.ndhunju.relay.ui.parent.ChildUserListFragment
 import com.ndhunju.relay.util.extensions.asState
 import kotlinx.coroutines.Dispatchers
@@ -71,14 +67,14 @@ class MainViewModel(
     }
 
     val onSearchTextChanged: (String) -> Unit = {}
-    val onClickAccountIcon = { doOpenAccountFragment?.invoke() }
+    val onClickAccountIcon = { doOpenAccountScreen?.invoke() }
     val onClickMessage: (Message) -> Unit = { doOpenMessageFromFragment?.invoke(it) }
     val onClickGrantPermission: () -> Unit = { doRequestSmsPermission?.invoke() }
 
     val onClickNavItem: (NavItem) -> Unit = { navItem ->
         when (navItem) {
             NavItem.AccountNavItem -> onClickAccountIcon()
-            NavItem.PairWithParentNavItem -> doOpenPairWithParentFragment?.invoke()
+            NavItem.PairWithParentNavItem -> doOpenPairWithParentScreen?.invoke()
             NavItem.PairWithChildNavItem -> doOpenPairWithChild?.invoke()
             NavItem.ChildUsersNavItem -> doOpenChildUserFragment?.invoke()
             NavItem.EncryptionKeyNavItem -> doOpenEncryptionKeyScreen?.invoke()
@@ -90,14 +86,14 @@ class MainViewModel(
     //region Action Callbacks
 
     /**
-     * Invoked when [MessagesFromFragment] needs to be opened
+     * Invoked when [Screen.MessageThread] needs to be opened
      */
     var doOpenMessageFromFragment: ((Message) -> Unit)? = null
 
     /**
-     * Invoked when [PairWithParentFragment] needs to be opened
+     * Invoked when [Screen.PairWithParent] needs to be opened
      */
-    var doOpenPairWithParentFragment: (() -> Unit)? = null
+    var doOpenPairWithParentScreen: (() -> Unit)? = null
 
     /**
      * Invoked when [PairWithChildByScanningQrCodeActivity] needs to be opened
@@ -110,9 +106,9 @@ class MainViewModel(
     var doOpenEncryptionKeyScreen: (() -> Unit)? = null
 
     /**
-     * Invoked when [AccountFragment] needs to be opened
+     * Invoked when [Screen.Account] needs to be opened
      */
-    var doOpenAccountFragment: (() -> Unit)? = null
+    var doOpenAccountScreen: (() -> Unit)? = null
 
     /**
      * Invoked when [ChildUserListFragment] needs to be opened
@@ -120,9 +116,9 @@ class MainViewModel(
     var doOpenChildUserFragment: (() -> Unit)? = null
 
     /**
-     * Invoked when [DebugFragment] needs to be opened
+     * Invoked when [Screen.Debug] needs to be opened
      */
-    var doOpenDebugFragment: (() -> Unit)? = null
+    var doOpenDebugScreen: (() -> Unit)? = null
 
     /**
      * Invoked when app needs user permissions

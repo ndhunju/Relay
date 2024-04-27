@@ -64,46 +64,16 @@ class MessagesFromFragment : BaseFragment() {
         return ComposeView(requireContext()).apply {
             setContent {
                 RelayTheme {
-                    // This coroutine is bound to the lifecycle of the enclosing compose
-                    //val composeCoroutine = rememberCoroutineScope()
-                    if (viewModel.isLoading) {
-                        Box(modifier = Modifier
-                            .wrapContentSize(align = Alignment.Center)
-                        ) {
-                            CircularProgressIndicator(
-                                modifier = Modifier
-                                    .size(32.dp)
-                            )
-                        }
-                    }
-
-                    AnimatedVisibility(
-                        visible = viewModel.isLoading.not(),
-                        enter = slideInHorizontally(
-                            initialOffsetX = { fullWidth -> fullWidth },
-                            animationSpec = tween(
-                                durationMillis = 150,
-                                easing = LinearOutSlowInEasing
-                            )
-                        ),
-                        exit = slideOutHorizontally(
-                            targetOffsetX = { fullWidth -> fullWidth },
-                            animationSpec = tween(
-                                durationMillis = 250,
-                                easing = FastOutLinearInEasing
-                            )
-                        )
-                    ) {
-                        MessagesFromView(
-                            senderAddress,
-                            viewModel.messagesInThread,
-                            viewModel.textMessage,
-                            viewModel.onTextMessageChange,
-                            viewModel::sendMessage,
-                            // TODO: Nikesh - Implement proper nav controller
-                            onBackPressed = { parentFragmentManager.popBackStack() }
-                        )
-                    }
+                    MessagesFromView(
+                        senderAddress,
+                        viewModel.messagesInThread,
+                        viewModel.isLoading,
+                        viewModel.textMessage,
+                        viewModel.onTextMessageChange,
+                        viewModel::sendMessage,
+                        // TODO: Nikesh - Implement proper nav controller
+                        onBackPressed = { parentFragmentManager.popBackStack() }
+                    )
                 }
             }
         }

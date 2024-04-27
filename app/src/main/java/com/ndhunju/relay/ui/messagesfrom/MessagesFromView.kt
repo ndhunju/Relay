@@ -2,6 +2,12 @@ package com.ndhunju.relay.ui.messagesfrom
 
 import android.annotation.SuppressLint
 import android.content.res.Configuration
+import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.core.FastOutLinearInEasing
+import androidx.compose.animation.core.LinearOutSlowInEasing
+import androidx.compose.animation.core.tween
+import androidx.compose.animation.slideInHorizontally
+import androidx.compose.animation.slideOutHorizontally
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -21,6 +27,7 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.BasicTextField
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.Send
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
@@ -55,13 +62,66 @@ fun MessagesFromPreview() {
     RelayTheme {
         MessagesFromView(
             fakeMessages.first().from,
-            messageList = mutableStateListOf<Message>().apply { addAll(fakeMessages) }
+            messageList = mutableStateListOf<Message>().apply { addAll(fakeMessages) },
+            isLoading = false
         )
     }
 }
 
 @Composable
 fun MessagesFromView(
+    senderAddress: String?,
+    messageList: List<Message>,
+    isLoading: Boolean,
+    text: State<String>? = null,
+    onTextMessageChanged: ((String) -> Unit)? = null,
+    onClickSend: (() -> Unit)? = null,
+    onBackPressed: (() -> Unit)? = null
+) {
+    // This coroutine is bound to the lifecycle of the enclosing compose
+    //val composeCoroutine = rememberCoroutineScope()
+    if (isLoading) {
+        Box(modifier = Modifier
+            .fillMaxSize()
+        ) {
+            CircularProgressIndicator(
+                modifier = Modifier
+                    .size(32.dp)
+                    .align(Alignment.Center)
+            )
+        }
+    }
+
+    AnimatedVisibility(
+        visible = isLoading.not(),
+        enter = slideInHorizontally(
+            initialOffsetX = { fullWidth -> fullWidth },
+            animationSpec = tween(
+                durationMillis = 150,
+                easing = LinearOutSlowInEasing
+            )
+        ),
+        exit = slideOutHorizontally(
+            targetOffsetX = { fullWidth -> fullWidth },
+            animationSpec = tween(
+                durationMillis = 250,
+                easing = FastOutLinearInEasing
+            )
+        )
+    ) {
+        MessagesFromViewCore(
+            senderAddress,
+            messageList,
+            text,
+            onTextMessageChanged,
+            onClickSend,
+            onBackPressed
+        )
+    }
+}
+
+@Composable
+fun MessagesFromViewCore(
     senderAddress: String?,
     messageList: List<Message>,
     text: State<String>? = null,
@@ -100,16 +160,17 @@ fun MessagesFromView(
                 content = {
                     // Show list of messages for the given thread
                     itemsIndexed(
-                        messageList,
+                        items = messageList,
                         // Pass key for better performance like setHasStableIds
-                        key = { _, message -> message.idInAndroidDb }
-                    ) { i: Int, message: Message ->
-                        ChatBubbleView(
-                            message = message,
-                            previous = messageList.getOrNull(i - 1),
-                            nextMessage = messageList.getOrNull(i + 1)
-                        )
-                    }
+                        key = { _, message -> message.idInAndroidDb },
+                        itemContent = { i: Int, message: Message ->
+                            ChatBubbleView(
+                                message = message,
+                                previous = messageList.getOrNull(i - 1),
+                                nextMessage = messageList.getOrNull(i + 1)
+                            )
+                        }
+                    )
                 }
             )
         }

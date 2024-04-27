@@ -101,7 +101,7 @@ fun MainScreen(viewModel: MainViewModel?) {
                     onClickLauncherIconCount++
                     if (onClickLauncherIconCount > 3) {
                         onClickLauncherIconCount = 0
-                        viewModel?.doOpenDebugFragment?.invoke()
+                        viewModel?.doOpenDebugScreen?.invoke()
                         coroutineScope.launch { drawerState.close() }
                     }
                 }
@@ -305,7 +305,7 @@ private fun ThreadList(
         state = lazyListState,
         content = {
             itemsIndexed(
-                lastMessageList?.toList() ?: emptyList(),
+                lastMessageList ?: emptyList(),
                 // Pass key for better performance like setHasStableIds
                 key = { _, item -> item.threadId },
             ) { _: Int, message: Message ->
