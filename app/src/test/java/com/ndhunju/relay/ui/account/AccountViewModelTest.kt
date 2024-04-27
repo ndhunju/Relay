@@ -53,11 +53,11 @@ class AccountViewModelTest {
     @Before
     fun setUp() {
         accountViewModel = AccountViewModel(
-            appStateBroadcastServiceMock,
-            analyticsProviderMock,
-            apiInterfaceMock,
-            currentUserMock,
-            userMock
+            appStateBroadcastService = appStateBroadcastServiceMock,
+            analyticsProvider= analyticsProviderMock,
+            apiInterface = apiInterfaceMock,
+            currentUser = currentUserMock,
+            user = userMock
         )
     }
 

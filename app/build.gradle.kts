@@ -139,7 +139,7 @@ dependencies {
     androidTestImplementation("androidx.work:work-testing:${rootProject.extra["work_version"]}") // Test helpers
 
     // Datastore (Replaces SharedPreferences)
-    implementation("androidx.datastore:datastore-preferences:1.0.0")
+    implementation("androidx.datastore:datastore-preferences:1.1.0")
 
     // Splash Screen
     implementation("androidx.core:core-splashscreen:1.0.1")

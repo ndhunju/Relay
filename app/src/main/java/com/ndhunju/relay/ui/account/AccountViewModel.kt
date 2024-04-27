@@ -141,27 +141,14 @@ class AccountViewModel(
             // this approach might be expensive as change in any one field triggers
             // recomposition of the entire layout, top to bottom
             combine(
-                name,
-                phone,
-                encKey,
-                errorStrIdForPhone,
-                errorStrResIdForEncKey,
-                errorStrIdGeneric,
-                showProgress
-            )
-            {
-              name,
-              phone,
-              encKey,
-              errorStrIdForPhone,
-              errorStrResForEncKey,
-              errorStrIdGeneric,
-              showProgress ->
+                name, phone, encKey, errorStrIdForPhone,
+                errorStrResIdForEncKey, errorStrIdGeneric, showProgress
+            ) {
+              name, phone, encKey, errorStrIdForPhone,
+              errorStrResForEncKey, errorStrIdGeneric, showProgress ->
                 AccountScreenUiState(
                     mode = if (user.isRegistered) Mode.Update else Mode.Create,
-                    name = name,
-                    phone = phone,
-                    encKey = encKey,
+                    name = name, phone = phone, encKey = encKey,
                     errorStrIdForPhoneField = errorStrIdForPhone,
                     errorStrResForEncKeyField = errorStrResForEncKey,
                     errorStrIdForGenericError = errorStrIdGeneric,

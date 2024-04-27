@@ -67,11 +67,11 @@ class AccountScreenTest {
         currentUser.user = newUser
 
         val accountViewModel = AccountViewModel(
-            appStateBroadcastService,
-            analyticsProvider,
-            apiInterface,
-            currentUser,
-            newUser
+            appStateBroadcastService = appStateBroadcastService,
+            analyticsProvider= analyticsProvider,
+            apiInterface = apiInterface,
+            currentUser = currentUser,
+            user = newUser
         )
 
         // When Account Screen is opened
@@ -94,11 +94,11 @@ class AccountScreenTest {
         currentUser.user = newUser
 
         val accountViewModel = AccountViewModel(
-            appStateBroadcastService,
-            analyticsProvider,
-            apiInterface,
-            currentUser,
-            newUser
+            appStateBroadcastService = appStateBroadcastService,
+            analyticsProvider= analyticsProvider,
+            apiInterface = apiInterface,
+            currentUser = currentUser,
+            user = newUser
         )
 
         // When Account Screen is opened
@@ -122,11 +122,11 @@ class AccountScreenTest {
         currentUser.user = newUser
 
         val accountViewModel = AccountViewModel(
-            appStateBroadcastService,
-            analyticsProvider,
-            apiInterface,
-            currentUser,
-            newUser
+            appStateBroadcastService = appStateBroadcastService,
+            analyticsProvider= analyticsProvider,
+            apiInterface = apiInterface,
+            currentUser = currentUser,
+            user = newUser
         )
 
         // When
@@ -160,11 +160,11 @@ class AccountScreenTest {
         }
 
         val accountViewModel = AccountViewModel(
-            appStateBroadcastService,
-            analyticsProvider,
-            apiInterface,
-            currentUser,
-            currentUser.user
+            appStateBroadcastService = appStateBroadcastService,
+            analyticsProvider= analyticsProvider,
+            apiInterface = apiInterface,
+            currentUser = currentUser,
+            user = currentUser.user
         )
 
         composeRule.setContent {
