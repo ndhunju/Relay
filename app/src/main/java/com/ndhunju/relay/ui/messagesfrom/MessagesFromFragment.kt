@@ -4,26 +4,14 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import androidx.compose.animation.AnimatedVisibility
-import androidx.compose.animation.core.FastOutLinearInEasing
-import androidx.compose.animation.core.LinearOutSlowInEasing
-import androidx.compose.animation.core.tween
-import androidx.compose.animation.slideInHorizontally
-import androidx.compose.animation.slideOutHorizontally
-import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.wrapContentSize
-import androidx.compose.material3.CircularProgressIndicator
-import androidx.compose.ui.Alignment
-import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.ComposeView
-import androidx.compose.ui.unit.dp
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentManager
 import androidx.fragment.app.activityViewModels
 import com.ndhunju.relay.RelayViewModelFactory
 import com.ndhunju.relay.ui.BaseFragment
 import com.ndhunju.relay.ui.messages.Message
+import com.ndhunju.relay.ui.parent.messagesinthreadfromchild.MessagesInThreadFromChildFragment
 import com.ndhunju.relay.ui.theme.RelayTheme
 
 private const val THREAD_ID = "THREAD_ID"
@@ -89,6 +77,7 @@ class MessagesFromFragment : BaseFragment() {
          *
          * @param threadId id of message thread
          * @return A new instance of fragment MessagesFromFragment.
+         * TODO: Nikesh - Delete this after [MessagesInThreadFromChildFragment] is removed
          */
         fun newInstance(threadId: String, senderAddress: String) =
             MessagesFromFragment().apply {

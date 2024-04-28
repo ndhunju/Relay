@@ -21,7 +21,7 @@ import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 
 class ChildUserListViewModel(
-    apiInterface: ApiInterface,
+    private val apiInterface: ApiInterface,
     private val workManager: WorkManager,
     private val currentUser: CurrentUser,
     private val application: Application,
@@ -110,8 +110,16 @@ class ChildUserListViewModel(
         onDeniedNotificationPermission()
     }
 
+    /**
+     * Should be called when the view is created
+     */
+    fun onViewCreated() {
+        fetchChildUserList()
+        showAllowNotificationDialogIfNeeded()
+    }
 
-    init {
+
+    private fun fetchChildUserList() {
         viewModelScope.launch(Dispatchers.IO) {
             // Show pair child users that were saved previously
             _childUsers.value = currentUser.user.getChildUsers().map { childUser ->
@@ -156,7 +164,6 @@ class ChildUserListViewModel(
             //    keyNotificationPermissionDeniedTime,
             //)
 
-            showAllowNotificationDialogIfNeeded()
         }
     }
 

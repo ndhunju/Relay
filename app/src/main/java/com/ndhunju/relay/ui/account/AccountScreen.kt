@@ -22,6 +22,7 @@ import androidx.compose.ui.text.input.KeyboardCapitalization
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.ndhunju.relay.R
 import com.ndhunju.relay.ui.custom.RelayOutlinedTextField
 import com.ndhunju.relay.ui.custom.MessageAlertDialog
@@ -139,6 +140,26 @@ fun AccountScreen(
 
         }
     }
+}
+
+@Composable
+fun AccountScreen(
+    accountViewModel: AccountAndroidViewModel,
+    onclickDeleteAccount: () -> Unit = {},
+    onUpPressed: () -> Unit = {}
+) {
+    val uiState = accountViewModel.instance.state.collectAsStateWithLifecycle()
+    AccountScreen(
+        accountScreenUiState = uiState.value,
+        showUpButton = true,
+        onNameChange = accountViewModel.instance.onNameChange,
+        onPhoneChange = accountViewModel.instance.onPhoneChange,
+        onEncKeyChange = accountViewModel.instance.onEncKeyChange,
+        onClickCreateUpdate = accountViewModel.instance.onClickCreateUpdateUser,
+        onUpPressed = onUpPressed,
+        onClickDialogBtnOk = accountViewModel.instance.onClickDialogBtnOk,
+        onclickDeleteAccount = onclickDeleteAccount
+    )
 }
 
 /**

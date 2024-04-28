@@ -68,3 +68,14 @@ fun DebugScreen(
         }
     }
 }
+
+@Composable
+fun DebugScreen(
+    debugViewModel: DebugViewModel,
+    onUpPressed: (() -> Unit)? = null
+) {
+    DebugScreen(
+        onClickForceCrash = debugViewModel.onClickForceCrashItem,
+        onUpPressed = onUpPressed
+    )
+}

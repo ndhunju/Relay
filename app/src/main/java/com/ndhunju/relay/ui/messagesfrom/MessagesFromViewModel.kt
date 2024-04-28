@@ -26,9 +26,9 @@ class MessagesFromViewModel(
 ): ViewModel() {
 
     var senderAddress: String = ""
-    var threadId: String? = null
+    var threadId: String = ""
         set(value) {
-            if (value == null || value == field) return
+            if (value == field) return
             field = value
             invalidateSenderAddress()
         }

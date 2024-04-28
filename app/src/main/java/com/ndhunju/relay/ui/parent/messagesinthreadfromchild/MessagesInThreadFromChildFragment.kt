@@ -94,6 +94,7 @@ class MessagesInThreadFromChildFragment: BaseFragment() {
                         MessagesFromView(
                             viewModel.senderAddress,
                             uiState.value.messagesInThread,
+                            uiState.value.isLoading.value,
                             onClickSend = {
                                 showDialog(context.getString(
                                     R.string.unsupported_action_sending_message

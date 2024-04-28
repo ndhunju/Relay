@@ -116,3 +116,21 @@ fun PairWithParentScreen(
         }
     }
 }
+
+@Composable
+fun PairWithParentScreen(
+    viewModel: PairWithParentViewModel,
+    onUpPressed: () -> Unit = {},
+) {
+    PairWithParentScreen(
+        viewModel.pairedUserPhoneList.collectAsState(),
+        viewModel.selectedParentPhoneAddress.collectAsState(),
+        viewModel.isSelectedParentPaired.collectAsState(),
+        viewModel.showProgress.collectAsState(),
+        viewModel.errorMsgResId.collectAsState(),
+        onUpPressed = onUpPressed,
+        onClickPairUnPair = viewModel::onClickPairUnpair,
+        onClickPairedUser = viewModel::onClickPairedUser,
+        onParentPhoneChanged = viewModel::onSelectedParentPhoneChanged
+    )
+}

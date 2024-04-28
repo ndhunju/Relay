@@ -45,6 +45,7 @@ import androidx.compose.ui.unit.dp
 import com.ndhunju.relay.R
 import com.ndhunju.relay.ui.custom.ScrollToTopLaunchedEffect
 import com.ndhunju.relay.ui.custom.CenteredMessageWithButton
+import com.ndhunju.relay.ui.custom.LaunchedEffectOnce
 import com.ndhunju.relay.ui.custom.SyncStatusIcon
 import com.ndhunju.relay.ui.custom.TopAppBarWithUpButton
 import com.ndhunju.relay.ui.fakeMessages
@@ -339,4 +340,21 @@ fun SendMessageBar(
                 )
         )
     }
+}
+
+@Composable
+fun MessagesFromScreen(
+    viewModel: MessagesFromViewModel,
+    onUpPressed: () -> Unit = {}
+) {
+    LaunchedEffectOnce { viewModel.getSmsByThreadId(viewModel.threadId) }
+    MessagesFromView(
+        viewModel.senderAddress,
+        viewModel.messagesInThread,
+        viewModel.isLoading,
+        viewModel.textMessage,
+        viewModel.onTextMessageChange,
+        viewModel::sendMessage,
+        onBackPressed = onUpPressed
+    )
 }
