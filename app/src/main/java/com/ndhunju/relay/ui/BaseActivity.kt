@@ -3,10 +3,12 @@ package com.ndhunju.relay.ui
 import android.os.Bundle
 import android.view.View
 import android.view.ViewGroup
+import android.widget.TextView
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.platform.ComposeView
 import androidx.fragment.app.FragmentActivity
 import androidx.lifecycle.lifecycleScope
+import com.ndhunju.relay.R
 import com.ndhunju.relay.RelayApplication
 import com.ndhunju.relay.service.AppStateBroadcastService
 import com.ndhunju.relay.service.analyticsprovider.AnalyticsProvider
@@ -14,7 +16,9 @@ import com.ndhunju.relay.ui.custom.AppUpdateDialog
 import com.ndhunju.relay.ui.custom.MessageAlertDialog
 import com.ndhunju.relay.util.CurrentSettings
 import com.ndhunju.relay.util.extensions.getAppVersionCode
+import com.ndhunju.relay.util.extensions.setTextAndVisibility
 import com.ndhunju.relay.util.extensions.startActivityForUrl
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 import javax.inject.Inject
@@ -36,6 +40,7 @@ abstract class BaseActivity: FragmentActivity() {
     override fun onPostCreate(savedInstanceState: Bundle?) {
         super.onPostCreate(savedInstanceState)
         checkForMinimumVersionCode()
+        checkForDeviceOnlineState()
     }
 
     /**
@@ -100,6 +105,36 @@ abstract class BaseActivity: FragmentActivity() {
         )
 
         return view
+    }
+
+    private fun checkForDeviceOnlineState() {
+        appStateBroadcastService.isDeviceOnline.observe(this) { isOnline ->
+            lifecycleScope.launch {
+                val messageToShow = if (isOnline) null else getString(R.string.alert_offline_body)
+                showCriticalMessageBar(messageToShow)
+            }
+        }
+    }
+
+    private var totalAttempts = 0
+
+    /**
+     * Shows critical message in a visually hard to miss way
+     */
+    open suspend fun showCriticalMessageBar(message: String?) {
+        val textView = findViewById<TextView>(R.id.critical_message_text_view)
+        // Sometimes, the view is not rendered when this fun is called
+        // So check again after a second to 3 more times
+        if (textView == null && totalAttempts <= 3) {
+            totalAttempts++
+            delay(1000)
+            showCriticalMessageBar(message)
+            return
+        }
+        // Reset totalAttempts
+        totalAttempts = 0
+        // Show the message
+        textView?.setTextAndVisibility(message)
     }
 
 }
