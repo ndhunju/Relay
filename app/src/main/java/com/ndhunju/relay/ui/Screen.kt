@@ -4,6 +4,7 @@ package com.ndhunju.relay.ui
  * List of all possible screens that the app displays
  */
 sealed class Screen(open val route: String) {
+    data object Welcome: Screen("welcome")
     data object MessageThread: Screen("messageThread")
     data object PairWithParent: Screen("pairWithParent")
     data object Account: Screen("account")
@@ -44,8 +45,27 @@ sealed class Screen(open val route: String) {
         }
     }
 
-    class MessagesInThreadFromChild(): Screen("messagesInThreadFromChild") {
-        // TODO: Nikesh - Implement this
+    class MessagesInThreadFromChild(
+        private val childUserId: String,
+        private val threadId: String,
+        private val senderAddress: String
+    ) : Screen(routeWithPlaceHolders) {
+
+        override val route: String
+            get() = routeWithPlaceHolders
+                .replacePathPlaceholder(keyChildUserId, childUserId)
+                .replacePathPlaceholder(keyThreadId, threadId)
+                .replaceQueryPlaceholder(keySenderAddress, senderAddress)
+
+        companion object {
+            var keyChildUserId = "childUserId"
+            var keyThreadId = "threadId"
+            var keySenderAddress = "senderAddress"
+            val routeWithPlaceHolders = "messagesInThreadFromChild/"
+                .addPathPlaceholder(keyChildUserId)
+                .addPathPlaceholder(keyThreadId)
+                .addQueryPlaceholder(keySenderAddress)
+        }
     }
 
 }
@@ -55,7 +75,7 @@ sealed class Screen(open val route: String) {
  * Eg. "baseUrl/".addPathPlaceholder("userId") returns "baseUrl/{userId}"
  */
 private fun String.addPathPlaceholder(key: String): String {
-    return "$this{$key}"
+    return "$this{$key}/"
 }
 
 /**
@@ -71,7 +91,7 @@ private fun String.replacePathPlaceholder(key: String, value: String): String {
  * Eg. "baseUrl/1?".addQueryPlaceholder("phone") returns "baseUrl/1?phone={phone}"
  */
 private fun String.addQueryPlaceholder(key: String): String {
-    return "$this$key={$key}"
+    return "$this$key={$key}&"
 }
 
 /**

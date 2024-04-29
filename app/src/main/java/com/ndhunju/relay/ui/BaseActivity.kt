@@ -1,16 +1,17 @@
 package com.ndhunju.relay.ui
 
 import android.os.Bundle
+import android.view.View
 import android.view.ViewGroup
-import android.widget.Toast
+import androidx.compose.runtime.Composable
 import androidx.compose.ui.platform.ComposeView
 import androidx.fragment.app.FragmentActivity
 import androidx.lifecycle.lifecycleScope
-import com.ndhunju.relay.R
 import com.ndhunju.relay.RelayApplication
 import com.ndhunju.relay.service.AppStateBroadcastService
 import com.ndhunju.relay.service.analyticsprovider.AnalyticsProvider
 import com.ndhunju.relay.ui.custom.AppUpdateDialog
+import com.ndhunju.relay.ui.custom.MessageAlertDialog
 import com.ndhunju.relay.util.CurrentSettings
 import com.ndhunju.relay.util.extensions.getAppVersionCode
 import com.ndhunju.relay.util.extensions.startActivityForUrl
@@ -67,6 +68,38 @@ abstract class BaseActivity: FragmentActivity() {
                 ViewGroup.LayoutParams.MATCH_PARENT
             )
         )
+    }
+
+    /**
+     * Convenient method to show messages on screen that can be dismissed
+     */
+    fun showDialog(message: String) {
+        addContentView(
+            ComposeView(this).apply { setContent {
+                MessageAlertDialog(
+                    message,
+                    onClickDialogBtnOk = { (parent as ViewGroup).removeView(this) },
+                    onClickDialogBtnCancel = { (parent as ViewGroup).removeView(this) }
+                )
+            } },
+            ViewGroup.LayoutParams(
+                ViewGroup.LayoutParams.MATCH_PARENT,
+                ViewGroup.LayoutParams.MATCH_PARENT
+            )
+        )
+    }
+
+    fun showDialog(content: @Composable () -> Unit): View {
+        val view: View = ComposeView(this).apply { setContent { content() } }
+        addContentView(
+            view,
+            ViewGroup.LayoutParams(
+                ViewGroup.LayoutParams.MATCH_PARENT,
+                ViewGroup.LayoutParams.MATCH_PARENT
+            )
+        )
+
+        return view
     }
 
 }

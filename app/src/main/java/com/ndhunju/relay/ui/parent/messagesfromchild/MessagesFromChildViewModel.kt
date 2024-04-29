@@ -10,8 +10,8 @@ import androidx.lifecycle.viewModelScope
 import androidx.work.WorkInfo
 import androidx.work.WorkManager
 import com.ndhunju.relay.data.ChildSmsInfoRepository
+import com.ndhunju.relay.ui.Screen
 import com.ndhunju.relay.ui.messages.Message
-import com.ndhunju.relay.ui.messagesfrom.MessagesFromFragment
 import com.ndhunju.relay.util.extensions.asState
 import com.ndhunju.relay.util.worker.SyncChildMessagesWorker
 import kotlinx.coroutines.Dispatchers
@@ -52,7 +52,7 @@ class MessagesFromChildViewModel(
     val onSearchTextChanged: (String) -> Unit = {}
     val onClickMessage: (Message) -> Unit = { message ->
         childUserId.let { childUserId ->
-            doOpenMessagesInThreadFromChildFragment?.invoke(childUserId, message)
+            doOpenMessagesInThreadFromChildScreen?.invoke(childUserId, message)
         }
     }
 
@@ -65,10 +65,10 @@ class MessagesFromChildViewModel(
     //endregion
 
     /**
-     * Invoked when [MessagesFromFragment] needs to be opened.
+     * Invoked when [Screen.MessagesInThreadFromChild] needs to be opened.
      * It passes child user id and [Message] object
      */
-    var doOpenMessagesInThreadFromChildFragment: ((String, Message) -> Unit)? = null
+    var doOpenMessagesInThreadFromChildScreen: ((String, Message) -> Unit)? = null
 
     var childUserPhone: String? = null
         set(value) {

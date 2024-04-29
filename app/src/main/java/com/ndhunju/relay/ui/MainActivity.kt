@@ -34,6 +34,8 @@ import com.ndhunju.relay.ui.parent.ChildUserListScreen
 import com.ndhunju.relay.ui.parent.ChildUserListViewModel
 import com.ndhunju.relay.ui.parent.messagesfromchild.MessagesFromChildScreen
 import com.ndhunju.relay.ui.parent.messagesfromchild.MessagesFromChildViewModel
+import com.ndhunju.relay.ui.parent.messagesinthreadfromchild.MessagesInThreadFromChildScreen
+import com.ndhunju.relay.ui.parent.messagesinthreadfromchild.MessagesInThreadFromChildVM
 import com.ndhunju.relay.ui.theme.RelayTheme
 import com.ndhunju.relay.util.areSmsPermissionGranted
 import com.ndhunju.relay.util.checkIfSmsPermissionsGranted
@@ -118,6 +120,17 @@ class MainActivity : BaseActivity() {
         ) { navBackStackEntry ->
             MessagesFromChildWithViewModel(navBackStackEntry)
         }
+
+        composable(
+            route = Screen.MessagesInThreadFromChild.routeWithPlaceHolders,
+            arguments = listOf(
+                navArgument(Screen.MessagesInThreadFromChild.keyChildUserId) {},
+                navArgument(Screen.MessagesInThreadFromChild.keyThreadId) {},
+                navArgument(Screen.MessagesInThreadFromChild.keySenderAddress) {}
+            )
+        ) { navBackStackEntry ->
+            MessagesInThreadFromChildScreenWithViewModel(navBackStackEntry)
+        }
     }
 
     private fun bindNavigationCallbacks() {
@@ -175,6 +188,30 @@ class MainActivity : BaseActivity() {
     //region Composable Screen bound with respective View Models
 
     @Composable
+    private fun MessagesInThreadFromChildScreenWithViewModel(navBackStackEntry: NavBackStackEntry) {
+        val viewModel: MessagesInThreadFromChildVM by viewModels { RelayViewModelFactory }
+        val childId = navBackStackEntry.arguments?.getString(
+            Screen.MessagesInThreadFromChild.keyChildUserId
+        ) ?: return
+        val threadId = navBackStackEntry.arguments?.getString(
+            Screen.MessagesInThreadFromChild.keyThreadId
+        ) ?: return
+        viewModel.senderAddress = navBackStackEntry.arguments?.getString(
+            Screen.MessagesInThreadFromChild.keySenderAddress
+        )
+
+        LaunchedEffectOnce { viewModel.loadMessagesForChildAndThread(childId, threadId) }
+        MessagesInThreadFromChildScreen(
+            viewModel,
+            onClickSend = {
+                showDialog(getString(R.string.unsupported_action_sending_message))
+                analyticsProvider.logEvent("didClickOnSendMessageToChild")
+            },
+            onBackPressed = { navController.popBackStack() }
+        )
+    }
+
+    @Composable
     private fun DebugScreenWithViewModel() {
         val debugViewModel: DebugViewModel by viewModels { RelayViewModelFactory }
         DebugScreen(debugViewModel) { navController.popBackStack() }
@@ -216,6 +253,16 @@ class MainActivity : BaseActivity() {
         viewModel.childUserPhone = navBackStackEntry.arguments?.getString(
             Screen.MessagesFromChild.phoneKey
         ) ?: return
+
+        viewModel.doOpenMessagesInThreadFromChildScreen = { childUserId, message ->
+            navController.navigate(
+                Screen.MessagesInThreadFromChild(
+                    childUserId,
+                    message.threadId,
+                    message.from
+                ).route
+            )
+        }
 
         MessagesFromChildScreen(viewModel) { navController.popBackStack() }
     }
