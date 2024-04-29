@@ -8,6 +8,7 @@ import androidx.activity.compose.setContent
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.activity.viewModels
 import androidx.compose.runtime.Composable
+import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavBackStackEntry
 import androidx.navigation.NavGraphBuilder
 import androidx.navigation.NavHostController
@@ -189,7 +190,9 @@ class MainActivity : BaseActivity() {
 
     @Composable
     private fun MessagesInThreadFromChildScreenWithViewModel(navBackStackEntry: NavBackStackEntry) {
-        val viewModel: MessagesInThreadFromChildVM by viewModels { RelayViewModelFactory }
+        val viewModel: MessagesInThreadFromChildVM = viewModel<MessagesInThreadFromChildVM>(
+            factory = RelayViewModelFactory
+        )
         val childId = navBackStackEntry.arguments?.getString(
             Screen.MessagesInThreadFromChild.keyChildUserId
         ) ?: return
@@ -213,20 +216,25 @@ class MainActivity : BaseActivity() {
 
     @Composable
     private fun DebugScreenWithViewModel() {
-        val debugViewModel: DebugViewModel by viewModels { RelayViewModelFactory }
+        val debugViewModel: DebugViewModel = viewModel<DebugViewModel>(
+            factory = RelayViewModelFactory
+        )
         DebugScreen(debugViewModel) { navController.popBackStack() }
     }
 
     @Composable
     private fun PairWithParentScreenWithViewModel() {
-        // TODO: Nikesh - Is this view model destroyed once this composable is popped?
-        val viewModel: PairWithParentViewModel by viewModels { RelayViewModelFactory }
+        val viewModel: PairWithParentViewModel = viewModel<PairWithParentViewModel>(
+            factory = RelayViewModelFactory
+        )
         PairWithParentScreen(viewModel) { navController.popBackStack() }
     }
 
     @Composable
     private fun AccountScreenWithViewModel() {
-        val accountViewModel: AccountAndroidViewModel by viewModels { RelayViewModelFactory }
+        val accountViewModel: AccountAndroidViewModel = viewModel<AccountAndroidViewModel>(
+            factory = RelayViewModelFactory
+        )
         AccountScreen(
             accountViewModel,
             onclickDeleteAccount = {
@@ -238,7 +246,9 @@ class MainActivity : BaseActivity() {
 
     @Composable
     private fun MessageFromScreenWithViewModel(entry: NavBackStackEntry) {
-        val viewModel: MessagesFromViewModel by viewModels { RelayViewModelFactory }
+        val viewModel: MessagesFromViewModel = viewModel<MessagesFromViewModel>(
+            factory = RelayViewModelFactory
+        )
         viewModel.threadId = entry.arguments?.getString(Screen.MessagesFrom.threadIdKey)
             ?: return
         MessagesFromScreen(viewModel) { navController.popBackStack() }
@@ -246,7 +256,10 @@ class MainActivity : BaseActivity() {
 
     @Composable
     private fun MessagesFromChildWithViewModel(navBackStackEntry: NavBackStackEntry) {
-        val viewModel: MessagesFromChildViewModel by viewModels { RelayViewModelFactory }
+        val viewModel: MessagesFromChildViewModel = viewModel<MessagesFromChildViewModel>(
+            factory = RelayViewModelFactory
+        )
+
         viewModel.childUserId = navBackStackEntry.arguments?.getString(
             Screen.MessagesFromChild.userIdKey
         ) ?: return
@@ -270,7 +283,9 @@ class MainActivity : BaseActivity() {
     @Composable
     fun ChildUserListScreenWithViewModel() {
 
-        val viewModel: ChildUserListViewModel by viewModels { RelayViewModelFactory }
+        val viewModel: ChildUserListViewModel = viewModel<ChildUserListViewModel>(
+            factory = RelayViewModelFactory
+        )
 
         onResultNotificationPermission = { permissions ->
             if (isNotificationPermissionGranted(permissions).not()) {
